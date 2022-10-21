@@ -2,37 +2,32 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Descreva o Bug**
+<!--Uma clara e concisa descrição do que se trata o bug-->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Como Reproduzir o Bug**
+Passos para reproduzir o comportamento observado:
+1. Ir para '...'
+2. Clicar em '....'
+3. Rolar para '....'
+4. Verificar erro.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Comportamento esperado**
+<!--Uma clara e concisa descrição do que você espera que aconteça-->
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Capturas de tela**
+<!-- Se aplicável, coloque imagens para ajudar a ilustrar o problema descrito -->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Configurações do Sistema:**
+ - SO: <!--e.g. Windows 10-->
+ - RAM: <!--16 GB-->
+ - Python: <!--e.g. 3.10.2-->
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
 
-**Additional context**
-Add any other context about the problem here.
+**Contexto Adicional
+<!-- Qualquer outro contexto relacionado ao problema -->

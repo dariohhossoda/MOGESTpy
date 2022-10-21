@@ -2,19 +2,20 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
+**Sua feature request está relacionada à um problema? Por favor descreva-o**
+<!-- Uma clara e concisa descrição da funcionalidade desejada. Ex. A cor do botão é feia [...] -->
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Descreva a solução desejada**
+<!-- Uma clara e concisa descrição da solução desejada. Ex. Mudar a cor do botão para verde [...] -->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Descrever as alternativas consideradas**
+<!-- Descrever brevemente as alternativas consideradas se aplicável -->
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Contexto Adicional**
+<!-- Adiciione aqui qualquer outro contexto ou captura de tela relacionada à feature request -->
+

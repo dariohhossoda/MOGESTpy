@@ -28,6 +28,5 @@ Passos para reproduzir o comportamento observado:
  - RAM: <!--16 GB-->
  - Python: <!--e.g. 3.10.2-->
 
-
-**Contexto Adicional
+**Contexto Adicional**
 <!-- Qualquer outro contexto relacionado ao problema -->

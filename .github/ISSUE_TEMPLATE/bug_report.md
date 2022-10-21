@@ -17,13 +17,13 @@ Passos para reproduzir o comportamento observado:
 3. Rolar para '....'
 4. Verificar erro.
 
-**Comportamento esperado**
+**Comportamento Esperado**
 <!--Uma clara e concisa descrição do que você espera que aconteça-->
 
-**Capturas de tela**
+**Capturas de Tela (Se Aplicável)**
 <!-- Se aplicável, coloque imagens para ajudar a ilustrar o problema descrito -->
 
-**Configurações do Sistema:**
+**Configurações do Sistema**
  - SO: <!--e.g. Windows 10-->
  - RAM: <!--16 GB-->
  - Python: <!--e.g. 3.10.2-->

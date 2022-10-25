@@ -10,8 +10,11 @@ assignees: ''
 **Descreva o Bug**
 <!--Uma clara e concisa descrição do que se trata o bug-->
 
+
 **Como Reproduzir o Bug**
+
 Passos para reproduzir o comportamento observado:
+<!--Sugestão-->
 1. Ir para '...'
 2. Clicar em '....'
 3. Rolar para '....'
@@ -20,8 +23,10 @@ Passos para reproduzir o comportamento observado:
 **Comportamento Esperado**
 <!--Uma clara e concisa descrição do que você espera que aconteça-->
 
+
 **Capturas de Tela (Se Aplicável)**
 <!-- Se aplicável, coloque imagens para ajudar a ilustrar o problema descrito -->
+
 
 **Configurações do Sistema**
  - SO: <!--e.g. Windows 10-->
@@ -30,3 +35,4 @@ Passos para reproduzir o comportamento observado:
 
 **Contexto Adicional**
 <!-- Qualquer outro contexto relacionado ao problema -->
+

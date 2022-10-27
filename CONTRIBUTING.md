@@ -68,9 +68,9 @@ Todas as alterações de código acontecem por meio de _pull requests_. As _pull
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
-### Reportar Bugs Usando os [_Issues_](https://github.com/LabSid-USP/SSD2Petrobras/issues) do Github 
+### Reportar Bugs Usando os [_Issues_](https://github.com/dariohhossoda/MOGESTpy/issues) do Github 
 
-Usamos _issues_ do GitHub para rastrear bugs. Relate um bug [abrindo um novo _issue_](https://github.com/LabSid-USP/SSD2Petrobras/issues/new/choose).
+Usamos _issues_ do GitHub para rastrear bugs. Relate um bug [abrindo um novo _issue_](https://github.com/dariohhossoda/MOGESTpy/issues/new/choose).
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 

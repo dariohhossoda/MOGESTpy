@@ -1,6 +1,9 @@
 <div id="top"></div>
 
-# MOGESTpy
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/58784697/198354481-255b4c93-8009-4b91-a497-342770bde866.png" />
+</p>
 
 ## Índice
 

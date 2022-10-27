@@ -18,7 +18,7 @@
 
 O projeto MOGESTpy é o **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
 
-### Modelo de Gestão
+### Modelo de Gestão de Recursos Hídricos
 
 Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade da água como forma de auxiliar a tomada de decisão.
 
@@ -29,7 +29,11 @@ Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade 
 </p>
 
 Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
- 
+
+## Modelos
+
+- SIHQUAL
+- SMAP
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 

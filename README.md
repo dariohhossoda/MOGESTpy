@@ -2,7 +2,8 @@
 
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/58784697/198354481-255b4c93-8009-4b91-a497-342770bde866.png" />
+  <img src="https://user-images.githubusercontent.com/58784697/198355109-f0bedc32-961f-46bb-84ca-077668a58ddc.png"
+  width = 250/>
 </p>
 
 ## Índice

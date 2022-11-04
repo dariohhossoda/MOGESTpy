@@ -1,5 +1,6 @@
 import math
 
+
 class BuildUpWashoff:
     def __init__(self, use_name, Bmax, Nb, Kb,
                  threshold_flow, Nw, Kw, BuMethod, WoMethod,

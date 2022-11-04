@@ -31,11 +31,11 @@ Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade 
 Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 
 
-## Modelos
-
+## Modelos utilizados no MOGESTpy
 - SIHQUAL
 - SMAP
-
+- 0D (Zero Dimensional)
+- BuildUp-Washoff
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 

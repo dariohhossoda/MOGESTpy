@@ -25,10 +25,11 @@ Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade 
 <!-- Figura Tese BRITES -->
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/58784697/197843907-cbea7969-9bd3-47c7-be9c-106859fed5df.png" />
+  <img src="https://user-images.githubusercontent.com/58784697/199972694-102a218c-bf48-4db4-b0ab-e96ff2609ebd.svg" />
 </p>
 
 Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
+
 
 ## Modelos
 

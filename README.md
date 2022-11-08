@@ -44,6 +44,7 @@ Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 |Agradecimentos|
 |:---:|
 |![LogoLabSid](https://user-images.githubusercontent.com/58784697/200078179-ea05ba48-2b67-4f30-bea0-78e1c1507ae1.svg)|
+|[Laboratório de Sistemas de Suporte a Decisão](https://sites.usp.br/labsid)|
 
 
 [^Brites,2010]: Brites, A. P. Z. Enquadramento dos corpos de água através de metas progressivas: Probabilidade de ocorrência e custos de despoluição hídrica. Tese de Doutorado. Universidade de São Paulo, 2010.

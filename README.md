@@ -14,16 +14,18 @@
   - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
     - [Modelo de Gestão de Recursos Hídricos](#modelo-de-gestão-de-recursos-hídricos)
   - [Modelos utilizados no MOGESTpy](#modelos-utilizados-no-mogestpy)
+  - [Como utilizar o MOGESTpy?](#como-utilizar-o-mogestpy)
+  - [Como colaborar com o projeto?](#como-colaborar-com-o-projeto)
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 ## O que é o MOGESTpy?
 
-O projeto MOGESTpy é o **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
+O projeto MOGESTpy a sigla de **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
 
 ### Modelo de Gestão de Recursos Hídricos
 
-Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade da água como forma de auxiliar a tomada de decisão.
+Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade da água como forma de auxiliar a tomada de decisão. Esta modelagem é feita por através de modelos de simulação em que processos naturais são representados desde a precipitação na área da bacia até seu transporte em rios e canais para o exutório da bacia.
 
 <!-- Figura Tese BRITES -->
 
@@ -40,6 +42,14 @@ Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 - [0D (Zero Dimensional)](Quality/)
 - [BuildUp-Washoff](Quality/)
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
+
+## Como utilizar o MOGESTpy?
+
+Atualmente, para executar o MOGESTpy é necessário clonar o repositório em sua máquina e chamar os módulos individualmente. Futuramente pensa-se em incluir um Framework para facilitar sua utilização.
+
+## Como colaborar com o projeto?
+
+Para contribuir com o projeto basta criar uma issue, adições ao código são bem-vindas, basta seguir o nosso [documento de colaboração](CONTRIBUTING.md).
 
 |Agradecimentos|
 |:---:|

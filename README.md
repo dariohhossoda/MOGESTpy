@@ -10,8 +10,10 @@
 ## Índice
 
 - [MOGESTpy](#mogestpy)
+  - [Índice](#índice)
   - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
-    - [Modelo de Gestão](#modelo-de-gestão)
+    - [Modelo de Gestão de Recursos Hídricos](#modelo-de-gestão-de-recursos-hídricos)
+  - [Modelos utilizados no MOGESTpy](#modelos-utilizados-no-mogestpy)
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
@@ -33,10 +35,10 @@ Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 
 
 ## Modelos utilizados no MOGESTpy
-- SIHQUAL
-- SMAP
-- 0D (Zero Dimensional)
-- BuildUp-Washoff
+- [SIHQUAL](Quantity/Hydrodynamic/)
+- [SMAP](Quantity/Hydrological)
+- [0D (Zero Dimensional)](Quality/)
+- [BuildUp-Washoff](Quality/)
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 

@@ -21,7 +21,7 @@
 
 ## O que é o MOGESTpy?
 
-O projeto MOGESTpy a sigla de **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
+O projeto MOGESTpy é a sigla para **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
 
 ### Modelo de Gestão de Recursos Hídricos
 

@@ -1,8 +1,9 @@
 <div id="top"></div>
 
+# MOGESTpy
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/58784697/198355109-f0bedc32-961f-46bb-84ca-077668a58ddc.png"
+  <img src="https://user-images.githubusercontent.com/58784697/200683473-b94e7a80-6f62-405d-8ba9-06ac5620044e.svg"
   width = 250/>
 </p>
 

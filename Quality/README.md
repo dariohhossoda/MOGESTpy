@@ -21,10 +21,10 @@ Onde:
 - $C_{out}$ é a concentração na saída em mg/L;
 - $C_{in}$ é a concentração na entrada em mg/L;
 - $\Delta t$ é a diferença entre os tempos $i+1$ e $i$ em s;
-- $V$ é o volume do reservatório em m$^3$;
-- $\Delta V$ é a diferença dos volumes a cada instante em m$^3$;
+- $V$ é o volume do reservatório em m $^3$;
+- $\Delta V$ é a diferença dos volumes a cada instante em m $^3$;
 - $v$ é a velocidade aparente de sedimentação em m/s;
-- $k$ é o coeficiente de reação de primeira ordem s$^{-1}$;
-- $A_s$ é a área de superfície entre água e sedimentos em m$^2$.
+- $k$ é o coeficiente de reação de primeira ordem s $^{-1}$;
+- $A_s$ é a área de superfície entre água e sedimentos em m $^2$.
 
 [^Chapra,2008]: Chapra, S. C. Surface Water-Quality Modeling. Waveland press, 2008.

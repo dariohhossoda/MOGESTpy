@@ -27,7 +27,7 @@ Onde:
 - $k$ é o coeficiente de reação de primeira ordem s $^{-1}$;
 - $A_s$ é a área de superfície entre água e sedimentos em m $^2$.
 
-
+O exemplo de utilização do modelo é fornecido [aqui](/Quality/examples/ZeroD_example.ipynb).
 
 [^Becker,2021]: Becker, A. C. C. Zero-Dimensional Modelling and Total Maximum Daily Loads As Tools for Reservoir Water Quality Planning and Management. Master Thesis. Universidade Federal do Paraná - UFPR, 2021.
 

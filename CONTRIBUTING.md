@@ -104,4 +104,21 @@ def do_something(parameter): # Comentário
     return variable_name
 ```
 
+**Ordem dos imports**
+
+Como *rule of thumb* os imports são divididos conforme o exemplo:
+
+```python
+import math # Imports nativos
+import os
+
+import pandas as pd # Imports de terceiros
+
+import my_module # Imports dos módulos do projeto
+
+
+if __name__ == '__main__':
+    print('Hello World')
+```
+
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>

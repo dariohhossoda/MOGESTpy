@@ -28,6 +28,6 @@ Onde:
 - $A_s$ é a área de superfície entre água e sedimentos em m $^2$.
 
 
-[^Becker,2021]: Backer, A. C. C. Zero-Dimensional Modelling and Total Maximum Daily Loads As Tools for Reservoir Water Quality Planning and Management. Master Thesis. Universidade Federal do Paraná (UFPR), 2021.
+[^Becker,2021]: Becker, A. C. C. Zero-Dimensional Modelling and Total Maximum Daily Loads As Tools for Reservoir Water Quality Planning and Management. Master Thesis. Universidade Federal do Paraná - UFPR, 2021.
 
 [^Chapra,2008]: Chapra, S. C. Surface Water-Quality Modeling. Waveland press, 2008.

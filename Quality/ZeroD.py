@@ -72,7 +72,7 @@ class ZeroDimensional:
         _param = self.Params
         dt = self.Timestep
 
-        _out.ConcentrationOut[0] = _in.ConcentrationIn[0]
+        _out.ConcentrationOut[0] = 0
 
         for i in range(1, self.SimCount):
             _out.ConcentrationOut[i] = (_out.ConcentrationOut[i - 1]

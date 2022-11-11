@@ -2,30 +2,44 @@ class SMAP:
     def __init__(self):
         raise NotImplementedError('Falta ajustar.')
 
-    # Ponto de controle com série de precipitações (array)
-    # e evapotranspiração potencial (fixa)
     class Ponto:
+        """
+        Ponto de controle com série de precipitações (array)
+        e evapotranspiração potencial (fixa)
+        """
         def __init__(self, P):
             self.P = P
         EP = 2.4
 
-    # Representação da bacia hidrográfica contendo área de
-    # drenagem, capacidade de campo, constante de recessão
-    # do escoamento básico e abstração inicial (todos fixos)
     class Bacia:
+        """
+        Representação da bacia hidrográfica contendo área de
+        drenagem, capacidade de campo, constante de recessão
+        do escoamento básico e abstração inicial (todos fixos)
+        """
         def __init__(self, AD, Capc, kkt):
             self.AD = AD
             self.Capc = Capc
             self.kkt = kkt
         Ai = 2.5
 
-    # Parâmetros de calibração:
-    #   Str : capacidade de saturação (mm)
-    #   k2t : constante de recessão para o escoamento superficial (dias)
-    #   Crec: recarga subterrânea (%)
-    #   TUin: teor de umidade inicial (adimensional)
-    #   EBin: escoamento básico inicial (m3/s)
     def RunModel(Str, k2t, Crec, TUin, EBin, Ponto, Bacia):
+        """
+        Roda o modelo SMAP
+        ----
+
+        Parâmetros de calibração:
+        ---
+        Str : capacidade de saturação (mm)
+
+        k2t : constante de recessão para o escoamento superficial (dias)
+
+        Crec: recarga subterrânea (%)
+
+        TUin: teor de umidade inicial (adimensional)
+
+        EBin: escoamento básico inicial (m3/s)
+        """
         # Input
         # AD: área de drenagem (km2)
         n, AD = len(Ponto.P), Bacia.AD

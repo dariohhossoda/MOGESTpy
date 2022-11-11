@@ -1,6 +1,6 @@
 class SMAP:
     """
-    Classe SMAP (Soil Moisture Accounting Procedure). Modelo 
+    Classe SMAP (Soil Moisture Accounting Procedure). Modelo
     Hidrológico para simulação chuva-vazão em bacias.
     """
     def __init__(self, point, basin):
@@ -10,7 +10,7 @@ class SMAP:
     class Point:
         """
         Representação de Point no modelo SMAP
-                
+
         Atributos
         ----
             P : ponto de controle com a série de precipitações
@@ -26,7 +26,7 @@ class SMAP:
     class Basin:
         """
         Representação da bacia hidrográfica no modelo SMAP
-        
+
         Atributos
         ----
             AD : área de drenagem (km^2)
@@ -58,13 +58,40 @@ class SMAP:
             self.RSub = EBin / (1 - (.5 ** (1 / kkt))) \
             / AD * 86.4
 
+        def IsValid(self):
+            """
+            Checa se os valores estão dentro do limite do modelo
+            """
+            param_dict = {0:'Str',
+                            1:'k2t',
+                            2:'Crec',
+                            3:'Ai',
+                            4:'Capc',
+                            5:'kkt'}
+
+            param_ranges = [100 <= self.Str <= 2000,
+                            .2 <= self.k2t <= 10,
+                            0 <= self.Crec <= 20,
+                            2 <= self.Ai <= 5,
+                            30 <= self.Capc <= 50,
+                            30 <= self.kkt <= 180]
+
+            for index, verification in enumerate(param_ranges):
+                if verification is False:
+                    print(f'{param_dict.get(index)} está fora \
+dos limites indicados.')
+                    return False
+            return True
+
+
     def RunModel(self):
         """
         Roda o modelo SMAP, retornando a vazão no exutório
         através da simulação do fluxo d'água nos processos que
         ocorrem na bacia hidrográfica.
         """
-        
+        self.Basin.IsValid()
+
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 

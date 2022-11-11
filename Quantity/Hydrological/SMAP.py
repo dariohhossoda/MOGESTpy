@@ -1,6 +1,6 @@
 class SMAP:
     """
-    Clase SMAP (Soil Moisture Accounting Procedure). Modelo 
+    Classe SMAP (Soil Moisture Accounting Procedure). Modelo 
     Hidrológico para simulação chuva-vazão em bacias.
     """
     def __init__(self, point, basin):
@@ -72,9 +72,9 @@ class SMAP:
             self.Point.P[i] - self.Basin.Ai + self.Basin.Str -
             self.Basin.RSolo) if (self.Point.P[i] > self.Basin.Ai) else 0
 
-            ER = self.Point.EP if ((self.Point.P[i] - ES) >
-            self.Point.EP) else self.Point.P[i] - ES + (
-            (self.Point.EP - self.Point.P[i] + ES) * TU)
+            ER = self.Point.EP[i] if ((self.Point.P[i] - ES) >
+            self.Point.EP[i]) else self.Point.P[i] - ES + (
+            (self.Point.EP[i] - self.Point.P[i] + ES) * TU)
 
             Rec = self.Basin.Crec / 100.0 * TU * (self.Basin.RSolo -
             self.Basin.Capc * self.Basin.Str) if (self.Basin.RSolo >

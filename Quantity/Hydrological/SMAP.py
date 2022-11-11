@@ -57,29 +57,19 @@ class SMAP:
         RSup = 0.0
         RSub = EBin / (1 - (0.5 ** (1 / kkt))) / AD * 86.4
 
+        # TODO: documentar variáveis em outro lugar (TU, ES, ER ...)
         for i in range(n):
-            # Teor de umidade
             TU = RSolo / Str
 
-            # Escoamento direto
-            if Ponto.P[i] > Ai:
-                ES = ((Ponto.P[i] - Ai) ** 2) / (Ponto.P[i] - Ai + Str - RSolo)
-            else:
-                ES = 0.0
+            ES = (Ponto.P[i] - Ai) ** 2 / (Ponto.P[i] - Ai + Str - RSolo) \
+                if (Ponto.P[i] > Ai) else 0
 
-            # Evapotranspiração real
-            if (Ponto.P[i] - ES) > Ponto.EP:
-                ER = Ponto.EP
-            else:
-                ER = Ponto.P[i] - ES + ((Ponto.EP - Ponto.P[i] + ES) * TU)
+            ER = Ponto.EP if ((Ponto.P[i] - ES) > Ponto.EP) else \
+                Ponto.P[i] - ES + ((Ponto.EP - Ponto.P[i] + ES) * TU)
 
-            # Recarga
-            if RSolo > (Capc * Str):
-                Rec = (Crec / 100.0) * TU * (RSolo - (Capc * Str))
-            else:
-                Rec = 0.0
+            Rec = Crec / 100.0 * TU * (RSolo - Capc * Str) \
+                if (RSolo > (Capc * Str)) else 0
 
-            # Atualiza reservatório-solo
             RSolo += Ponto.P[i] - ES - ER - Rec
 
             if RSolo > Str:

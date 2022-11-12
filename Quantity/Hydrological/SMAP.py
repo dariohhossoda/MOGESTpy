@@ -7,6 +7,7 @@ class SMAP:
         self.Point = point
         self.Basin = basin
         self.Q = []
+
     class Point:
         """
         Representação de Point no modelo SMAP
@@ -41,8 +42,10 @@ class SMAP:
             TUin: teor de umidade inicial (-).
 
         """
-        def __init__(self, Str, AD, Crec, TUin, EBin, Capc,
-                     kkt, k2t, Ai=2.5):
+        def __init__(self,  AD: float, Str=1000, Crec=10,
+                     TUin=0, EBin=0, Capc=40,
+                     kkt=100, k2t=5, Ai=2.5):
+
             self.Str = Str
             self.Crec = Crec
             self.Tuin = TUin
@@ -55,19 +58,27 @@ class SMAP:
 
             self.RSolo = TUin * Str
             self.RSup = 0
-            self.RSub = EBin / (1 - (.5 ** (1 / kkt))) \
-            / AD * 86.4
+            self.RSub = EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
         def IsValid(self):
             """
             Checa se os valores estão dentro do limite do modelo
+
+            Limites:
+            ----
+            Str : 100 - 2000
+            k2t : 0.2 - 10
+            Crec : 0 - 20
+            Ai : 2 - 5
+            Capc : 30 - 50
+            kkt : 30 - 180
             """
-            param_dict = {0:'Str',
-                            1:'k2t',
-                            2:'Crec',
-                            3:'Ai',
-                            4:'Capc',
-                            5:'kkt'}
+            param_dict = {0: 'Str',
+                          1: 'k2t',
+                          2: 'Crec',
+                          3: 'Ai',
+                          4: 'Capc',
+                          5: 'kkt'}
 
             param_ranges = [100 <= self.Str <= 2000,
                             .2 <= self.k2t <= 10,
@@ -83,29 +94,32 @@ dos limites indicados.')
                     return False
             return True
 
-
     def RunModel(self):
         """
         Roda o modelo SMAP, retornando a vazão no exutório
         através da simulação do fluxo d'água nos processos que
         ocorrem na bacia hidrográfica.
         """
-        self.Basin.IsValid()
+        self.Q = []
 
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 
-            ES = (self.Point.P[i] - self.Basin.Ai) ** 2 / (
-            self.Point.P[i] - self.Basin.Ai + self.Basin.Str -
-            self.Basin.RSolo) if (self.Point.P[i] > self.Basin.Ai) else 0
+            ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
+                  / (self.Point.P[i] - self.Basin.Ai
+                     + self.Basin.Str - self.Basin.RSolo)
+                  if (self.Point.P[i] > self.Basin.Ai) else 0)
 
-            ER = self.Point.EP[i] if ((self.Point.P[i] - ES) >
-            self.Point.EP[i]) else self.Point.P[i] - ES + (
-            (self.Point.EP[i] - self.Point.P[i] + ES) * TU)
+            ER = (self.Point.EP[i] if
+                  ((self.Point.P[i] - ES) > self.Point.EP[i])
+                  else self.Point.P[i] - ES
+                  + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
 
-            Rec = self.Basin.Crec / 100.0 * TU * (self.Basin.RSolo -
-            self.Basin.Capc * self.Basin.Str) if (self.Basin.RSolo >
-            (self.Basin.Capc * self.Basin.Str)) else 0
+            Rec = (self.Basin.Crec / 100.0 * TU
+                   * (self.Basin.RSolo - self.Basin.Capc
+                      * self.Basin.Str) if (self.Basin.RSolo
+                                            > (self.Basin.Capc
+                                               * self.Basin.Str)) else 0)
 
             self.Basin.RSolo += self.Point.P[i] - ES - ER - Rec
 

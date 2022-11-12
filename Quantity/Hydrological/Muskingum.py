@@ -1,7 +1,9 @@
 class Muskingum:
-    # O routing de montante para jusante
-    # recebe um hidrograma de montante (upstream)
     def DownstreamRouting(upstream, K, x, T):
+        """
+        O routing de montante para jusante
+        recebe um hidrograma de montante (upstream)
+        """
         # Coeficientes
         C0 = (T - (2 * K * x)) / ((2 * K * (1 - x)) + T)
         C1 = (T + (2 * K * x)) / ((2 * K * (1 - x)) + T)
@@ -13,15 +15,20 @@ class Muskingum:
         downstream[0] = upstream[0]
         # Loop entre segunda e última entradas
         for i in range(1, n):
-            downstream[i] = C0 * upstream[i] + C1 * upstream[i - 1] + C2 * downstream[i - 1]
+            downstream[i] = C0 * upstream[i] + C1 * upstream[i - 1]
+            + C2 * downstream[i - 1]
 
         return downstream
 
-    # Modelo não-linear de Muskingum (de primeira ordem) com método de Runge-Kutta
-    # de quarta ordem (routing de montante para jusante). Variáveis K, X e m devem
-    # ser calibradas. I refere-se a input, ou hidrograma de montante, e T ao time step
-    # envolvido (neste caso, 24 horas)
     def DownstreamFORK(K, X, m, T, I):
+        """
+        Modelo não-linear de Muskingum (de primeira ordem)
+        com método de Runge-Kutta de quarta ordem (routing
+        de montante para jusante). Variáveis K, X e m devem
+        ser calibradas. I refere-se a input, ou hidrograma
+        de montante, e T ao time step envolvido (neste caso,
+        24 horas)
+        """
         n = len(I)
 
         # Outflow
@@ -45,12 +52,17 @@ class Muskingum:
             O[i + 1] = (1 / (1 - X)) * ((S[i + 1] / K) ** (1 / m) - X * I[i + 1])
 
         return O
-    
-    # Modelo nao-linear de Muskingum (de primeira ordem) com metodo de Runge-Kutta
-    # de quarta ordem (routing de jusante para montante). Variaveis K, X e m devem
-    # ser calibradas. O refere-se a output, ou hidrograma de jusante, e T ao time step
-    # envolvido (neste caso, 24 horas)
+
     def UpstreamFORK(K, X, m, T, O):
+        """
+        Modelo nao-linear de Muskingum (de primeira ordem)
+        com metodo de Runge-Kutta de quarta ordem (routing
+        de jusante para montante). Variaveis K, X e m devem
+        ser calibradas. O refere-se a output, ou hidrograma
+        de jusante, e T ao time step envolvido (neste caso,
+        24 horas)
+        """
+
         n = len(O)
 
         # Inflow

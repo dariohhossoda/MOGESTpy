@@ -1,84 +1,140 @@
 class SMAP:
-    def __init__(self):
-        raise NotImplementedError('Falta ajustar.')
+    """
+    Classe SMAP (Soil Moisture Accounting Procedure). Modelo
+    Hidrológico para simulação chuva-vazão em bacias.
+    """
 
-    # Ponto de controle com série de precipitações (array)
-    # e evapotranspiração potencial (fixa)
-    class Ponto:
-        def __init__(self, P):
+    def __init__(self, point, basin):
+        self.Point = point
+        self.Basin = basin
+        self.Q = []
+
+    class Point:
+        """
+        Representação de Point no modelo SMAP
+
+        Atributos
+        ----
+            P : ponto de controle com a série de precipitações
+            (array)
+            EP : evapotranspiração potencial
+            n : tamanho da série de precipitações
+        """
+
+        def __init__(self, P, EP):
             self.P = P
-        EP = 2.4
-    
-    # Representação da bacia hidrográfica contendo área de
-    # drenagem, capacidade de campo, constante de recessão
-    # do escoamento básico e abstração inicial (todos fixos)
-    class Bacia:
-        def __init__(self, AD, Capc, kkt):
-            self.AD   = AD
+            self.EP = EP
+            self.n = len(P)
+
+    class Basin:
+        """
+        Representação da bacia hidrográfica no modelo SMAP
+
+        Atributos
+        ----
+            AD : área de drenagem (km^2)
+            Ai : abstração inicial ( = 2.5, default) (mm)
+            Capc : capacidade de campo (%)
+            kkt : constante de recessão (dias)
+            k2t : constante de recessão para o escoamento
+            superficial (dias);
+            Crec: recarga subterrânea (%);
+            Str : capacidade de saturação (mm);
+            EBin: escoamento básico inicial (m3/s);
+            TUin: teor de umidade inicial (-).
+
+        """
+
+        def __init__(self,  AD: float, Str=1000, Crec=10,
+                     TUin=0, EBin=0, Capc=40,
+                     kkt=100, k2t=5, Ai=2.5):
+
+            self.Str = Str
+            self.Crec = Crec
+            self.Tuin = TUin
+            self.Ebin = EBin
+            self.AD = AD
             self.Capc = Capc
-            self.kkt  = kkt
-        Ai = 2.5
+            self.kkt = kkt
+            self.k2t = k2t
+            self.Ai = Ai
 
-    # Parâmetros de calibração:
-    #   Str : capacidade de saturação (mm)
-    #   k2t : constante de recessão para o escoamento superficial (dias)
-    #   Crec: recarga subterrânea (%)
-    #   TUin: teor de umidade inicial (adimensional)
-    #   EBin: escoamento básico inicial (m3/s)
-    def RunModel(Str, k2t, Crec, TUin, EBin, Ponto, Bacia):
-        # Input
-        # AD: área de drenagem (km2)
-        n, AD = len(Ponto.P), Bacia.AD
+            self.RSolo = TUin * Str
+            self.RSup = 0
+            self.RSub = EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
-        # Inicialização
-        Q = []
+        def IsValid(self):
+            """
+            Checa se os valores estão dentro do limite do modelo
 
-        # Ai  : abstração inicial (mm)
-        # Capc: capacidade de campo (%)
-        # kkt : constante de recessão para o escoamento básico (dias)
-        Ai, Capc, kkt = Bacia.Ai, Bacia.Capc, Bacia.kkt
+            Limites:
+            ----
+            Str : 100 - 2000
+            k2t : 0.2 - 10
+            Crec : 0 - 20
+            Ai : 2 - 5
+            Capc : 30 - 50
+            kkt : 30 - 180
+            """
+            param_dict = {0: 'Str',
+                          1: 'k2t',
+                          2: 'Crec',
+                          3: 'Ai',
+                          4: 'Capc',
+                          5: 'kkt'}
 
-        # Reservatórios em t = 0
-        RSolo = TUin * Str
-        RSup  = 0.0
-        RSub  = EBin / (1 - (0.5 ** (1 / kkt))) / AD * 86.4
+            param_ranges = [100 <= self.Str <= 2000,
+                            .2 <= self.k2t <= 10,
+                            0 <= self.Crec <= 20,
+                            2 <= self.Ai <= 5,
+                            30 <= self.Capc <= 50,
+                            30 <= self.kkt <= 180]
 
-        for i in range(n):
-            # Teor de umidade
-            TU = RSolo / Str
+            for index, verification in enumerate(param_ranges):
+                if verification is False:
+                    print(f'{param_dict.get(index)} está fora \
+dos limites indicados.')
+                    return False
+            return True
 
-            # Escoamento direto
-            if Ponto.P[i] > Ai:
-                ES = ((Ponto.P[i] - Ai) ** 2) / (Ponto.P[i] - Ai + Str - RSolo)
-            else:
-                ES = 0.0
+    def RunModel(self):
+        """
+        Roda o modelo SMAP, retornando a vazão no exutório
+        através da simulação do fluxo d'água nos processos que
+        ocorrem na bacia hidrográfica.
+        """
+        self.Q = []
 
-            # Evapotranspiração real
-            if (Ponto.P[i] - ES) > Ponto.EP:
-                ER = Ponto.EP
-            else:
-                ER = Ponto.P[i] - ES + ((Ponto.EP - Ponto.P[i] + ES) * TU)
+        for i in range(self.Point.n):
+            TU = self.Basin.RSolo / self.Basin.Str
 
-            # Recarga
-            if RSolo > (Capc * Str):
-                Rec = (Crec / 100.0) * TU * (RSolo - (Capc * Str))
-            else:
-                Rec = 0.0
+            ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
+                  / (self.Point.P[i] - self.Basin.Ai
+                     + self.Basin.Str - self.Basin.RSolo)
+                  if (self.Point.P[i] > self.Basin.Ai) else 0)
 
-            # Atualiza reservatório-solo
-            RSolo += Ponto.P[i] - ES - ER - Rec
+            ER = (self.Point.EP[i] if
+                  ((self.Point.P[i] - ES) > self.Point.EP[i])
+                  else self.Point.P[i] - ES
+                  + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
 
-            if RSolo > Str:
-                ES   += RSolo - Str
-                RSolo = Str
+            Rec = (self.Basin.Crec / 100.0 * TU
+                   * (self.Basin.RSolo - self.Basin.Capc
+                      * self.Basin.Str) if (self.Basin.RSolo
+                                            > (self.Basin.Capc
+                                               * self.Basin.Str)) else 0)
 
-            RSup += ES
-            ED    = RSup * (1 - (0.5 ** (1 / k2t)))
-            RSup -= ED
+            self.Basin.RSolo += self.Point.P[i] - ES - ER - Rec
 
-            EB    = RSub * (1 - (0.5 ** (1 / kkt)))
-            RSub += Rec - EB
+            if self.Basin.RSolo > self.Basin.Str:
+                ES += self.Basin.RSolo - self.Basin.Str
+                self.Basin.RSolo = self.Basin.Str
 
-            Q.append((ED + EB) * Bacia.AD / 86.4)
+            self.Basin.RSup += ES
+            ED = self.Basin.RSup * (1 - (.5 ** (1 / self.Basin.k2t)))
+            self.Basin.RSup -= ED
 
-        return Q
+            EB = self.Basin.RSub * (1 - (.5 ** (1 / self.Basin.kkt)))
+            self.Basin.RSub += Rec - EB
+
+            self.Q.append((ED + EB) * self.Basin.AD / 86.4)

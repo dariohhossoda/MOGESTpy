@@ -3,6 +3,7 @@ class SMAP:
     Classe SMAP (Soil Moisture Accounting Procedure). Modelo
     Hidrológico para simulação chuva-vazão em bacias.
     """
+
     def __init__(self, point, basin):
         self.Point = point
         self.Basin = basin
@@ -19,6 +20,7 @@ class SMAP:
             EP : evapotranspiração potencial
             n : tamanho da série de precipitações
         """
+
         def __init__(self, P, EP):
             self.P = P
             self.EP = EP
@@ -42,6 +44,7 @@ class SMAP:
             TUin: teor de umidade inicial (-).
 
         """
+
         def __init__(self,  AD: float, Str=1000, Crec=10,
                      TUin=0, EBin=0, Capc=40,
                      kkt=100, k2t=5, Ai=2.5):

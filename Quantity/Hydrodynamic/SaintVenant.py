@@ -8,8 +8,19 @@ class SaintVenant:
     trapezoidal.
     """
 
-    def __init__(self):
-        raise NotImplementedError('Ainda não implementado!')
+    def __init__(self, b, y, m, Q, n, So, dt, dx, g=9.81):
+        self.b = b
+        self.y = y
+        self.m = m
+
+        self.Q = Q
+        self.n = n
+        self.So = So
+
+        self.dt = dt
+        self.dx = dx
+
+        self.g = g
 
     class TrapezoidalCrossSection:
         """
@@ -42,6 +53,7 @@ class SaintVenant:
             Calcula a profundidade normal pelo método
             de Newton-Raphson
             """
+
             # FIXME: Verificar contas
             y_norm = .1
             f = 1
@@ -69,6 +81,7 @@ class SaintVenant:
             Calcula a profundidade dada uma área molhada
             pelo método de Newton-Raphson.
             """
+
             # FIXME: Verificar contas
             y = .1
             step = 0
@@ -88,21 +101,30 @@ class SaintVenant:
         """
         Verificação de estabilidade de Courant
         """
-        raise NotImplementedError('Ainda não implementado!')
-        return dt / dx * (g * y + Q / A) ** .5
+
+        A = self.TrapezoidalCrossSection.WetArea()
+        return (self.dt / self.dx
+                * (self.g * self.y + self.Q
+                   / A) ** .5)
 
     def QuadraticFroude(self):
         """
         Retorna o número de Froude ao quadrado
         """
-        raise NotImplementedError('Ainda não implementado!')
-        return Q ** 2 * B / (g * A ** 3)
+
+        A = self.TrapezoidalCrossSection.WetArea()
+        return self.Q ** 2 * self.B / (self.g * A ** 3)
 
     def Sf(self):
         """
         Retorna a declividade da linha de energia
         """
-        raise NotImplementedError('Ainda não implementado!')
+
+        A = self.TrapezoidalCrossSection.WetArea()
+        Rh = self.TrapezoidalCrossSection.Rh
+
+        return (self.Q * math.fabs(self.Q) * self.n ** 2
+                / (A ** 2 * Rh ** (4 / 3)))
 
     def RunModel(self):
         raise NotImplementedError('Ainda não implementado!')

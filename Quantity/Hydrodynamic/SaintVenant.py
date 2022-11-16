@@ -111,34 +111,48 @@ class SaintVenant:
 
         self.g = g
 
-    def CourantCheck(self):
+    def Courant(self):
         """
-        Verificação de estabilidade de Courant
+        Retorna o valor do adimensional de Courant
         """
 
-        A = self.TrapezoidalCrossSection.WetArea()
+        A = self.CrossSection.WetArea()
         return (self.dt / self.dx
-                * (self.g * self.y + self.Q
+                * (self.g * self.CrossSection.y + self.Q
                    / A) ** .5)
 
-    def QuadraticFroude(self):
+    def CourantCheck(self) -> (bool):
+        """
+        Retorna bool da condição de estabilidade numérica
+        """
+
+        return self.Courant() <= 1
+
+    def QuadraticFroude(self) -> (bool):
         """
         Retorna o número de Froude ao quadrado
         """
 
-        A = self.TrapezoidalCrossSection.WetArea()
+        A = self.CrossSection.WetArea()
         return self.Q ** 2 * self.B / (self.g * A ** 3)
 
-    def Sf(self):
+    def Sf(self) -> (bool):
         """
         Retorna a declividade da linha de energia
         """
 
-        A = self.TrapezoidalCrossSection.WetArea()
-        Rh = self.TrapezoidalCrossSection.Rh
+        A = self.CrossSection.WetArea()
+        Rh = self.CrossSection.Rh
 
         return (self.Q * math.fabs(self.Q) * self.n ** 2
                 / (A ** 2 * Rh ** (4 / 3)))
 
     def RunModel(self):
         raise NotImplementedError('Ainda não implementado!')
+
+
+def LateralContribution():
+    """
+    Define a contribuição lateral a ser incluída
+    """
+    raise NotImplementedError('Ainda não implementado!')

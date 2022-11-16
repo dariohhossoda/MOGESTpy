@@ -77,16 +77,15 @@ m: {self.m:.3f}'
         pelo método de Newton-Raphson.
         """
 
-        # FIXME: Verificar contas
-        y = .1
+        y = 1
         step = 0
         f = 1
         tolerance = 1e-13
         max_steps = 100
 
         while math.fabs(f) > tolerance and step < max_steps:
-            f = self.WetArea()
-            df = self.b + 2 * self.m * self.y
+            f = self.b * y + self.m * y ** 2
+            df = self.b + 2 * self.m * y
             y -= (f - area) / df
             step += 1
 

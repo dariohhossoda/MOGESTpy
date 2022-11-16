@@ -47,7 +47,6 @@ m: {self.m:.3f}'
         de Newton-Raphson
         """
 
-        # FIXME: Verificar contas
         y_norm = .1
         f = 1
         exp = 2/3
@@ -55,14 +54,17 @@ m: {self.m:.3f}'
         steps = 0
         max_steps = 100
 
+        area = self.WetArea()
+        perimeter = self.WetPerimeter()
+
         while math.fabs(f) > tolerance and steps < max_steps:
-            f = (self.WetArea() ** (1 + exp) / self.WetPerimeter ** exp
+            f = (area ** (1 + exp) / perimeter ** exp
                  - Q * n / So ** .5)
-            df = (5 * self.WetArea() ** exp *
+            df = (5 * area ** exp *
                   (self.b + 2 * self.m * y_norm)
-                  / self.WetPerimeter() ** exp
-                  - 4 * self.WetArea() ** (1 + exp)
-                  / self.WetPerimeter() ** (1 + exp)
+                  / perimeter ** exp
+                  - 4 * area ** (1 + exp)
+                  / perimeter ** (1 + exp)
                   * (1 + self.m ** 2) ** .5 / 3)
             y_norm -= f / df
             steps += 1

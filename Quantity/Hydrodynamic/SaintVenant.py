@@ -6,29 +6,42 @@ class TrapezoidalCrossSection:
     Classe de seção transversal trapezoidal.
     """
 
-    def __init__(self, b, m, y):
+    def __init__(self, b: float, y: float, m: float):
         self.b = b
-        self.m = m
         self.y = y
+        self.m = m
 
-        self.B = b + 2 * m * y
+        self.B = self.TopBase()
         self.Rh = self.WetArea() / self.WetPerimeter()
 
-    def WetArea(self):
+    def __str__(self):
+        return f'Trapezoidal Cross Section:\n\
+b: {self.b:.3f}\n\
+y: {self.y:.3f}\n\
+m: {self.m:.3f}'
+
+    def TopBase(self) -> (float):
+        """
+        Largura do topo B (m)
+        """
+
+        return self.b + 2 * self.m * self.y
+
+    def WetArea(self) -> (float):
         """
         Área molhada
         """
 
         return self.b * self.y + self.m * self.y ** 2
 
-    def WetPerimeter(self):
+    def WetPerimeter(self) -> (float):
         """
         Perímetro molhado
         """
 
         return self.b + 2 * self.y * math.sqrt(1 + self.m ** 2)
 
-    def NormalDepth(self, Q, n, So):
+    def NormalDepth(self, Q, n, So) -> (float):
         """
         Calcula a profundidade normal pelo método
         de Newton-Raphson

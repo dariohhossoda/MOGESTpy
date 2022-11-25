@@ -147,7 +147,20 @@ class SaintVenant:
         return (self.Q * math.fabs(self.Q) * self.n ** 2
                 / (A ** 2 * Rh ** (4 / 3)))
 
+    def UpdateValues(self):
+        """
+        Calcula o estado com base no passo de tempo
+        """
+
+        # for i in range(1, self.y ):
+        
+        raise NotImplementedError('Ainda não implementado!')
+    
     def RunModel(self):
+        """
+        Roda o modelo
+        """
+        
         raise NotImplementedError('Ainda não implementado!')
 
 
@@ -155,4 +168,17 @@ def LateralContribution():
     """
     Define a contribuição lateral a ser incluída
     """
+    
     raise NotImplementedError('Ainda não implementado!')
+
+def Average(values_list, index):
+    """
+    Dado uma lista de valores e um índice, retorna a média centrado
+    no índice
+    """
+    
+    try:
+        return .5 * (values_list[index + 1]
+                     + values_list[index - 1])
+    except:
+        return None

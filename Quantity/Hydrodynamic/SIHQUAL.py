@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 
-
 filename = 'SIHQUAL.xlsx'
 
 data_sheet = 'Data'
@@ -38,16 +37,54 @@ cqd = data_df['cqd']
 
 output_sections = param_df['output_sections']
 
-output_df = pd.DataFrame()
+output_df = pd.DataFraVme()
 
+def vec_avg(vector):
+    return (vector[i - 1] + vector [i + 1]) * .5
+                                
+                        
+
+
+sim_time = 0
+auto_step = True
+g = 9.81
 # Loop numérico
-for sim_time in range(stop=tf, step=dt):
-    # region Contribuição Lateral
+while sim_time <= tf:
     
+    
+    # TODO: Implementar contribuicao latalW
+    # region Contribuição Lateral
+    cq = cqd / A1
     # endregion Contribuição Lateral
     
     # region Módulo Hidrodinâmico
-    
+    y2 = y1.copy()
+    v2 = y2.copy()
+    for i in range(1, len(y1) - 1):
+        yy = vec_avg(y1)
+        vv = vec_avg(v1)
+        SSf = vec_avg(Sf1)
+        AA = vec_avg(A1)
+        BB = vec_avg(B1)
+        # region Continuity Eq
+        
+        y2[i] = (alpha * y1[i] + (1 - alpha) * yy
+                    - (0.5 * dt / dx / BB) * (vv * (y1[i + 1] - y1[i - 1]) * BB
+                    + vv * (A1[i + 1] - A1[i - 1])
+                    + AA * (v1[i + 1] - v1[i - 1]))
+                    + ql[i] * dt / BB)
+        # end region
+        # region Momentum Eq.
+        v2[i] = (alpha * v1[i] + (1 - alpha) * vv
+                    - 0.5 * dt / dx * ( vv * (v1[i + 1] - v1[i - 1])
+                    + g * (y1[i + 1] - y1[i - 1]) )
+                    + g * dt * (So[i] - SSf))
+        # end region
+        
+        y2[-1] = y2[-2]
+        v2[-1] = v2[-2]
+        
+        
     # endregion Módulo Hidrodinâmico
     
     # region Módulo de Qualidade
@@ -66,6 +103,6 @@ for sim_time in range(stop=tf, step=dt):
     
     # endregion Output
     
-    pass
+    sim_time += dt if not auto_step else dt
 
 output_df.to_excel('SIHQUAL_output.xlsx')

@@ -1,7 +1,10 @@
+import os
+
 import pandas as pd
 import numpy as np
 
-filename = 'SIHQUAL.xlsx'
+cwd = os.getcwd()
+filename = os.path.join(cwd, 'Quantity/Hydrodynamic/SIHQUAL.xlsx')
 
 data_sheet = 'Data'
 param_sheet = 'Parameters'
@@ -9,20 +12,21 @@ param_sheet = 'Parameters'
 data_df = pd.read_excel(filename, sheet_name=data_sheet)
 param_df = pd.read_excel(filename, sheet_name=param_sheet)
 
-dx = param_df[0][1]
-dt = param_df[1][1]
+dx = param_df['dx'][0]
+dt = param_df['dt'][0]
 
-tf = param_df[2][1]
+xf = param_df['xf'][0]
+tf = param_df['tf'][0]
 
-alpha = param_df[3][1]
-coef_D = param_df[4][1]
+alpha = param_df['alpha'][0]
+coef_D = param_df['D'][0]
 
 x = data_df['x']
 So = data_df['So']
 m = data_df['m']
 y1 = data_df['y1']
 v1 = data_df['v1']
-b = data_df['b']
+b = data_df['b1']
 B1 = data_df['B1']
 A1 = data_df['A1']
 Rh1 = data_df['Rh1']
@@ -30,14 +34,14 @@ Sf1 = data_df['Sf1']
 Q1 = data_df['Q1']
 n = data_df['n']
 
-Kd = data_df['Kd']
-Ks = data_df['Ks']
+Kd = data_df['kd']
+Ks = data_df['ks']
 c1 = data_df['c1']
-cqd = data_df['cqd']
+cqd = data_df['cq']
 
 output_sections = param_df['output_sections']
 
-output_df = pd.DataFraVme()
+output_df = pd.DataFrame()
 
 def vec_avg(vector):
     return (vector[i - 1] + vector [i + 1]) * .5
@@ -50,7 +54,7 @@ g = 9.81
 while sim_time <= tf:
     
     
-    # TODO: Implementar contribuicao latalW
+    # TODO: Implementar contribuicao lateral
     # region Contribuição Lateral
     cq = cqd / A1
     # endregion Contribuição Lateral

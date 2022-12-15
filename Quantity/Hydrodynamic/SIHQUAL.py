@@ -43,8 +43,6 @@ def vec_avg(vector):
     return (vector[i - 1] + vector [i + 1]) * .5
                                 
                         
-
-
 sim_time = 0
 auto_step = True
 g = 9.81
@@ -57,7 +55,8 @@ while sim_time <= tf:
     cq = cqd / A1
     # endregion Contribuição Lateral
     
-    # region Módulo Hidrodinâmico
+    # region ModuloHidrodinamico
+    
     y2 = y1.copy()
     v2 = y2.copy()
     for i in range(1, len(y1) - 1):
@@ -73,19 +72,19 @@ while sim_time <= tf:
                     + vv * (A1[i + 1] - A1[i - 1])
                     + AA * (v1[i + 1] - v1[i - 1]))
                     + ql[i] * dt / BB)
-        # end region
-        # region Momentum Eq.
+        # endregion Continuity Eq
+        # region Momentum Eq
         v2[i] = (alpha * v1[i] + (1 - alpha) * vv
                     - 0.5 * dt / dx * ( vv * (v1[i + 1] - v1[i - 1])
                     + g * (y1[i + 1] - y1[i - 1]) )
                     + g * dt * (So[i] - SSf))
-        # end region
+        # endregion Momentum Eq
         
         y2[-1] = y2[-2]
         v2[-1] = v2[-2]
         
         
-    # endregion Módulo Hidrodinâmico
+    # endregion ModuloHidrodinamico
     
     # region Módulo de Qualidade
     

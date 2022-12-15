@@ -50,12 +50,14 @@ def vec_avg(vector):
 sim_time = 0
 auto_step = True
 g = 9.81
+
 # Loop numérico
+
 while sim_time <= tf:
-    
     
     # TODO: Implementar contribuicao lateral
     # region Contribuição Lateral
+    ql = 0
     cq = cqd / A1
     # endregion Contribuição Lateral
     
@@ -63,49 +65,56 @@ while sim_time <= tf:
     
     y2 = y1.copy()
     v2 = y2.copy()
+
     for i in range(1, len(y1) - 1):
         yy = vec_avg(y1)
         vv = vec_avg(v1)
         SSf = vec_avg(Sf1)
         AA = vec_avg(A1)
         BB = vec_avg(B1)
+        
         # region Continuity Eq
         
         y2[i] = (alpha * y1[i] + (1 - alpha) * yy
                     - (0.5 * dt / dx / BB) * (vv * (y1[i + 1] - y1[i - 1]) * BB
                     + vv * (A1[i + 1] - A1[i - 1])
                     + AA * (v1[i + 1] - v1[i - 1]))
-                    + ql[i] * dt / BB)
+                    + ql * dt / BB) # ql[i]
+        
         # endregion Continuity Eq
+        
         # region Momentum Eq
+        
         v2[i] = (alpha * v1[i] + (1 - alpha) * vv
                     - 0.5 * dt / dx * ( vv * (v1[i + 1] - v1[i - 1])
                     + g * (y1[i + 1] - y1[i - 1]) )
                     + g * dt * (So[i] - SSf))
+        
         # endregion Momentum Eq
         
-        y2[-1] = y2[-2]
-        v2[-1] = v2[-2]
+        y2[len(y2)-1] = y2[len(y2)-2]
+        v2[len(y2)-1] = v2[len(y2)-2]
         
         
     # endregion ModuloHidrodinamico
     
     # region Módulo de Qualidade
-    
+    # TODO: Adicionar módulo de qualidade
     # endregion Módulo de Qualidade
 
     # region Redefinição de Variáveis
-    
+    # TODO: Adicionar lógica de redefinição de variáveis
     # endregion Redefinição de Variáveis
     
     # region Condição de Estabilidade
-    
+    # TODO: Adicionar verificação da condição de estabilidade
     # endregion Condição de Estabilidade
     
     # region Output
-    
+    # TODO: Adicionar saídas do modelo
     # endregion Output
     
+    # TODO: Adicionar lógica de passo automáticos
     sim_time += dt if not auto_step else dt
 
 output_df.to_excel('SIHQUAL_output.xlsx')

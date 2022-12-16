@@ -10,5 +10,5 @@ class MassBalance:
         self.Vin = Vin
         
     def Volume_out(self):
-        return self.Vin - (self.Qin 
+        return self.Vin + (self.Qin 
                            - self.Qout) * self.Delta_t

@@ -7,11 +7,11 @@ assignees: ''
 
 ---
 
-**Descreva o Bug**
+## Descreva o Bug
 <!--Uma clara e concisa descrição do que se trata o bug-->
 
 
-**Como Reproduzir o Bug**
+## Como Reproduzir o Bug
 
 Passos para reproduzir o comportamento observado:
 <!--Sugestão-->
@@ -20,19 +20,19 @@ Passos para reproduzir o comportamento observado:
 3. Rolar para '....'
 4. Verificar erro.
 
-**Comportamento Esperado**
+## Comportamento Esperado
 <!--Uma clara e concisa descrição do que você espera que aconteça-->
 
 
-**Capturas de Tela (Se Aplicável)**
+## Capturas de Tela (Se Aplicável)
 <!-- Se aplicável, coloque imagens para ajudar a ilustrar o problema descrito -->
 
 
-**Configurações do Sistema**
+## Configurações do Sistema
  - SO: <!--e.g. Windows 10-->
  - RAM: <!--16 GB-->
  - Python: <!--e.g. 3.10.2-->
 
-**Contexto Adicional**
+## Contexto Adicional
 <!-- Qualquer outro contexto relacionado ao problema -->
 

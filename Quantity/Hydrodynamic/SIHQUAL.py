@@ -145,16 +145,14 @@ def boundary(vector, df, L, dim, t):
         index = ifromx(int(df.columns[i]), L, dim)
         vector[index] = np.interp(t, t_arr, df.iloc[:,i])
 
-def lateral_contribution(df, L, dim, t):
+def lateral_contribution(vector, df, L, dim, t):
     # TODO: Implementar contribuições laterais
-    vector = np.zeros(dim)
     t_arr = df.iloc[:,0].to_numpy(dtype=np.int32)
     
     for i in range(1, len(df.columns)):
         i_0 = ifromx(int(df.columns[i][0]), L, dim)
         i_f = ifromx(int(df.columns[i][1]), L, dim)
         vector[i_0: i_f] = np.interp(t, t_arr, df.iloc[:,i].to_numpy())
-    return vector
 # endregion Aux
 
 # Inicialização dos vetores de contribuição lateral
@@ -164,6 +162,9 @@ auto_step = False
 y2 = np.zeros_like(y1)
 v2 = np.zeros_like(v1)
 c2 = np.zeros_like(c1)
+
+ql = np.zeros(dim)
+cqd = np.zeros(dim)
 #%%
 progress = tqdm(total=tf,
                 desc='SIHQUAL',
@@ -171,17 +172,18 @@ progress = tqdm(total=tf,
 n_index = 0
 sim_time = 0
 while sim_time <= tf: # Loop numérico
-    A1 = wet_area(b1, y1, m)
-    B1 = top_base(b1, y1, m)
-    Rh1 = Rh(b1, y1, m)
-    Sf1 = Sf(n, v1, Rh1)
+    A1 = b1 * y1 + m * y1 * y1 #wet_area(b1, y1, m)
+    B1 = b1 + 2 * m  * y1 #top_base(b1, y1, m)
+    Rh1 = A1 / (b1 + 2 * y1 * (1 + m ** 2) ** .5) #Rh(b1, y1, m)
+    Sf1 =  n * n * v1 * v1 * Rh1 ** (- 4 / 3) # Sf(n, v1, Rh1)
 
     if auto_step:
         dt = .5 * dt / courant_max
 
     # region Contribuição Lateral
     # TODO: Implementar contribuicao lateral
-    ql = lateral_contribution(lateral_Q, xf, dim, sim_time + dt)
+    # lateral_contribution(ql, lateral_Q, xf, dim, sim_time + dt)
+    # lateral_contribution(cqd, lateral_c, xf, dim, sim_time + dt)
     cq = cqd / A1
     # endregion Contribuição Lateral
 
@@ -205,14 +207,14 @@ while sim_time <= tf: # Loop numérico
                 + g * dt * (So[1:-1] - SSf))
 
     # FIXME: arrumar contornos
-    y2[0] = np.interp(sim_time + dt,
-                      upstream_boundary_df['t'],
-                      upstream_boundary_df['y'])
+    # y2[0] = np.interp(sim_time + dt,
+    #                   upstream_boundary_df['t'],
+    #                   upstream_boundary_df['y'])
 
-    area = wet_area(b1[0], y2[0], m[0])
-    v2[0] = (np.interp(sim_time + dt,
-                      upstream_boundary_df['t'],
-                      upstream_boundary_df['Q']) / area)
+    # area = wet_area(b1[0], y2[0], m[0])
+    # v2[0] = (np.interp(sim_time + dt,
+    #                   upstream_boundary_df['t'],
+    #                   upstream_boundary_df['Q']) / area)
 
     y2[-1] = y2[-2]
     v2[-1] = v2[-2]
@@ -234,9 +236,9 @@ while sim_time <= tf: # Loop numérico
     # region Redefinição de Variáveis
     
     # TODO: Implementar contornos Q, y, c
-    boundary(v2)
-    boundary(y2)
-    boundary(c2)
+    # boundary(v2)
+    # boundary(y2)
+    # boundary(c2)
     
     y1 = np.copy(y2)
     v1 = np.copy(v2)

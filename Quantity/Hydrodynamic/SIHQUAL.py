@@ -145,15 +145,16 @@ def boundary(vector, df, L, dim, t):
         index = ifromx(int(df.columns[i]), L, dim)
         vector[index] = np.interp(t, t_arr, df.iloc[:,i])
 
-def lateral_contribution(vector, df, L, dim, t):
+def lateral_contribution(df, L, dim, t):
     # TODO: Implementar contribuições laterais
+    vector = np.zeros(dim)
     t_arr = df.iloc[:,0].to_numpy(dtype=np.int32)
     
     for i in range(1, len(df.columns)):
         i_0 = ifromx(int(df.columns[i][0]), L, dim)
         i_f = ifromx(int(df.columns[i][1]), L, dim)
         vector[i_0: i_f] = np.interp(t, t_arr, df.iloc[:,i].to_numpy())
-    
+    return vector
 # endregion Aux
 
 # Inicialização dos vetores de contribuição lateral
@@ -180,7 +181,7 @@ while sim_time <= tf: # Loop numérico
 
     # region Contribuição Lateral
     # TODO: Implementar contribuicao lateral
-    ql = np.zeros(dim)
+    ql = lateral_contribution(lateral_Q, xf, dim, sim_time + dt)
     cq = cqd / A1
     # endregion Contribuição Lateral
 

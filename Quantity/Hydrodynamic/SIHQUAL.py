@@ -2,7 +2,6 @@
 Simulação Hidrodinâmica e de Qualidade da Água (SIHQUAL)
 em Python
 """
-#%%
 import os
 from tqdm import tqdm
 
@@ -10,10 +9,9 @@ import numpy as np
 import pandas as pd
 # from numpy.core.multiarray import interp as compiled_interp
 
-#%%
 cwd = os.getcwd()
 filename = os.path.join(cwd, 'Quantity/Hydrodynamic/SIHQUAL.xlsx')
-#%%
+
 data_sheet = 'Data'
 param_sheet = 'Parameters'
 
@@ -43,9 +41,10 @@ Kd = data_df['kd'].to_numpy(dtype=np.float64)
 Ks = data_df['ks'].to_numpy(dtype=np.float64)
 c1 = data_df['c1'].to_numpy(dtype=np.float64)
 cqd = data_df['cq'].to_numpy(dtype=np.float64)
-#%%
+
 input_folder = os.path.join(cwd,'Quantity/Hydrodynamic/SIHQUALInputs/')
-#%%
+dim = int(xf / dx) + 1
+
 boundary_Q = pd.read_csv(input_folder+'boundary_Q.csv', sep=';', encoding='utf-8')
 boundary_y = pd.read_csv(input_folder+'boundary_y.csv', sep=';', encoding='utf-8')
 boundary_c = pd.read_csv(input_folder+'boundary_c.csv', sep=';', encoding='utf-8')
@@ -54,9 +53,13 @@ t_arr_Q = boundary_Q.iloc[:, 0].to_numpy(dtype=np.int32)
 t_arr_y = boundary_y.iloc[:, 0].to_numpy(dtype=np.int32)
 t_arr_c = boundary_c.iloc[:, 0].to_numpy(dtype=np.int32)
 
-index_Q = boundary_Q.columns[1:].to_numpy(dtype=np.int32)
-index_y = boundary_y.columns[1:].to_numpy(dtype=np.int32)
-index_c = boundary_c.columns[1:].to_numpy(dtype=np.int32)
+def ifromx (x, L, dim):
+    r_index = int(x / L * (dim - 1))
+    return  r_index if x.size > 1 else [r_index] 
+
+index_Q = ifromx(boundary_Q.columns[1:].to_numpy(dtype=np.int32), xf, dim)
+index_y = ifromx(boundary_y.columns[1:].to_numpy(dtype=np.int32), xf, dim)
+index_c = ifromx(boundary_c.columns[1:].to_numpy(dtype=np.int32), xf, dim)
 
 bQ_data = boundary_Q.iloc[:, 1:].T.to_numpy()
 by_data = boundary_y.iloc[:, 1:].T.to_numpy()
@@ -65,17 +68,25 @@ bc_data = boundary_c.iloc[:, 1:].T.to_numpy()
 try:
     lateral_Q = pd.read_csv(input_folder+'lateral_Q.csv', sep=';', encoding='utf-8', header=[0, 1])
     t_arr_lQ = lateral_Q.iloc[:, 0].to_numpy(dtype=np.int32)
+    v_tuples = lateral_Q.columns[1:][:]
+    lQ_slices = [(int(int(a)/ xf * (dim - 1)),
+                  (int(int(b)/ xf * (dim - 1)))) for a, b in v_tuples]
+    lQ_data = lateral_Q.iloc[:, 1:].T.to_numpy()
 except:
     pass
 try:
     lateral_c = pd.read_csv(input_folder+'lateral_c.csv', sep=';', encoding='utf-8', header=[0, 1])
     t_arr_lc = lateral_c.iloc[:, 0].to_numpy(dtype=np.int32)
+    v_tuples = lateral_c.columns[1:][:]
+    lc_slices = [(int(int(a)/ xf * (dim - 1)),
+                  (int(int(b)/ xf * (dim - 1)))) for a, b in v_tuples]
+    lc_data = lateral_c.iloc[:, 1:].T.to_numpy()
 except:
     pass
 
-dim = int(xf / dx) + 1
+
 g = 9.81
-#%%
+
 t_out = []
 y_out = []
 Q_out = []
@@ -83,7 +94,7 @@ Q_out = []
 output_sections = param_df['output_sections']
 
 output_df = pd.DataFrame()
-#%%
+
 # region Aux
 def v_manning(n, Rh, So):
     return 1 / n * Rh ** (2/3) * So ** .5
@@ -150,31 +161,6 @@ def courant(dt, dx, v, g, A, B):
     Estabilidade de Courant
     """
     return dt / dx * (abs(v) + (g * A / B) ** .5)
-
-def ifromx (x, L, dim):
-    return int(x / L * (dim - 1))
-
-def boundary(vector, df, L, dim, t):
-    t_arr = df.iloc[:,0].to_numpy(dtype=np.int32)
-    
-    for i in range(1, len(df.columns) - 1):
-        index = ifromx(int(df.columns[i]), L, dim)
-        vector[index] = np.interp(t, t_arr, df.iloc[:,i])
-
-def lateral_contribution(vector, df, L, dim, t):
-    # TODO: Implementar contribuições laterais
-    t_arr = df.iloc[:,0].to_numpy(dtype=np.int32)
-    
-    for i in range(1, len(df.columns)):
-        i_0 = ifromx(int(df.columns[i][0]), L, dim)
-        i_f = ifromx(int(df.columns[i][1]), L, dim)
-        vector[i_0: i_f] = np.interp(t, t_arr, df.iloc[:,i].to_numpy())
-        
-def multiInterp2(x, xp, fp):
-    i = np.arange(xp.size)
-    j = np.searchsorted(xp, x) - 1
-    d = (x - xp[j]) / (xp[j + 1] - xp[j])
-    return (1 - d) * fp[i, j] + fp[i, j + 1] * d
 # endregion Aux
 
 # Inicialização dos vetores de contribuição lateral
@@ -203,9 +189,11 @@ while sim_time <= tf:
         dt = .5 * dt / courant_max
 
     # region Contribuição Lateral
-    # TODO: Implementar contribuicao lateral
-    # lateral_contribution(ql, lateral_Q, xf, dim, sim_time + dt)
-    # lateral_contribution(cqd, lateral_c, xf, dim, sim_time + dt)
+    for i in range(len(lQ_slices)):
+        ql[slice(lQ_slices[i][0], lQ_slices[i][1])] = np.interp(sim_time + dt, t_arr_lQ, lQ_data[i])
+    
+    for i in range(len(lc_slices)):
+        cqd[slice(lc_slices[i][0], lc_slices[i][1])] = np.interp(sim_time + dt, t_arr_lQ, lc_data[i])
     cq = cqd / A1
     # endregion Contribuição Lateral
 
@@ -228,15 +216,6 @@ while sim_time <= tf:
                 + mfactor * g * dy
                 + g * dt * (So[1:-1] - SSf))
 
-    # FIXME: arrumar contornos
-    # y2[0] = np.interp(sim_time + dt,
-    #                   upstream_boundary_df['t'],
-    #                   upstream_boundary_df['y'])
-
-    # area = wet_area(b1[0], y2[0], m[0])
-    # v2[0] = (np.interp(sim_time + dt,
-    #                   upstream_boundary_df['t'],
-    #                   upstream_boundary_df['Q']) / area)
 
     y2[-1] = y2[-2]
     v2[-1] = v2[-2]
@@ -255,22 +234,17 @@ while sim_time <= tf:
     # endregion Módulo de Qualidade
 
     # region Redefinição de Variáveis
-    
-    # TODO: Implementar contornos Q, y, c
     y2[index_y] = [np.interp(sim_time + dt, t_arr_y, by_data[i]) for i in index_y]
-    
     A2 = b1 * y2 + m * y2 * y2
     v2[index_Q] = [np.interp(sim_time + dt, t_arr_y, bQ_data[i]) / A2[i] for i in index_Q]
-    
     c2[index_c] = [np.interp(sim_time + dt, t_arr_y, bc_data[i]) for i in index_c]
     
     y1 = np.copy(y2)
     v1 = np.copy(v2)
-
     c1 = np.copy(c2)
     # endregion Redefinição de Variáveis
 
-    courant_max = courant(dt, dx, v1, g, A1, B1).max()
+    courant_max = dt / dx * (abs(v1) + (g * A1 / B1) ** .5).max()
     if courant_max >= 1:
         raise Exception('Erro de estabilidade!')
 

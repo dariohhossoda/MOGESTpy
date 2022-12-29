@@ -8,6 +8,8 @@ from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
+# from numpy.core.multiarray import interp as compiled_interp
+
 #%%
 cwd = os.getcwd()
 filename = os.path.join(cwd, 'Quantity/Hydrodynamic/SIHQUAL.xlsx')
@@ -48,12 +50,26 @@ boundary_Q = pd.read_csv(input_folder+'boundary_Q.csv', sep=';', encoding='utf-8
 boundary_y = pd.read_csv(input_folder+'boundary_y.csv', sep=';', encoding='utf-8')
 boundary_c = pd.read_csv(input_folder+'boundary_c.csv', sep=';', encoding='utf-8')
 
+t_arr_Q = boundary_Q.iloc[:, 0].to_numpy(dtype=np.int32)
+t_arr_y = boundary_y.iloc[:, 0].to_numpy(dtype=np.int32)
+t_arr_c = boundary_c.iloc[:, 0].to_numpy(dtype=np.int32)
+
+index_Q = boundary_Q.columns[1:].to_numpy(dtype=np.int32)
+index_y = boundary_y.columns[1:].to_numpy(dtype=np.int32)
+index_c = boundary_c.columns[1:].to_numpy(dtype=np.int32)
+
+bQ_data = boundary_Q.iloc[:, 1:].T.to_numpy()
+by_data = boundary_y.iloc[:, 1:].T.to_numpy()
+bc_data = boundary_c.iloc[:, 1:].T.to_numpy()
+
 try:
     lateral_Q = pd.read_csv(input_folder+'lateral_Q.csv', sep=';', encoding='utf-8', header=[0, 1])
+    t_arr_lQ = lateral_Q.iloc[:, 0].to_numpy(dtype=np.int32)
 except:
     pass
 try:
     lateral_c = pd.read_csv(input_folder+'lateral_c.csv', sep=';', encoding='utf-8', header=[0, 1])
+    t_arr_lc = lateral_c.iloc[:, 0].to_numpy(dtype=np.int32)
 except:
     pass
 
@@ -153,6 +169,12 @@ def lateral_contribution(vector, df, L, dim, t):
         i_0 = ifromx(int(df.columns[i][0]), L, dim)
         i_f = ifromx(int(df.columns[i][1]), L, dim)
         vector[i_0: i_f] = np.interp(t, t_arr, df.iloc[:,i].to_numpy())
+        
+def multiInterp2(x, xp, fp):
+    i = np.arange(xp.size)
+    j = np.searchsorted(xp, x) - 1
+    d = (x - xp[j]) / (xp[j + 1] - xp[j])
+    return (1 - d) * fp[i, j] + fp[i, j + 1] * d
 # endregion Aux
 
 # Inicialização dos vetores de contribuição lateral
@@ -171,10 +193,10 @@ progress = tqdm(total=tf,
                 unit='s_(sim)')
 n_index = 0
 sim_time = 0
-while sim_time <= tf: # Loop numérico
-    A1 = b1 * y1 + m * y1 * y1 #wet_area(b1, y1, m)
-    B1 = b1 + 2 * m  * y1 #top_base(b1, y1, m)
-    Rh1 = A1 / (b1 + 2 * y1 * (1 + m ** 2) ** .5) #Rh(b1, y1, m)
+while sim_time <= tf:
+    A1 = b1 * y1 + m * y1 * y1 # wet_area(b1, y1, m)
+    B1 = b1 + 2 * m  * y1 # top_base(b1, y1, m)
+    Rh1 = A1 / (b1 + 2 * y1 * (1 + m ** 2) ** .5) # Rh(b1, y1, m)
     Sf1 =  n * n * v1 * v1 * Rh1 ** (- 4 / 3) # Sf(n, v1, Rh1)
 
     if auto_step:
@@ -229,16 +251,18 @@ while sim_time <= tf: # Loop numérico
                 + DD * dt / dx ** 2
                 )
 
-    c2[0] = c1[0]
     c2[-1] = c2[-2]
     # endregion Módulo de Qualidade
 
     # region Redefinição de Variáveis
     
     # TODO: Implementar contornos Q, y, c
-    # boundary(v2)
-    # boundary(y2)
-    # boundary(c2)
+    y2[index_y] = [np.interp(sim_time + dt, t_arr_y, by_data[i]) for i in index_y]
+    
+    A2 = b1 * y2 + m * y2 * y2
+    v2[index_Q] = [np.interp(sim_time + dt, t_arr_y, bQ_data[i]) / A2[i] for i in index_Q]
+    
+    c2[index_c] = [np.interp(sim_time + dt, t_arr_y, bc_data[i]) for i in index_c]
     
     y1 = np.copy(y2)
     v1 = np.copy(v2)

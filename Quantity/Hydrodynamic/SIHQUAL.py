@@ -84,16 +84,10 @@ try:
 except:
     pass
 
+sections = param_df['output_sections'].to_numpy()
 
 g = 9.81
 
-t_out = []
-y_out = []
-Q_out = []
-
-output_sections = param_df['output_sections']
-
-output_df = pd.DataFrame()
 
 # region Aux
 def v_manning(n, Rh, So):
@@ -163,8 +157,6 @@ def courant(dt, dx, v, g, A, B):
     return dt / dx * (abs(v) + (g * A / B) ** .5)
 # endregion Aux
 
-# Inicialização dos vetores de contribuição lateral
-
 auto_step = False
 
 y2 = np.zeros_like(y1)
@@ -173,10 +165,11 @@ c2 = np.zeros_like(c1)
 
 ql = np.zeros(dim)
 cqd = np.zeros(dim)
-#%%
+
 progress = tqdm(total=tf,
                 desc='SIHQUAL',
                 unit='s_(sim)')
+df_data = []
 n_index = 0
 sim_time = 0
 while sim_time <= tf:
@@ -251,9 +244,13 @@ while sim_time <= tf:
     # region Output
     days_elapsed = sim_time / 86400
     if  days_elapsed >= n_index:
-        t_out.append(int(days_elapsed))
-        y_out.append(y1[0])
-        Q_out.append(v1[0] * A1[0])
+        _list = []
+        for section in sections:
+            _i = int(int(i) / xf * (dim - 1))
+            _list.append(v1[_i] * A1[_i])
+            _list.append(y1[_i])
+            _list.append(c1[_i])
+        df_data.append(_list)
 
         n_index += 1
     # endregion Output
@@ -261,8 +258,10 @@ while sim_time <= tf:
     sim_time +=  dt
     progress.update(n = dt)
 
-output_df['t'] = t_out
-output_df['y'] = y_out
-output_df['Q'] = Q_out
 
-output_df.to_excel('SIHQUAL_output.xlsx', index=False)
+
+variables = ['Q', 'y', 'c']
+cols = pd.MultiIndex.from_product([sections, variables], names=['section', 'variables'])
+t_index = pd.Index([i for i in range(tf // 86400) + 1], name='t')
+output_df = pd.DataFrame(df_data, columns=cols, index=t_index)
+output_df.to_excel('SIHQUAL_output.xlsx')

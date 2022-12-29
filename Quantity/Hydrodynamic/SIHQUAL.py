@@ -88,21 +88,7 @@ sections = param_df['output_sections'].to_numpy()
 
 g = 9.81
 
-
 # region Aux
-def v_manning(n, Rh, So):
-    return 1 / n * Rh ** (2/3) * So ** .5
-
-def Q_manning(n, Rh, So, A):
-    return v_manning(n, Rh, So) * A
-
-def df2array(column_name,
-             dataframe,
-             index_array,
-             index_name = 'x'):
-    aux = dataframe[[index_name, column_name]].dropna()
-    return np.interp(index_array, aux[index_name], aux[column_name])
-
 def avg(vector):
     """
     Vetor médio.
@@ -169,9 +155,18 @@ cqd = np.zeros(dim)
 progress = tqdm(total=tf,
                 desc='SIHQUAL',
                 unit='s_(sim)')
-df_data = []
+
 n_index = 0
 sim_time = 0
+
+days_total = tf // 86400 + 1
+variables = ['Q', 'y', 'c']
+cols = pd.MultiIndex.from_product([sections, variables], names=['section', 'variables'])
+t_index = pd.Index([i for i in range(days_total)], name='t')
+
+col_num = len(variables) * len(sections)
+df_data = np.zeros((days_total, col_num))
+
 while sim_time <= tf:
     A1 = b1 * y1 + m * y1 * y1 # wet_area(b1, y1, m)
     B1 = b1 + 2 * m  * y1 # top_base(b1, y1, m)
@@ -244,13 +239,15 @@ while sim_time <= tf:
     # region Output
     days_elapsed = sim_time / 86400
     if  days_elapsed >= n_index:
-        _list = []
+        k = 0
+        _array = np.zeros(col_num)
         for section in sections:
-            _i = int(int(i) / xf * (dim - 1))
-            _list.append(v1[_i] * A1[_i])
-            _list.append(y1[_i])
-            _list.append(c1[_i])
-        df_data.append(_list)
+            _i = int(int(section) / xf * (dim - 1))
+            _array[k] = v1[_i] * A1[_i]
+            _array[k+1] = y1[_i]
+            _array[k+2] = c1[_i]
+            k += 1
+        df_data[int(days_elapsed)] = _array
 
         n_index += 1
     # endregion Output
@@ -258,10 +255,9 @@ while sim_time <= tf:
     sim_time +=  dt
     progress.update(n = dt)
 
-
-
-variables = ['Q', 'y', 'c']
-cols = pd.MultiIndex.from_product([sections, variables], names=['section', 'variables'])
-t_index = pd.Index([i for i in range(tf // 86400) + 1], name='t')
 output_df = pd.DataFrame(df_data, columns=cols, index=t_index)
-output_df.to_excel('SIHQUAL_output.xlsx')
+
+try:
+    output_df.to_excel('SIHQUAL_output.xlsx')
+except:
+    print('Erro: Verificar se a planilha está aberta')

@@ -39,15 +39,15 @@ $Eb$    = escoamento básico
 
 Inicialização:
 
-$$ Rsolo (1) = Tuin . Str $$
+$$ Rsolo (1) = Tuin \cdot Str $$
 
 $$ Rsup  (1) =  0$$
 
-$$ Rsub  (1) = Ebin / (1-kk) / Ad * 86.4 $$
+$$ Rsub  (1) = Ebin / (1-kk) / Ad \cdot 86.4 $$
 
 Onde:
 
-$Tuin$ = teor de umidade inicial (ad.)
+$Tuin$ = teor de umidade inicial ( - )
 
 $Ebin$ = vazão básica inicial (m³/s)
 
@@ -72,7 +72,7 @@ Caso contrário
 
 $Es = 0$
 
-2. Se ($(P - Es) > Ep$)
+2. Se $(P - Es) > Ep$
 
 Então
 		
@@ -80,21 +80,21 @@ $Er = Ep$
 
 Caso contrário
 
-$Er = (P - Es) + (Ep - (P - Es)) * Tu$
+$Er = (P - Es) + (Ep - (P - Es)) \cdot Tu$
 
-3. Se $Rsolo > (Capc * Str)$
+3. Se $Rsolo > (Capc \cdot Str)$
 
 Então
 
-$Rec = Crec * Tu * (Rsolo - (Capc * Str))$
+$Rec = Crec \cdot Tu \cdot (Rsolo - (Capc \cdot Str))$
 
 Caso contrário
 
 $Rec = 0$
 
-1. $Ed  = Rsup * ( 1 - K2 )$
+1. $Ed  = Rsup \cdot ( 1 - K2 )$
 
-2. $Eb  = Rsub * ( 1 - Kk )$
+2. $Eb  = Rsub \cdot ( 1 - Kk )$
 
 
 sendo	$Tu = Rsolo / Str$
@@ -116,7 +116,7 @@ $Kkt$	- constante de recessão do escoamento básico (dias)
 
 Foram ajustadas as unidades dos parâmetros:
 
-$Kk = 0,5 ^ (1/Kkt)  e  K2 = 0,5 ^ (1/K2t)$  onde $Kkt$  e  $K2t$  são expressos em dias em que a vazão cai a metade de seu valor.
+$Kk = 0,5 ^ {(1/Kkt)}$  e  $K2 = 0,5 ^ {(1/K2t)}$  onde $Kkt$  e  $K2t$  são expressos em dias em que a vazão cai a metade de seu valor.
 
 $Crec$  e  $Capc$  são multiplicados por $100$
 
@@ -128,4 +128,4 @@ $$Q = (Es + Eb) * Ad / 86.4$$
 
 Os dados de entrada do modelo são os totais diários de chuva e o total diário médio do período de evaporação potencial (tanque classe A). Para calibração são necessários de 30 a 90 dias de dados de vazão media mensal, incluindo eventos de cheia.
 
-É utilizado um coeficiente de ajuste da chuva media da bacia '$Pcof$’ que deve ser calculado em função da distribuição espacial dos postos.
+É utilizado um coeficiente de ajuste da chuva media da bacia "$Pcof$" que deve ser calculado em função da distribuição espacial dos postos.

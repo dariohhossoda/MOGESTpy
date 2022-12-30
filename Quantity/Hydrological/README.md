@@ -88,7 +88,7 @@ $Ad$   = área de drenagem (km²)
 
 O modelo apresenta 5 funções de transferência entre os reservatórios. A separação do escoamento superficial é baseado no método do SCS ( Soil Conservation Service do U.S.Dept. Agr.).
 
-1. Se ($P > Ai$)
+1. Se ( $P > Ai$ )
 
 Então
 

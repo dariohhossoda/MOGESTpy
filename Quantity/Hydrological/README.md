@@ -49,9 +49,83 @@ Onde:
 
 $Tuin$ = teor de umidade inicial (ad.)
 
-$Ebin$ = vazão básica inicial (m3/s)
+$Ebin$ = vazão básica inicial (m³/s)
 
-$Ad$   = área de drenagem (km2)
+$Ad$   = área de drenagem (km²)
 
 
 <!-- TODO: Finalizar Documentação -->
+<!-- Adicionar Figura -->
+
+
+O modelo apresenta 5 funções de transferência entre os reservatórios. A separação do escoamento superficial é baseado no método do SCS ( Soil Conservation Service do U.S.Dept. Agr.).
+
+1. Se ($P > Ai$)
+
+Então
+
+$S = Str - Rsolo$
+
+$Es = (P - Ai) ^ 2 / (P - Ai + S)$
+
+Caso contrário
+
+$Es = 0$
+
+2. Se ($(P - Es) > Ep$)
+
+Então
+		
+$Er = Ep$
+
+Caso contrário
+
+$Er = (P - Es) + (Ep - (P - Es)) * Tu$
+
+3. Se $Rsolo > (Capc * Str)$
+
+Então
+
+$Rec = Crec * Tu * (Rsolo - (Capc * Str))$
+
+Caso contrário
+
+$Rec = 0$
+
+1. $Ed  = Rsup * ( 1 - K2 )$
+
+2. $Eb  = Rsub * ( 1 - Kk )$
+
+
+sendo	$Tu = Rsolo / Str$
+
+
+São 6 os parâmetros do modelo:
+
+$Str$	- capacidade de saturação do solo (mm)
+
+$K2t$	- constante de recessão do escoamento 
+superficial (dias)
+$Crec$	- parâmetro de recarga subterrânea (%)
+
+$Ai$	- abstração inicial (mm)
+
+$Capc$	- capacidade de campo (%)
+
+$Kkt$	- constante de recessão do escoamento básico (dias)
+
+Foram ajustadas as unidades dos parâmetros:
+
+$Kk = 0,5 ^ (1/Kkt)  e  K2 = 0,5 ^ (1/K2t)$  onde $Kkt$  e  $K2t$  são expressos em dias em que a vazão cai a metade de seu valor.
+
+$Crec$  e  $Capc$  são multiplicados por $100$
+
+O eventual transbordo do reservatório do solo é transformado em escoamento superficial.
+
+Finalmente o cálculo da vazão é dado pela equação:
+
+$$Q = (Es + Eb) * Ad / 86.4$$
+
+Os dados de entrada do modelo são os totais diários de chuva e o total diário médio do período de evaporação potencial (tanque classe A). Para calibração são necessários de 30 a 90 dias de dados de vazão media mensal, incluindo eventos de cheia.
+
+É utilizado um coeficiente de ajuste da chuva media da bacia '$Pcof$’ que deve ser calculado em função da distribuição espacial dos postos.

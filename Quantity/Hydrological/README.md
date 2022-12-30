@@ -12,6 +12,10 @@ Esta seção destina-se aos modelos hidrológicos de quantidade de água.
   - [SMAP](#smap)
     - [Introdução](#introdução)
     - [Metodologia do Modelo](#metodologia-do-modelo)
+      - [Reservatórios Matemáticos](#reservatórios-matemáticos)
+      - [Inicialização](#inicialização)
+      - [Funções de Transferência](#funções-de-transferência)
+    - [Parâmetros de Calibração](#parâmetros-de-calibração)
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
@@ -27,13 +31,17 @@ O desenvolvimento do modelo baseou-se na experiência com a aplicação do model
 
 ### Metodologia do Modelo
 
+#### Reservatórios Matemáticos
+
 Em sua versão diária, é constituído de três reservatórios matemáticos, cujas variáveis de estado são atualizadas a cada dia da forma:
 
 $$Rsolo (i+1) = Rsolo (i) + P - Es - Er - Rec$$
 $$Rsup  (i+1) = Rsup  (i) + Es - Ed$$
 $$Rsub  (i+1) = Rsub  (i) + Rec - Eb$$
 
-Onde:
+<details>
+<summary>Com as seguintes definições</summary>
+<br>
 
 $Rsolo$ = reservatório do solo (zona aerada)
 
@@ -53,7 +61,9 @@ $Rec$   = recarga subterrânea
 
 $Eb$    = escoamento básico
 
-Inicialização:
+</details>
+
+#### Inicialização
 
 $$ Rsolo (1) = Tuin \cdot Str $$
 
@@ -61,7 +71,9 @@ $$ Rsup  (1) =  0$$
 
 $$ Rsub  (1) = Ebin / (1-kk) / Ad \cdot 86.4 $$
 
-Onde:
+<details>
+<summary>Com as seguintes definições</summary>
+<br>
 
 $Tuin$ = teor de umidade inicial ( - )
 
@@ -69,10 +81,10 @@ $Ebin$ = vazão básica inicial (m³/s)
 
 $Ad$   = área de drenagem (km²)
 
+</details>
 
-<!-- TODO: Finalizar Documentação -->
-<!-- Adicionar Figura -->
 
+#### Funções de Transferência
 
 O modelo apresenta 5 funções de transferência entre os reservatórios. A separação do escoamento superficial é baseado no método do SCS ( Soil Conservation Service do U.S.Dept. Agr.).
 
@@ -116,7 +128,9 @@ $Rec = 0$
 sendo	$Tu = Rsolo / Str$
 
 
-São 6 os parâmetros do modelo:
+<details>
+<summary>São 6 os parâmetros do modelo</summary>
+<br>
 
 $Str$	- capacidade de saturação do solo (mm)
 
@@ -130,7 +144,9 @@ $Capc$	- capacidade de campo (%)
 
 $Kkt$	- constante de recessão do escoamento básico (dias)
 
-Foram ajustadas as unidades dos parâmetros:
+</details>
+
+Além disto, há um ajuste nas unidades dos parâmetros:
 
 $Kk = 0,5 ^ {(1/Kkt)}$  e  $K2 = 0,5 ^ {(1/K2t)}$  onde $Kkt$  e  $K2t$  são expressos em dias em que a vazão cai a metade de seu valor.
 
@@ -147,3 +163,16 @@ Os dados de entrada do modelo são os totais diários de chuva e o total diário
 É utilizado um coeficiente de ajuste da chuva media da bacia "$Pcof$" que deve ser calculado em função da distribuição espacial dos postos.
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
+
+### Parâmetros de Calibração
+
+
+Os parâmetros de calibração do modelo são:
+
+$$100 < Str < 2000$$
+$$0.2 < K2t <10 $$
+$$0 < Crec < 20$$
+
+
+<p align="right">(<a href="#top">voltar ao topo</a>)
+</p>

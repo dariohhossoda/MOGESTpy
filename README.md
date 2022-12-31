@@ -83,9 +83,13 @@ MOGESTpy
 
 Atualmente, para executar o MOGESTpy é necessário clonar o repositório em sua máquina e chamar os módulos individualmente. Futuramente pensa-se em incluir um Framework para facilitar sua utilização.
 
+<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+
 ## Como colaborar com o projeto?
 
 Para contribuir com o projeto basta criar uma issue, adições ao código são bem-vindas, basta seguir o nosso [documento de colaboração](CONTRIBUTING.md).
+
+<p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 <div align=center>
 
@@ -95,5 +99,7 @@ Para contribuir com o projeto basta criar uma issue, adições ao código são b
 |[Laboratório de Sistemas de Suporte a Decisões](https://sites.usp.br/labsid)|
 
 </div>
+
+<p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 [^Brites,2010]: Brites, A. P. Z. Enquadramento dos corpos de água através de metas progressivas: Probabilidade de ocorrência e custos de despoluição hídrica. Tese de Doutorado. Universidade de São Paulo, 2010.

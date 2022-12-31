@@ -1,16 +1,21 @@
 <div id="top"></div>
 
+
+<div align=center>
+<!-- https://user-images.githubusercontent.com/58784697/200683473-b94e7a80-6f62-405d-8ba9-06ac5620044e.svg -->
+
 # MOGESTpy
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/58784697/200683473-b94e7a80-6f62-405d-8ba9-06ac5620044e.svg"
-  width = 250/>
+<p>
+  <img src="https://user-images.githubusercontent.com/58784697/210153011-0ccac06f-5ff8-4c80-a2ad-d03528e71e3e.svg"
+  width = 200/>
 </p>
+</div>
 
-## Índice
+<details>
+<Summary>Índice</Summary>
 
 - [MOGESTpy](#mogestpy)
-  - [Índice](#índice)
   - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
     - [Modelo de Gestão de Recursos Hídricos](#modelo-de-gestão-de-recursos-hídricos)
   - [Modelos utilizados no MOGESTpy](#modelos-utilizados-no-mogestpy)
@@ -18,11 +23,13 @@
   - [Como utilizar o MOGESTpy?](#como-utilizar-o-mogestpy)
   - [Como colaborar com o projeto?](#como-colaborar-com-o-projeto)
 
+</details>
+
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 ## O que é o MOGESTpy?
 
-O projeto MOGESTpy é a sigla para **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem Python.
+MOGESTpy é a sigla para **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem [Python3](https://www.python.org/).
 
 ### Modelo de Gestão de Recursos Hídricos
 
@@ -38,13 +45,21 @@ Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 
 
 ## Modelos utilizados no MOGESTpy
+
+Os modelos utilizados no MOGESTpy são:
+
 - [SIHQUAL](Quantity/Hydrodynamic/)
 - [SMAP](Quantity/Hydrological)
 - [0D (Zero Dimensional)](Quality/)
 - [BuildUp-Washoff](Quality/)
+
+Para mais detalhes, cheque a documentação dentro do repositório.
+
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 ## Estrutura do Repositório
+
+O repositório está dividido em três partes principais: modelos de qualidade (Quality), modelos quantitativos (Quantity) e dadods de simulação para testes e exemplos do funcionamento de cada módulo (Datasets).
 
 ```
 MOGESTpy

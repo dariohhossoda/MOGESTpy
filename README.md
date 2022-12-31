@@ -14,6 +14,7 @@
   - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
     - [Modelo de Gestão de Recursos Hídricos](#modelo-de-gestão-de-recursos-hídricos)
   - [Modelos utilizados no MOGESTpy](#modelos-utilizados-no-mogestpy)
+  - [Estrutura do Repositório](#estrutura-do-repositório)
   - [Como utilizar o MOGESTpy?](#como-utilizar-o-mogestpy)
   - [Como colaborar com o projeto?](#como-colaborar-com-o-projeto)
 
@@ -43,6 +44,26 @@ Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
 - [BuildUp-Washoff](Quality/)
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
+## Estrutura do Repositório
+
+```
+MOGESTpy
+├─ Datasets
+│   └─ Results
+├─ Quality
+│   ├─ BuWo.py
+│   └─ ZeroD.py
+└─ Quantity
+    ├─ Hydrological
+    │   ├─ SMAP.py
+    │   ├─ Muskingum.py
+    │   └─ MassBalance.py
+    └─ Hydrodynamic
+        └─ SIHQUAL.py
+```
+
+<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+
 ## Como utilizar o MOGESTpy?
 
 Atualmente, para executar o MOGESTpy é necessário clonar o repositório em sua máquina e chamar os módulos individualmente. Futuramente pensa-se em incluir um Framework para facilitar sua utilização.
@@ -51,10 +72,13 @@ Atualmente, para executar o MOGESTpy é necessário clonar o repositório em sua
 
 Para contribuir com o projeto basta criar uma issue, adições ao código são bem-vindas, basta seguir o nosso [documento de colaboração](CONTRIBUTING.md).
 
+<div align=center>
+
 |Agradecimentos|
 |:---:|
 |![LogoLabSid](https://user-images.githubusercontent.com/58784697/200078179-ea05ba48-2b67-4f30-bea0-78e1c1507ae1.svg)|
 |[Laboratório de Sistemas de Suporte a Decisões](https://sites.usp.br/labsid)|
 
+</div>
 
 [^Brites,2010]: Brites, A. P. Z. Enquadramento dos corpos de água através de metas progressivas: Probabilidade de ocorrência e custos de despoluição hídrica. Tese de Doutorado. Universidade de São Paulo, 2010.

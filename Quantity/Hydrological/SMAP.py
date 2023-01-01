@@ -76,6 +76,7 @@ class SMAP:
             Capc : 30 - 50
             kkt : 30 - 180
             """
+
             param_dict = {0: 'Str',
                           1: 'k2t',
                           2: 'Crec',
@@ -103,6 +104,7 @@ dos limites indicados.')
         através da simulação do fluxo d'água nos processos que
         ocorrem na bacia hidrográfica.
         """
+
         self.Q = []
 
         for i in range(self.Point.n):

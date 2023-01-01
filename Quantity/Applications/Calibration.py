@@ -10,13 +10,14 @@ import Quantity.Hydrological.SMAP as SMAP
 
 def Calibracao(obsAtibaia, obsValinhos, revAtibainha,
                revCachoeira, Atibaia, Valinhos, FO):
+    # TODO: Mover para documentação em um README.md
     """
     1. Muskingum de jusante até o ponto de controle de Atibaia:
     O modelo utilizará como parâmetros, duas trincas de variáveis Muskingum
     (K1, X1, m1) p/ Atibainha e (K2, X2, m2) p/ Cachoeira e também uma quina
     de variáveis SMAP (Str, k2t, Crec, TUin, EBin). O objetivo será minimizar
-    as diferenças entre as vazões incrementais calculadas com o routing hidrológico
-    e aquelas obtidas com o módulo chuva-vazão
+    as diferenças entre as vazões incrementais calculadas com o routing
+    hidrológico e aquelas obtidas com o módulo chuva-vazão
     Condições de contorno para variáveis que serão calibradas
 
     Parâmetros:
@@ -52,8 +53,9 @@ def Calibracao(obsAtibaia, obsValinhos, revAtibainha,
         Q2 = Muskingum.DownstreamFORK(K2, X2, m2, 24.0, revCachoeira.D)
 
         # Junto ao ponto de controle, a vazão observada equivale a uma parcela
-        # despachada de cada reservatório mais uma parcela incremental de eventos chuvosos
-        # menos uma parcela captada entre as barragens e a própria seção
+        # despachada de cada reservatório mais uma parcela incremental de
+        # eventos chuvosos menos uma parcela captada entre as barragens e a
+        # própria seção
         inc1 = [0] * n
         for j in range(n):
             inc1[j] = obsAtibaia.Q[j] - (Q1[j] + Q2[j]) + obsAtibaia.C[j]
@@ -153,8 +155,9 @@ def Calibracao(obsAtibaia, obsValinhos, revAtibainha,
         Q = Muskingum.DownstreamFORK(K, X, m, 24.0, obsAtibaia.Q)
 
         # Junto ao ponto de controle, a vazão observada equivale a uma parcela
-        # despachada de cada reservatório mais uma parcela incremental de eventos chuvosos
-        # menos uma parcela captada entre as barragens e a própria seção
+        # despachada de cada reservatório mais uma parcela incremental de
+        # eventos chuvosos menos uma parcela captada entre as barragens e 
+        # a própria seção
         inc1 = [0] * n
         for j in range(n):
             inc1[j] = obsValinhos.Q[j] - Q[j] + obsValinhos.C[j]

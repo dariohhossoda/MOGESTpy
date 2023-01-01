@@ -13,7 +13,7 @@
 </div>
 
 <details>
-<Summary>Índice</Summary>
+<Summary><font size="5">Índice</font></Summary>
 
 - [MOGESTpy](#mogestpy)
   - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
@@ -59,7 +59,7 @@ Para mais detalhes, cheque a documentação dentro do repositório.
 
 ## Estrutura do Repositório
 
-O repositório está dividido em três partes principais: modelos de qualidade (Quality), modelos quantitativos (Quantity) e dadods de simulação para testes e exemplos do funcionamento de cada módulo (Datasets).
+O repositório está dividido em três partes principais: modelos de qualidade (Quality), modelos quantitativos (Quantity) e dados de simulação para testes e exemplos do funcionamento de cada módulo (Datasets).
 
 ```
 MOGESTpy

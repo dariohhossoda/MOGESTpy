@@ -6,12 +6,18 @@ O SIHQUAL é o modelo de Simulação Hidrodinâmica e de Qualidade da Água, des
 
 ### Parâmetros de configuração
 
-dx: passo espacial (m)
-dt: passo de tempo (s)
-L: comprimento total do curso d'água (m)
-tf: tempo total de simulação (s)
-g: aceleração da gravidade (m2/s)
-alpha: coeficiente de difusão numérica de Lax
-D: coeficiente de dispersão
+$\mathrm{d}x$: passo espacial (m)
+
+$\mathrm{d}t$: passo de tempo (s)
+
+$L$: comprimento total do curso d'água (m)
+
+$tf$: tempo total de simulação (s)
+
+$g$: aceleração da gravidade (m$2$/s)
+
+$\alpha$: coeficiente de difusão numérica de Lax
+
+$D$: coeficiente de dispersão
 
 [^Ferreira,2015]: Ferreira, D, M. Simulação Hidrodinâmica e de Qualidade da Água em Rios: Impacto para os Instrumentos de Gestão de Recursos Hídricos. Tese de Mestrado. Universidade Federal do Paraná, 2015.

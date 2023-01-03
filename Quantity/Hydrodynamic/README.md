@@ -21,20 +21,28 @@ $$ B \frac{\partial{y}}{\partial{t}} + UB \frac{\partial{y}}{\partial{x}} + A \f
 $$ \frac{\partial{U}}{\partial{t}} + U\frac{\partial{U}}{\partial{x}} + g\frac{\partial{y}}{\partial{x}} = \frac{q(v_L - U)}{A} + g(S_0 - S_f) $$
 
 
+### Discretização
+
+A resolução das equações de Saint-Venant se dão através da utilização do método das diferenças finitas.
+
+As diferenças finitas são um tipo de método numérico utilizado na resolução de equações diferenciais parciais para aproximar a solução dadas as condições iniciais e as condições de contorno, sendo que esta resolução é representada na forma de um conjunto de números discretos e pode ser obtida iterativamente a cada passo de tempo e atualizando o seu valor para ser utilizado na próxima iteração.
+
+
+
 ### Parâmetros de configuração
 
-$\mathrm{d}x$: passo espacial (m)
+$\mathrm{d}x$: passo espacial (m);
 
-$\mathrm{d}t$: passo de tempo (s)
+$\mathrm{d}t$: passo de tempo (s);
 
-$L$: comprimento total do curso d'água (m)
+$L$: comprimento total do curso d'água (m);
 
-$tf$: tempo total de simulação (s)
+$tf$: tempo total de simulação (s);
 
-$g$: aceleração da gravidade (m$2$/s)
+$g$: aceleração da gravidade (m$^2$/s);
 
-$\alpha$: coeficiente de difusão numérica de Lax
+$\alpha$: coeficiente de difusão numérica de Lax;
 
-$D$: coeficiente de dispersão
+$D$: coeficiente de dispersão.
 
 [^Ferreira,2015]: Ferreira, D, M. Simulação Hidrodinâmica e de Qualidade da Água em Rios: Impacto para os Instrumentos de Gestão de Recursos Hídricos. Tese de Mestrado. Universidade Federal do Paraná, 2015.

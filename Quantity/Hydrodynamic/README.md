@@ -20,6 +20,28 @@ $$ B \frac{\partial{y}}{\partial{t}} + UB \frac{\partial{y}}{\partial{x}} + A \f
 
 $$ \frac{\partial{U}}{\partial{t}} + U\frac{\partial{U}}{\partial{x}} + g\frac{\partial{y}}{\partial{x}} = \frac{q(v_L - U)}{A} + g(S_0 - S_f) $$
 
+<details>
+<Summary>Com as seguintes definições</Summary>
+
+ - $B$: largura do topo da seção transversal (m);
+
+ - $y$: profundidade do escoamento (m);
+
+ - $U$: velocidade longitudinal do escoamento (m/s);
+
+ - $A$: área da seção transversal (m $^2$ );
+ 
+ - $q$: contribuição lateral por unidade de comprimento do canal (m $^3$ /s/m);
+
+ - $g$: aceleração da gravidade (m/s $^2$ );
+ 
+ - $v_L$: velocidade de entrada da contribuição lateral na direção longitudinal (m/s);
+ 
+ - $S_0$: declividade do fundo do canal (m/m);
+
+ - $S_f$: declividade da linha de energia (m/m)
+
+</details>
 
 ### Discretização
 
@@ -39,7 +61,7 @@ $L$: comprimento total do curso d'água (m);
 
 $tf$: tempo total de simulação (s);
 
-$g$: aceleração da gravidade (m$^2$/s);
+$g$: aceleração da gravidade (m $^2$ /s);
 
 $\alpha$: coeficiente de difusão numérica de Lax;
 

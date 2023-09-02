@@ -148,6 +148,7 @@ For more details, check the documentation within the repository.
 
 The repository is divided into three main parts: quality models (Quality), quantitative models (Quantity), and simulation data for testing and examples of how each module works (Datasets).
 
+```
 MOGESTpy
 ├─ Datasets
 │ └─ Results
@@ -161,9 +162,7 @@ MOGESTpy
 │ └─ MassBalance.py
 └─ Hydrodynamic
 └─ SIHQUAL.py
-
-css
-Copy code
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

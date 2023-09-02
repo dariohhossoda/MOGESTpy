@@ -7,32 +7,31 @@ assignees: ''
 
 ---
 
-## Descreva o Bug
-<!--Uma clara e concisa descrição do que se trata o bug-->
+## Describe the Bug
+<!-- A clear and concise description of the bug -->
 
 
-## Como Reproduzir o Bug
+## How to Reproduce the Bug
 
-Passos para reproduzir o comportamento observado:
-<!--Sugestão-->
-1. Ir para '...'
-2. Clicar em '....'
-3. Rolar para '....'
-4. Verificar erro.
+Steps to reproduce the observed behavior:
+<!-- Suggestion -->
+1. Go to '...'
+2. Click on '....'
+3. Scroll to '....'
+4. Check for an error.
 
-## Comportamento Esperado
-<!--Uma clara e concisa descrição do que você espera que aconteça-->
-
-
-## Capturas de Tela (Se Aplicável)
-<!-- Se aplicável, coloque imagens para ajudar a ilustrar o problema descrito -->
+## Expected Behavior
+<!-- A clear and concise description of what you expect to happen -->
 
 
-## Configurações do Sistema
- - SO: <!--e.g. Windows 10-->
- - RAM: <!--16 GB-->
- - Python: <!--e.g. 3.10.2-->
+## Screenshots (If Applicable)
+<!-- If applicable, include images to help illustrate the described problem -->
 
-## Contexto Adicional
-<!-- Qualquer outro contexto relacionado ao problema -->
 
+## System Configuration
+ - OS: <!-- e.g., Windows 10 -->
+ - RAM: <!-- 16 GB -->
+ - Python: <!-- e.g., 3.10.2 -->
+
+## Additional Context
+<!-- Any additional context related to the problem -->

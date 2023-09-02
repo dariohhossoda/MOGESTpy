@@ -1,27 +1,21 @@
-<!-- Forneça um resumo geral das suas alterações no _Título_ acima -->
-
+<!-- Provide a general summary of your changes in the _Title_ above -->
 ## Checklist
-- [ ] Seguiu as diretrizes do nosso documento de contribuição?
-- [ ] Verificou se não existem outros _Pull Requests_ em aberto para a mesma atualização/alteração?
-- [ ] Foram feitos **testes** para código alterado;
-- [ ] A **documentação** foi atualizada para considerar o código alterado.
+- [ ] Did you follow the guidelines in our contribution document?
+- [ ] Have you checked if there are no other open Pull Requests for the same update/change?
+- [ ] **Tests** have been conducted for the altered code;
+- [ ] The **documentation** has been updated to reflect the altered code.
 
 
-## Descrição
-
-<!-- Descreva as suas alterações em detalhes. -->
-
+## Description
+<!-- Describe your changes in detail. -->
 
 
-## Motivação e Contexto
-
-<!-- Por que esta mudança é necessária? Que é o problema que ela resolve? Se resolve um _issue_ em aberto, por favor faça aqui um link para o problema (ex. #102 para o issue 102). -->
-
-
-## Como essa mudança foi testada
-
-<!-- Por favor descreva em detalhe como testou as suas alterações. Inclua detalhes do seu ambiente de testes, e os testes a que foi submetido. Veja como a sua alteração afeta outras áreas do código, etc. -->
+## Motivation and Context
+<!-- Why is this change necessary? What problem does it solve? If it resolves an open issue, please link to the issue here (e.g., #102 for issue 102). -->
 
 
+## How This Change Was Tested
+<!-- Please describe in detail how you tested your changes. Include details about your testing environment, the tests it underwent. Consider how your change affects other areas of the code, etc. -->
 
-## Capturas de Tela (se aplicável)
+
+## Screenshots (if applicable)

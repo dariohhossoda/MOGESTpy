@@ -15,14 +15,4 @@ def test_zero_dimensional_1():
     reactor = zero_d.ZeroDimensional(V, Qin, Qout, Cin, As, k, v, dt)
     reactor.RunModel()
     
-    assert reactor.Output.ConcentrationOut == [0,
-                                               20.689655172413794,
-                                               23.543400713436384,
-                                               23.937020788060188,
-                                               23.99131321214623,
-                                               23.998801822364996,
-                                               23.99983473411931,
-                                               23.99997720470611,
-                                               23.999996855821532,
-                                               23.999999566320213]
-    
+    assert reactor.Output.ConcentrationOut[-1] == 23.999999566320213

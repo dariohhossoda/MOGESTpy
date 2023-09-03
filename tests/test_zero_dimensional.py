@@ -1,5 +1,4 @@
-from mogestpy.quality import zero_dimensional
-
+from mogestpy.quality import zero_d
 
 def test_zero_dimensional_1():
     vector_size = 10
@@ -13,7 +12,7 @@ def test_zero_dimensional_1():
 
     dt = 50
     
-    reactor = zero_dimensional(V, Qin, Qout, Cin, As, k, v, dt)
+    reactor = zero_d.ZeroDimensional(V, Qin, Qout, Cin, As, k, v, dt)
     reactor.RunModel()
     
     assert reactor.Output.ConcentrationOut == [0,

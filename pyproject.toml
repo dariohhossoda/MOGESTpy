@@ -6,12 +6,12 @@ authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"
 readme = "README.md"
 homepage = ""
-repository = ""
+repository = "https://github.com/dariohhossoda/MOGESTpy"
 documentation = ""
 keywords = ["hydrology", "water resouces", "hydrological model"]
 
 [tool.poetry.urls]
-"Bug Tracker" = ""
+"Bug Tracker" = "https://github.com/dariohhossoda/MOGESTpy/issues"
 
 [tool.poetry.dependencies]
 python = "^3.9"

@@ -65,7 +65,7 @@ class BuildUpWashoff:
         return math.min(self.Bmax, self.Kb * (time ** self.Nb))
 
     def BuildUpExp(self, time):
-        return self.Bmax * (1 - math.e ** (self.Kb * time))
+        return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
     def BuildUpSat(self, time):
         return self.Bmax * time / (self.Kb + time)

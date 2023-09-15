@@ -50,11 +50,11 @@ class SMAP:
                      kkt=100, k2t=5, Ai=2.5):
 
             self.Str = Str
-            self.Crec = Crec
-            self.Tuin = TUin
+            self.Crec = Crec / 100
+            self.Tuin = TUin / 100
             self.Ebin = EBin
             self.AD = AD
-            self.Capc = Capc
+            self.Capc = Capc / 100
             self.kkt = kkt
             self.k2t = k2t
             self.Ai = Ai
@@ -120,7 +120,7 @@ dos limites indicados.')
                   else self.Point.P[i] - ES
                   + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
 
-            Rec = (self.Basin.Crec / 100.0 * TU
+            Rec = (self.Basin.Crec * TU
                    * (self.Basin.RSolo - self.Basin.Capc
                       * self.Basin.Str) if (self.Basin.RSolo
                                             > (self.Basin.Capc

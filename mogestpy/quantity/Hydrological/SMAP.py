@@ -1,3 +1,7 @@
+from spotpy.objectivefunctions import kge, nashsutcliffe, rmse, pbias
+from scipy.optimize import minimize
+
+
 class SMAP:
     """
     Classe SMAP (Soil Moisture Accounting Procedure). Modelo
@@ -140,3 +144,34 @@ dos limites indicados.')
             self.Basin.RSub += Rec - EB
 
             self.Q.append((ED + EB) * self.Basin.AD / 86.4)
+
+
+    def Calibrate(self, evaluation,
+                    bounds = [[100.0, 2000.0], # Str      
+                              [0., 20], # Crec
+                              [0., 1.], # TUin
+                              [0., 20], # EBin
+                              [30, 50], # Capc
+                              [30, 180], # kkt
+                              [.2, 10], # k2t
+                              [2, 5]], # Ai
+                    objective_function = 'nse',
+                    maxiter=1000):
+                
+        def objective(p):
+            Str, Crec, TUin, EBin, Capc, kkt, k2t, Ai = p
+            
+            self.Basin.Str=Str
+            self.Basin.k2t=k2t
+            self.Basin.Crec=Crec
+            self.Basin.Ai=Ai
+            self.Basin.Capc=Capc
+            self.Basin.kkt=kkt
+            self.Basin.TUin=TUin
+            self.Basin.EBin=EBin
+            
+            self.RunModel()
+            
+            return -nashsutcliffe(evaluation, self.Q)
+        
+        return minimize(objective, x0=[100, 0, 0, 0, 39, 39, .2, 2], bounds=bounds)

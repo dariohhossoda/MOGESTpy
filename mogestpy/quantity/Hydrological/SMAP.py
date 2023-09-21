@@ -171,8 +171,8 @@ dos limites indicados.')
             evaluation (array-like): Evaluation values to compare
             bounds (list, optional): SMAP parameters bounds
             x0 (list, optional): Initial condition
-            objective_function(str, optional): Objective function, options:
-            nse, kge, rmse, pbias.
+            objective_function(any, optional): Objective function, options:
+            'nse', 'kge', 'rmse', 'pbias' or custom function.
         """
         
         def objective(p):
@@ -194,7 +194,10 @@ dos limites indicados.')
                              'rmse': rmse,
                              'pbias': pbias}
             
-            return obj_func_dict.get(objective_function)(evaluation, self.Q)
+            if type(objective_function == str):
+                return obj_func_dict.get(objective_function)(evaluation, self.Q)
+            else:
+                return lambda eval: objective_function(eval, self.Q)
         
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)

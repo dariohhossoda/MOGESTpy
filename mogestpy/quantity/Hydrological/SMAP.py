@@ -1,5 +1,5 @@
 from spotpy.objectivefunctions import kge, nashsutcliffe, rmse, pbias
-from scipy.optimize import minimize
+from scipy.optimize import minimize, differential_evolution
 
 
 class SMAP:
@@ -67,6 +67,11 @@ class SMAP:
             self.RSup = 0
             self.RSub = EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
+        def __str__(self):
+            return (f'SMAP Basin Object.\nParameters:\nStr = {self.Str},\
+\nCrec = {self.Crec},\nTUin = {self.Tuin},\nEBin = {self.Ebin}\nAD: {self.AD},\
+\nCapc = {self.Capc},\nkkt = {self.kkt},\nk2t = {self.k2t},\nAi = {self.Ai}')
+        
         def IsValid(self):
             """
             Checa se os valores estão dentro do limite do modelo
@@ -155,11 +160,23 @@ dos limites indicados.')
                               [30, 180], # kkt
                               [.2, 10], # k2t
                               [2, 5]], # Ai
-                    objective_function = 'nse',
-                    maxiter=1000):
-                
+                    optimization_engine='minimize',
+                    x0=[1050, 10, .5, 0, 40, 105, .2, 3.5],
+                    maxiter=1000,
+                    objective_function = 'nse'):
+        """Calibrate SMAP model using scipy.minimize on spotpy objective
+        functions.
+
+        Args:
+            evaluation (array-like): Evaluation values to compare
+            bounds (list, optional): SMAP parameters bounds
+            x0 (list, optional): Initial condition
+            objective_function(str, optional): Objective function, options:
+            nse, kge, rmse, pbias.
+        """
+        
         def objective(p):
-            Str, Crec, TUin, EBin, Capc, kkt, k2t, Ai = p
+            Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
             
             self.Basin.Str=Str
             self.Basin.k2t=k2t
@@ -167,11 +184,21 @@ dos limites indicados.')
             self.Basin.Ai=Ai
             self.Basin.Capc=Capc
             self.Basin.kkt=kkt
-            self.Basin.TUin=TUin
-            self.Basin.EBin=EBin
+            self.Basin.Tuin=Tuin
+            self.Basin.Ebin=Ebin
             
             self.RunModel()
             
-            return -nashsutcliffe(evaluation, self.Q)
+            obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
+                             'kge': lambda eval, Q: -kge(eval, Q),
+                             'rmse': rmse,
+                             'pbias': pbias}
+            
+            return obj_func_dict.get(objective_function)(evaluation, self.Q)
         
-        return minimize(objective, x0=[100, 0, 0, 0, 39, 39, .2, 2], bounds=bounds)
+        if optimization_engine == 'minimize':
+            return minimize(objective, x0=x0, bounds=bounds)
+        else:
+            return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
+        
+        

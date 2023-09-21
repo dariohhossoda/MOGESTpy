@@ -194,10 +194,9 @@ dos limites indicados.')
                              'rmse': rmse,
                              'pbias': pbias}
             
-            if type(objective_function == str):
+            if type(objective_function) == str:
                 return obj_func_dict.get(objective_function)(evaluation, self.Q)
-            else:
-                return lambda eval: objective_function(eval, self.Q)
+            return lambda eval: objective_function(eval, self.Q)
         
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)

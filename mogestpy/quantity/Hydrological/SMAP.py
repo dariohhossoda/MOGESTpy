@@ -69,7 +69,7 @@ class SMAP:
 
         def __str__(self):
             return (f'SMAP Basin Object.\nParameters:\nStr = {self.Str},\
-\nCrec = {self.Crec},\nTUin = {self.Tuin},\nEBin = {self.Ebin},\nAD: {self.AD},\
+\nCrec = {self.Crec},\nTUin = {self.Tuin},\nEBin = {self.Ebin},\nAD = {self.AD},\
 \nCapc = {self.Capc},\nkkt = {self.kkt},\nk2t = {self.k2t},\nAi = {self.Ai}')
         
         def IsValid(self):
@@ -197,7 +197,7 @@ dos limites indicados.')
             if type(objective_function) == str:
                 return obj_func_dict.get(objective_function)(evaluation, self.Q)
             return (lambda eval, Q: objective_function(eval, Q))(evaluation, self.Q)
-        
+         
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)
         return differential_evolution(objective, bounds=bounds, maxiter=maxiter)

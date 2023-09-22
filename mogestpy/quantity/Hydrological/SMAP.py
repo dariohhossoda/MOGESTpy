@@ -95,9 +95,9 @@ class SMAP:
 
             param_ranges = [100 <= self.Str <= 2000,
                             .2 <= self.k2t <= 10,
-                            0 <= self.Crec <= 20,
+                            0 <= self.Crec <= 20/100,
                             2 <= self.Ai <= 5,
-                            30 <= self.Capc <= 50,
+                            30/100 <= self.Capc <= 50/100,
                             30 <= self.kkt <= 180]
 
             for index, verification in enumerate(param_ranges):

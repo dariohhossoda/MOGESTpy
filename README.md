@@ -1,6 +1,5 @@
 <div id="top"></div>
 
-
 <div align=center>
 <!-- https://user-images.githubusercontent.com/58784697/200683473-b94e7a80-6f62-405d-8ba9-06ac5620044e.svg -->
 
@@ -13,93 +12,93 @@
 </div>
 
 <details>
-<Summary><font size="5">Índice</font></Summary>
+<Summary><font size="5">Table of Contents</font></Summary>
 
 - [MOGESTpy](#mogestpy)
-  - [O que é o MOGESTpy?](#o-que-é-o-mogestpy)
-    - [Modelo de Gestão de Recursos Hídricos](#modelo-de-gestão-de-recursos-hídricos)
-  - [Modelos utilizados no MOGESTpy](#modelos-utilizados-no-mogestpy)
-  - [Estrutura do Repositório](#estrutura-do-repositório)
-  - [Como utilizar o MOGESTpy?](#como-utilizar-o-mogestpy)
-  - [Como colaborar com o projeto?](#como-colaborar-com-o-projeto)
+  - [What is MOGESTpy?](#what-is-mogestpy)
+    - [Water Resources Management Model](#water-resources-management-model)
+  - [Models used in MOGESTpy](#models-used-in-mogestpy)
+  - [Repository Structure](#repository-structure)
+  - [How to Use MOGESTpy?](#how-to-use-mogestpy)
+  - [How to Contribute to the Project?](#how-to-contribute-to-the-project)
 
 </details>
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-## O que é o MOGESTpy?
+## What is MOGESTpy?
 
-MOGESTpy é a sigla para **Mo**delo de **Gest**ão de Recursos Hídricos desenvolvido em linguagem [Python3](https://www.python.org/).
+MOGESTpy is an acronym for **Mo**del of **Gest**ion of Water Resources developed in the [Python3](https://www.python.org/) programming language.
 
-### Modelo de Gestão de Recursos Hídricos
+### Water Resources Management Model
 
-Um modelo de gestão utiliza ferramentas de modelagem de quantidade e qualidade da água como forma de auxiliar a tomada de decisão. Esta modelagem é feita por através de modelos de simulação em que processos naturais são representados desde a precipitação na área da bacia até seu transporte em rios e canais para o exutório da bacia.
+A management model uses water quantity and quality modeling tools to assist in decision-making. This modeling is done through simulation models where natural processes are represented from precipitation in the watershed area to its transport in rivers and channels to the watershed's outlet.
 
-<!-- Figura Tese BRITES -->
+<!-- Thesis Figure BRITES -->
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/58784697/199972694-102a218c-bf48-4db4-b0ab-e96ff2609ebd.svg" />
 </p>
 
-Ferramentas para o Processo de Gestão de Recursos Hídricos[^Brites,2010]
+Tools for the Water Resources Management Process[^Brites,2010]
 
+## Models used in MOGESTpy
 
-## Modelos utilizados no MOGESTpy
-
-Os modelos utilizados no MOGESTpy são:
+The models used in MOGESTpy include:
 
 - [SIHQUAL](Quantity/Hydrodynamic/)
 - [SMAP](Quantity/Hydrological)
 - [0D (Zero Dimensional)](Quality/)
 - [BuildUp-Washoff](Quality/)
 
-Para mais detalhes, cheque a documentação dentro do repositório.
+For more details, check the documentation within the repository.
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-## Estrutura do Repositório
+## Repository Structure
 
-O repositório está dividido em três partes principais: modelos de qualidade (Quality), modelos quantitativos (Quantity) e dados de simulação para testes e exemplos do funcionamento de cada módulo (Datasets).
+The repository is divided into three main parts: quality models (Quality), quantitative models (Quantity), and simulation data for testing and examples of how each module works (Datasets).
 
 ```
 MOGESTpy
 ├─ Datasets
-│   └─ Results
+│ └─ Results
 ├─ Quality
-│   ├─ BuWo.py
-│   └─ ZeroD.py
+│ ├─ BuWo.py
+│ └─ ZeroD.py
 └─ Quantity
-    ├─ Hydrological
-    │   ├─ SMAP.py
-    │   ├─ Muskingum.py
-    │   └─ MassBalance.py
-    └─ Hydrodynamic
-        └─ SIHQUAL.py
+├─ Hydrological
+│ ├─ SMAP.py
+│ ├─ Muskingum.py
+│ └─ MassBalance.py
+└─ Hydrodynamic
+└─ SIHQUAL.py
 ```
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-## Como utilizar o MOGESTpy?
+## How to Use MOGESTpy?
 
-Atualmente, para executar o MOGESTpy é necessário clonar o repositório em sua máquina e chamar os módulos individualmente. Futuramente pensa-se em incluir um Framework para facilitar sua utilização.
+Currently, to run MOGESTpy, you need to clone the repository to your machine and call the modules individually. In the future, a framework is planned to be included to facilitate its use.
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-## Como colaborar com o projeto?
+## How to Contribute to the Project?
 
-Para contribuir com o projeto basta criar uma issue, adições ao código são bem-vindas, basta seguir o nosso [documento de colaboração](CONTRIBUTING.md).
+To contribute to the project, simply create an issue. Code additions are welcome; just follow our [contributing document](CONTRIBUTING.md).
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <div align=center>
 
-|Agradecimentos|
+|Acknowledgments|
 |:---:|
 |![LogoLabSid](https://user-images.githubusercontent.com/58784697/200078179-ea05ba48-2b67-4f30-bea0-78e1c1507ae1.svg)|
-|[Laboratório de Sistemas de Suporte a Decisões](https://sites.usp.br/labsid)|
+|[Laboratory of Decision Support Systems](https://sites.usp.br/labsid)|
 
 </div>
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 [^Brites,2010]: Brites, A. P. Z. Enquadramento dos corpos de água através de metas progressivas: Probabilidade de ocorrência e custos de despoluição hídrica. Tese de Doutorado. Universidade de São Paulo, 2010.

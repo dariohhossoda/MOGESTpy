@@ -60,9 +60,9 @@ class SMAP:
             self.k2t = k2t
             self.Ai = Ai
 
-            self.RSolo = TUin * Str
+            self.RSolo = 0 #TUin * Str
             self.RSup = 0
-            self.RSub = EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
+            self.RSub = 0 #EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
         def __str__(self):
             return (
@@ -108,8 +108,9 @@ class SMAP:
 
             for index, verification in enumerate(param_ranges):
                 if verification is False:
-                    print(f'{param_dict.get(index)} está fora \
-dos limites indicados.')
+                    param_name = param_dict.get(index)
+                    message = f'{param_name} is outside the specified limits.'
+                    print(message)
                     return False
             return True
 
@@ -130,6 +131,11 @@ dos limites indicados.')
 
         self.Q = []
 
+        self.Basin.RSolo = self.Basin.Tuin * self.Basin.Str
+        self.Basin.RSup = 0
+        self.Basin.Rsub = self.Basin.Ebin / (
+            1 - (.5 ** (1 / self.Basin.kkt))) / self.Basin.AD * 86.4
+        
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 

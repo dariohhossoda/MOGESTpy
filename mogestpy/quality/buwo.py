@@ -1,36 +1,33 @@
-import math
-import numpy as np
-
 class BuildUpWashoff:
     def __init__(self, landuse_name, Bmax, Nb, Kb,
                  threshold_flow, Nw, Kw, BuMethod, WoMethod,
                  timestep_h, initial_buildup, area, area_fraction,
-                 surface_flow, aggregate = False):
+                 surface_flow, aggregate=False):
 
         self.LanduseName = landuse_name
-        
+
         self.Bmax = Bmax
         self.Nb = Nb
         self.Kb = Kb
         self.Kw = Kw
         self.Nw = Nw
-        
+
         self.timestep_h = timestep_h
         self.timestep_d = self.timestep_h / 24
-        
-        self.Washoff = []
-        self.BuildUp = []
+
+        self.Washoff = [0,0,0,0,0,0,0,0,0,0,0,0] #aqui o tamanho destes vetores deve ser alterado de modo a determinar o intervalo de tempo total simulado
+        self.BuildUp = [0,0,0,0,0,0,0,0,0,0,0,0]
         self.EffectiveWashoff = []
-        
+
         self.Aggregate = aggregate
         self.InitialBuildUp = initial_buildup
-        
+
         self.Area = area
         self.AreaFraction = area_fraction
-        
+
         self.SurfaceFlow = surface_flow
         self.ThresholdFlow = threshold_flow
-        
+
         self.BuMethod = BuMethod
         self.WoMethod = WoMethod
 
@@ -40,7 +37,7 @@ class BuildUpWashoff:
             time = (buildup / self.Kb) ** (1 / self.Nb)
         except:
             time = 0
-
+        print("função timefrombuilduppow ", (buildup / self.Kb) ** (1 / self.Nb))
         return time
 
     def TimeFromBuildUpExp(self, buildup):
@@ -58,17 +55,20 @@ class BuildUpWashoff:
             time = 0
 
         return time
+
     # endregion Time from BuildUp Equations
 
     # region BuildUp Equations
     def BuildUpPow(self, time):
-        return math.min(self.Bmax, self.Kb * (time ** self.Nb))
+        print("funcao builduppow retornando: ", min(self.Bmax, self.Kb * (time ** self.Nb)))
+        return min(self.Bmax, self.Kb * (time ** self.Nb))
 
     def BuildUpExp(self, time):
         return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
     def BuildUpSat(self, time):
         return self.Bmax * time / (self.Kb + time)
+
     # endregion BuildUp Equations
 
     # region Washoff Equations
@@ -80,36 +80,42 @@ class BuildUpWashoff:
 
     def WashoffEMC(self, surface_flow, watershed_area):
         return self.Kw * surface_flow * watershed_area
+
     # endregion Washoff Equations
 
     def Process(self):
         """
         Roda o modelo de acúmulo e lavagem (BuildUp e Washoff).
         """
+        print("teste 1", self.Washoff, len(self.Washoff))
         buildup = self.InitialBuildUp / (self.Area * self.AreaFraction)
-        
-        time_from_buildup = {1 : self.TimeFromBuildUpPow(buildup),
-                             2 : self.TimeFromBuildUpPow(buildup),
-                             3 : self.TimeFromBuildUpPow(buildup)}
-        
+
+        time_from_buildup = {1: self.TimeFromBuildUpPow(buildup),
+                             2: self.TimeFromBuildUpPow(buildup),
+                             3: self.TimeFromBuildUpPow(buildup)}
+
         bu_time = time_from_buildup.get(self.BuMethod)
-        
+        print("bu_time",bu_time)
+
         for i in range(len(self.Washoff)):
+            print("entrou no laço")
             if self.SurfaceFlow[i] < self.ThresholdFlow:
                 bu_time += self.timestep_d
                 self.Washoff[i] = 0
 
-                buildup_curve = {1 : self.BuildUpPow(bu_time),
-                                 2 : self.BuildUpExp(bu_time),
-                                 3 : self.BuildUpSat(bu_time)}
+                buildup_curve = {1: self.BuildUpPow(bu_time),
+                                 2: self.BuildUpExp(bu_time),
+                                 3: self.BuildUpSat(bu_time)}
+                print("buildup curve vale", buildup_curve)
 
-                buildup_specific = buildup_curve.get(self.BuMethod)
+                buildup_specific = buildup_curve.get(self.BuMethod)     #2
 
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
+                print("buildupmass = ", buildup_mass)
             else:
-                washoff_curve = {1 : self.WashoffExp(self.SurfaceFlow, buildup_mass),
-                                 2 : self.WashoffRating(self.SurfaceFlow, buildup_mass),
-                                 3 : self.WashoffEMC(self.SurfaceFlow, buildup_mass)}
+                washoff_curve = {1: self.WashoffExp(self.SurfaceFlow, buildup_mass),
+                                 2: self.WashoffRating(self.SurfaceFlow, buildup_mass),
+                                 3: self.WashoffEMC(self.SurfaceFlow, buildup_mass)}
 
                 washoff_rate = washoff_curve.get(self.WoMethod)
 
@@ -121,3 +127,4 @@ class BuildUpWashoff:
                 bu_time = time_from_buildup.get(self.BuMethod)
 
             self.BuildUp[i] = buildup_mass
+        print(self.BuildUp,self.Washoff)

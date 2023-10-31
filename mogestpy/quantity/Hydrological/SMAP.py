@@ -117,6 +117,7 @@ dos limites indicados.')
         self.Q = []
 
         for i in range(self.Point.n):
+            print(i)
             TU = self.Basin.RSolo / self.Basin.Str
 
             ES = ((self.Point.P[i] - self.Basin.Ai) ** 2

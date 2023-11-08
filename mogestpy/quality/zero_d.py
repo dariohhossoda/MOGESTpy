@@ -7,6 +7,7 @@ class ZeroDimensional:
         """
         TODO: Documentar
         """
+        print("init")
         self.Input = ZeroDimensional.Input(volume,
                                            Qin,
                                            Qout,
@@ -16,7 +17,6 @@ class ZeroDimensional:
         self.Output = ZeroDimensional.Output(self.SimCount)
         self.Params = ZeroDimensional.Params(k, v)
         self.Timestep = timestep
-
     class Output:
         """
         Saída do modelo 0D

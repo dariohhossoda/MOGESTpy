@@ -1,3 +1,6 @@
+from spotpy.objectivefunctions import kge, nashsutcliffe, rmse, pbias
+from scipy.optimize import minimize, differential_evolution
+
 class BuildUpWashoff:
     def __init__(self, landuse_name, Bmax, Nb, Kb,
                  threshold_flow, Nw, Kw, BuMethod, WoMethod,
@@ -128,3 +131,45 @@ class BuildUpWashoff:
 
             self.BuildUp[i] = buildup_mass
         print(self.BuildUp,self.Washoff)
+    
+    def Calibrate(self, evaluation,
+                    bounds = [
+                              [0.2, 0.2], # Thresholdflow/EscMax
+                              [0.001, 0.05], # Nw
+                              [0.001, 0.05]], # Kw
+                    optimization_engine='minimize',
+                    x0=[ 0.2, 0.01, 0.01],
+                    maxiter=1000,
+                    objective_function = 'nse'):
+        """Calibrate BuWo model using scipy.minimize on spotpy objective
+        functions.
+
+        Args:
+            evaluation (array-like): Evaluation values to compare (Bu/Wo)
+            bounds (list, optional): Buildup parameters bounds
+            x0 (list, optional): Initial condition
+            objective_function(any, optional): Objective function, options:
+            'nse', 'kge', 'rmse', 'pbias' or custom function.
+        """
+        
+        def objective(p):
+            threshold_flow, Nw, Kw = p
+            self.threshold_flow=threshold_flow
+            self.Nw=Nw
+            self.Kw=Kw
+
+            self.Process()
+            
+            obj_func_dict = {'nse': lambda eval, Washoff: -nashsutcliffe(eval, Washoff),
+                             'kge': lambda eval, Washoff: -kge(eval, Washoff),
+                             'rmse': rmse,
+                             'pbias': pbias}
+            
+            if type(objective_function) == str:
+                return obj_func_dict.get(objective_function)(evaluation, self.Washoff)
+            return lambda eval: objective_function(eval, self.Washoff)
+        
+        if optimization_engine == 'minimize':
+            return minimize(objective, x0=x0, bounds=bounds)
+        else:
+            return differential_evolution(objective, bounds=bounds, maxiter=maxiter)

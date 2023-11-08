@@ -40,7 +40,6 @@ class BuildUpWashoff:
             time = (buildup / self.Kb) ** (1 / self.Nb)
         except:
             time = 0
-        print("função timefrombuilduppow ", (buildup / self.Kb) ** (1 / self.Nb))
         return time
 
     def TimeFromBuildUpExp(self, buildup):
@@ -63,7 +62,6 @@ class BuildUpWashoff:
 
     # region BuildUp Equations
     def BuildUpPow(self, time):
-        print("funcao builduppow retornando: ", min(self.Bmax, self.Kb * (time ** self.Nb)))
         return min(self.Bmax, self.Kb * (time ** self.Nb))
 
     def BuildUpExp(self, time):
@@ -90,7 +88,6 @@ class BuildUpWashoff:
         """
         Roda o modelo de acúmulo e lavagem (BuildUp e Washoff).
         """
-        print("teste 1", self.Washoff, len(self.Washoff))
         buildup = self.InitialBuildUp / (self.Area * self.AreaFraction)
 
         time_from_buildup = {1: self.TimeFromBuildUpPow(buildup),
@@ -98,10 +95,8 @@ class BuildUpWashoff:
                              3: self.TimeFromBuildUpPow(buildup)}
 
         bu_time = time_from_buildup.get(self.BuMethod)
-        print("bu_time",bu_time)
 
         for i in range(len(self.Washoff)):
-            print("entrou no laço")
             if self.SurfaceFlow[i] < self.ThresholdFlow:
                 bu_time += self.timestep_d
                 self.Washoff[i] = 0
@@ -109,12 +104,10 @@ class BuildUpWashoff:
                 buildup_curve = {1: self.BuildUpPow(bu_time),
                                  2: self.BuildUpExp(bu_time),
                                  3: self.BuildUpSat(bu_time)}
-                print("buildup curve vale", buildup_curve)
 
                 buildup_specific = buildup_curve.get(self.BuMethod)     #2
 
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
-                print("buildupmass = ", buildup_mass)
             else:
                 washoff_curve = {1: self.WashoffExp(self.SurfaceFlow, buildup_mass),
                                  2: self.WashoffRating(self.SurfaceFlow, buildup_mass),
@@ -130,8 +123,6 @@ class BuildUpWashoff:
                 bu_time = time_from_buildup.get(self.BuMethod)
 
             self.BuildUp[i] = buildup_mass
-        print(self.BuildUp,self.Washoff)
-    
     def Calibrate(self, evaluation,
                     bounds = [
                               [0.2, 0.2], # Thresholdflow/EscMax

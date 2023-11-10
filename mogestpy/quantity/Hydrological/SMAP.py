@@ -12,6 +12,8 @@ class SMAP:
         self.Point = point
         self.Basin = basin
         self.Q = []
+        self.Qb = []
+        self.Qd = []
 
     class Point:
         """
@@ -169,7 +171,8 @@ class SMAP:
             self.Basin.RSub += Rec - EB
 
             self.Q.append((ED + EB) * self.Basin.AD / 86.4)
-
+            self.Qb.append(EB * self.Basin.AD / 86.4)
+            self.Qd.append(ED * self.Basin.AD / 86.4)
 
     def Calibrate(self, evaluation,
                     bounds = [[100.0, 2000.0], # Str      

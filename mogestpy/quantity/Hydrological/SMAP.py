@@ -4,8 +4,8 @@ from scipy.optimize import minimize, differential_evolution
 
 class SMAP:
     """
-    Classe SMAP (Soil Moisture Accounting Procedure). Modelo
-    Hidrológico para simulação chuva-vazão em bacias.
+        SMAP Class (Soil Moisture Accounting Procedure). Hydrological
+        Model for Rainfall-Runoff Simulation in Watersheds.
     """
 
     def __init__(self, point, basin):
@@ -17,14 +17,13 @@ class SMAP:
 
     class Point:
         """
-        Representação de Point no modelo SMAP
+        Representation of a Point in the SMAP model.
 
-        Atributos
+        Attributes
         ----
-            P : ponto de controle com a série de precipitações
-            (array)
-            EP : evapotranspiração potencial
-            n : tamanho da série de precipitações
+            P: control point with precipitation series (array)
+            EP: potential evapotranspiration
+            n: size of the precipitation series
         """
 
         def __init__(self, P, EP):
@@ -34,21 +33,19 @@ class SMAP:
 
     class Basin:
         """
-        Representação da bacia hidrográfica no modelo SMAP
+        Representation of the watershed in the SMAP model.
 
-        Atributos
+        Attributes
         ----
-            AD : área de drenagem (km^2)
-            Ai : abstração inicial ( = 2.5, default) (mm)
-            Capc : capacidade de campo (%)
-            kkt : constante de recessão (dias)
-            k2t : constante de recessão para o escoamento
-            superficial (dias);
-            Crec: recarga subterrânea (%);
-            Str : capacidade de saturação (mm);
-            EBin: escoamento básico inicial (m3/s);
-            TUin: teor de umidade inicial (-).
-
+            AD: drainage area (km^2)
+            Ai: initial abstraction ( = 2.5, default) (mm)
+            Capc: field capacity (%)
+            kkt: recession constant (days)
+            k2t: recession constant for surface runoff (days)
+            Crec: groundwater recharge (%)
+            Str: saturation capacity (mm)
+            EBin: initial baseflow (m3/s)
+            TUin: initial moisture content (-).
         """
 
         def __init__(self,  AD: float, Str=1000, Crec=10,
@@ -65,27 +62,36 @@ class SMAP:
             self.k2t = k2t
             self.Ai = Ai
 
-            self.RSolo = TUin * Str
+            self.RSolo = 0 #TUin * Str
             self.RSup = 0
-            self.RSub = EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
+            self.RSub = 0 #EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
         def __str__(self):
-            return (f'SMAP Basin Object.\nParameters:\nStr = {self.Str},\
-\nCrec = {self.Crec},\nTUin = {self.Tuin},\nEBin = {self.Ebin}\nAD: {self.AD},\
-\nCapc = {self.Capc},\nkkt = {self.kkt},\nk2t = {self.k2t},\nAi = {self.Ai}')
+            return (
+                f'SMAP Basin Object:\n'
+                f'  Str = {self.Str},\n'
+                f'  Crec = {self.Crec},\n'
+                f'  Capc = {self.Capc},\n'
+                f'  kkt = {self.kkt},\n'
+                f'  k2t = {self.k2t},\n'
+                f'  Ai = {self.Ai},\n'
+                f'  TUin = {self.Tuin},\n'
+                f'  EBin = {self.Ebin},\n'
+                f'  AD = {self.AD}'
+            )
         
         def IsValid(self):
             """
-            Checa se os valores estão dentro do limite do modelo
+            Checks if the values are within the model's limits.
 
-            Limites:
+            Limits:
             ----
-            Str : 100 - 2000
-            k2t : 0.2 - 10
-            Crec : 0 - 20
-            Ai : 2 - 5
-            Capc : 30 - 50
-            kkt : 30 - 180
+                Str: 100 - 2000
+                k2t: 0.2 - 10
+                Crec: 0 - 20
+                Ai: 2 - 5
+                Capc: 30 - 50
+                kkt: 30 - 180
             """
 
             param_dict = {0: 'Str',
@@ -97,27 +103,41 @@ class SMAP:
 
             param_ranges = [100 <= self.Str <= 2000,
                             .2 <= self.k2t <= 10,
-                            0 <= self.Crec <= 20,
+                            0 <= self.Crec <= 20/100,
                             2 <= self.Ai <= 5,
-                            30 <= self.Capc <= 50,
+                            30/100 <= self.Capc <= 50/100,
                             30 <= self.kkt <= 180]
 
             for index, verification in enumerate(param_ranges):
                 if verification is False:
-                    print(f'{param_dict.get(index)} está fora \
-dos limites indicados.')
+                    param_name = param_dict.get(index)
+                    message = f'{param_name} is outside the specified limits.'
+                    print(message)
                     return False
             return True
 
     def RunModel(self):
         """
-        Roda o modelo SMAP, retornando a vazão no exutório
-        através da simulação do fluxo d'água nos processos que
-        ocorrem na bacia hidrográfica.
+        Runs the SMAP model, calculating the watershed's outflow by
+        simulating the water flow processes within the basin.
+
+        This function calculates the runoff and outflow based on the
+        hydrological processes occurring in the watershed.
+
+        Returns:
+            None
+
+        Updates:
+            self.Q: List of simulated outflow values for each time step.
         """
 
         self.Q = []
 
+        self.Basin.RSolo = self.Basin.Tuin * self.Basin.Str
+        self.Basin.RSup = 0
+        self.Basin.Rsub = self.Basin.Ebin / (
+            1 - (.5 ** (1 / self.Basin.kkt))) / self.Basin.AD * 86.4
+        
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 
@@ -167,15 +187,22 @@ dos limites indicados.')
                     x0=[1050, 10, .5, 0, 40, 105, .2, 3.5],
                     maxiter=1000,
                     objective_function = 'nse'):
-        """Calibrate SMAP model using scipy.minimize on spotpy objective
-        functions.
+        """
+        Calibrate the SMAP model using scipy.minimize or
+        differential evolution on spotpy objective functions.
 
         Args:
-            evaluation (array-like): Evaluation values to compare
-            bounds (list, optional): SMAP parameters bounds
-            x0 (list, optional): Initial condition
-            objective_function(any, optional): Objective function, options:
-            'nse', 'kge', 'rmse', 'pbias' or custom function.
+            evaluation (array-like): Evaluation values to compare.
+            bounds (list, optional): SMAP parameters bounds.
+            optimization_engine (str, optional): Optimization engine,
+            'minimize' (default) or 'differential_evolution'.
+            x0 (list, optional): Initial conditions.
+            maxiter (int, optional): Max iterations for optimization.
+            objective_function (str or callable, optional): Objective function,
+            options: 'nse', 'kge', 'rmse', 'pbias', or custom.
+
+        Returns:
+            Result object: Optimization result.
         """
         
         def objective(p):
@@ -199,11 +226,10 @@ dos limites indicados.')
             
             if type(objective_function) == str:
                 return obj_func_dict.get(objective_function)(evaluation, self.Q)
-            return lambda eval: objective_function(eval, self.Q)
-        
+            return objective_function(evaluation, self.Q)
+         
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)
-        else:
-            return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
+        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
         
         

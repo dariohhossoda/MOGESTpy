@@ -1,0 +1,92 @@
+Name                                  ,Code     ,Type ,SubBasin ,City                ,State     ,Responsible  ,Latitude ,Longitude ,StartDate  ,EndDate    ,NYD ,MD   ,N_YWOMD ,YWMD
+USINA BATISTA                         ,02347049 ,   2 ,      64 ,PILAR DO SUL        ,SÃO PAULO ,DAEE-SP      ,-23.8333 ,-47.65    ,1937/01/01 ,2014/11/30 , 78 ,11.1 ,     66 , 15.4
+SÃO MIGUEL ARCANJO                    ,02347050 ,   2 ,      64 ,SÃO MIGUEL ARCANJO  ,SÃO PAULO ,DAEE-SP      ,-23.8667 ,-47.9997  ,1936/11/13 ,2014/12/31 , 79 , 1.9 ,     62 , 21.5
+BAIRRO RIBEIRÃO BONITO                ,02347147 ,   2 ,      64 ,PIEDADE             ,SÃO PAULO ,DAEE-SP      ,-23.85   ,-47.45    ,1972/08/01 ,2001/03/15 , 30 , 0.0 ,     27 , 10.0
+FAZENDA MOQUEM                        ,02347148 ,   2 ,      64 ,PILAR DO SUL        ,SÃO PAULO ,DAEE-SP      ,-23.9333 ,-47.7167  ,1972/09/01 ,2001/01/31 , 30 , 1.2 ,     26 , 13.3
+SANTA CRUZ DOS MOTAS                  ,02347149 ,   2 ,      64 ,SÃO MIGUEL ARCANJO  ,SÃO PAULO ,DAEE-SP      ,-23.7333 ,-47.9333  ,1972/08/01 ,2014/11/30 , 43 , 0.2 ,     39 ,  9.3
+ALEGRE                                ,02347151 ,   2 ,      64 ,PILAR DO SUL        ,SÃO PAULO ,DAEE-SP      ,-23.9333 ,-47.8333  ,1972/10/25 ,1999/12/31 , 28 , 0.2 ,     24 , 14.3
+UHE JURUMIRIM BREJAUVA                ,02347192 ,   2 ,      64 ,SÃO MIGUEL ARCANJO  ,SÃO PAULO ,PARANAPANEMA ,-23.7856 ,-47.6356  ,2012/01/01 ,2012/12/31 ,  1 , 0.0 ,      1 ,  0.0
+SERRINHA                              ,02348013 ,   2 ,      64 ,PARANAPANEMA        ,SÃO PAULO ,DAEE-SP      ,-23.3    ,-48.8833  ,1971/05/01 ,1998/09/30 , 28 , 1.4 ,     17 , 39.3
+GUAREI                                ,02348014 ,   2 ,      64 ,GUAREI              ,SÃO PAULO ,DAEE-SP      ,-23.3667 ,-48.1833  ,1959/02/08 ,2014/03/31 , 56 , 4.2 ,     49 , 12.5
+PARANAPANEMA                          ,02348015 ,   2 ,      64 ,PARANAPANEMA        ,SÃO PAULO ,DAEE-SP      ,-23.3833 ,-48.7333  ,1952/06/01 ,2001/01/31 , 50 ,33.1 ,     27 , 46.0
+FAZENDA ATERRADINHO                   ,02348016 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.45   ,-48.5833  ,1939/10/01 ,2003/03/31 , 65 , 0.1 ,     61 ,  6.2
+ANGATUBA                              ,02348017 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.4833 ,-48.4167  ,1939/09/01 ,2014/12/31 , 76 , 0.6 ,     64 , 15.8
+BOM RETIRO                            ,02348019 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.55   ,-48.3     ,1936/11/01 ,1997/01/31 , 62 ,27.7 ,     43 , 30.6
+RECHA                                 ,02348020 ,   2 ,      64 ,ITAPETININGA        ,SÃO PAULO ,DAEE-SP      ,-23.6    ,-48.3167  ,1966/09/01 ,1998/12/31 , 33 , 2.8 ,     24 , 27.3
+ENGENHEIRO HERMILO                    ,02348022 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.6    ,-48.45    ,1939/10/01 ,2004/02/29 , 66 ,16.8 ,     34 , 48.5
+CRUZEIRINHO                           ,02348023 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,DAEE-SP      ,-23.6333 ,-48.8333  ,1970/07/01 ,1998/12/31 , 29 , 0.0 ,     27 ,  6.9
+GUARIZINHO                            ,02348024 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,DAEE-SP      ,-23.7167 ,-48.85    ,1965/05/12 ,1998/12/31 , 34 , 3.3 ,     29 , 14.7
+GRAMADINHO                            ,02348025 ,   2 ,      64 ,ITAPETININGA        ,SÃO PAULO ,DAEE-SP      ,-23.7667 ,-48.1333  ,1947/01/01 ,2000/12/31 , 54 ,18.2 ,     42 , 22.2
+FAZENDA SÃO JOSÉ DO BOM RETIRO        ,02348026 ,   2 ,      64 ,ITAPETININGA        ,SÃO PAULO ,DAEE-SP      ,-23.7833 ,-48.35    ,1970/05/14 ,2012/12/31 , 43 , 0.2 ,     38 , 11.6
+BURI                                  ,02348027 ,   2 ,      64 ,BURI                ,SÃO PAULO ,DAEE-SP      ,-23.8    ,-48.5833  ,1951/09/01 ,2001/01/31 , 51 , 0.1 ,     42 , 17.6
+ITAPETININGA                          ,02348028 ,   2 ,      64 ,ITAPETININGA        ,SÃO PAULO ,DAEE-SP      ,-23.5833 ,-48.05    ,1939/08/01 ,2014/11/30 , 76 , 0.7 ,     73 ,  3.9
+FERREIRA DAS ALMAS                    ,02348029 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-23.95   ,-48.2167  ,1947/08/01 ,1999/12/31 , 53 , 1.8 ,     43 , 18.9
+TAQUARI - VAI                         ,02348030 ,   2 ,      64 ,BURI                ,SÃO PAULO ,DAEE-SP      ,-23.9167 ,-48.7     ,1945/12/01 ,1996/10/10 , 52 , 3.0 ,     41 , 21.2
+ITAPEVA                               ,02348031 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,DAEE-SP      ,-23.9667 ,-48.95    ,1946/12/01 ,2014/11/30 , 69 , 2.4 ,     51 , 26.1
+ANGATUBA                              ,02348033 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,ANA          ,-23.5639 ,-48.3897  ,1938/03/01 ,2019/07/31 , 82 , 3.8 ,     62 , 24.4
+UHE JURUMIRIM CAMPINA DO MONTE ALEGRE ,02348034 ,   2 ,      64 ,CAMPINA DO MONTE AL ,SÃO PAULO ,PARANAPANEMA ,-23.5928 ,-48.4914  ,1943/05/01 ,2012/12/31 , 70 , 2.9 ,     60 , 14.3
+CERRADINHO                            ,02348037 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,ANA          ,-23.9697 ,-48.2783  ,1939/06/01 ,2019/07/31 , 81 , 1.4 ,     68 , 16.0
+ITAPETININGA                          ,02348041 ,   2 ,      64 ,ITAPETININGA        ,SÃO PAULO ,INMET        ,-23.6    ,-48.05    ,1961/01/01 ,1970/11/30 , 10 , 5.2 ,      4 , 60.0
+ITAPEVA                               ,02348043 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,INMET        ,-23.95   ,-48.8833  ,1961/01/01 ,1993/04/15 , 33 ,35.2 ,     14 , 57.6
+FAZENDA BEM VINDA                     ,02348063 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.5167 ,-48.55    ,1958/08/14 ,2000/01/31 , 43 , 0.3 ,     37 , 14.0
+BAIRRO DO CAPIM                       ,02348072 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.4    ,-48.4833  ,1970/07/28 ,1998/12/31 , 29 , 0.4 ,     24 , 17.2
+HOLAMBRA                              ,02348074 ,   2 ,      64 ,PARANAPANEMA        ,SÃO PAULO ,DAEE-SP      ,-23.4333 ,-48.8833  ,1971/03/01 ,1995/03/31 , 25 , 1.3 ,     16 , 36.0
+FAZENDA ENTRE RIOS                    ,02348075 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,DAEE-SP      ,-23.2667 ,-48.4333  ,1972/09/15 ,1998/12/31 , 27 , 1.1 ,     21 , 22.2
+FAZENDA BOA ESPERANÇA                 ,02348076 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-23.95   ,-48.4167  ,1972/11/01 ,2011/07/31 , 40 , 2.0 ,     33 , 17.5
+JACUTINGA (FAZENDA ANDRÉA)            ,02348077 ,   2 ,      64 ,AVARÉ               ,SÃO PAULO ,DAEE-SP      ,-23.2    ,-48.8167  ,1972/12/01 ,2000/12/19 , 29 , 3.8 ,     22 , 24.1
+ARACAÇU                               ,02348080 ,   2 ,      64 ,BURI                ,SÃO PAULO ,DAEE-SP      ,-23.7167 ,-48.4833  ,1982/10/30 ,2000/12/31 , 19 , 0.0 ,     17 , 10.5
+UHE JURUMIRIM BURI                    ,02348086 ,   2 ,      64 ,BURI                ,SÃO PAULO ,PARANAPANEMA ,-23.7986 ,-48.5867  ,2012/01/01 ,2012/12/31 ,  1 , 2.2 ,      0 ,100.0
+ENGENHEIRO BACELAR                    ,02348088 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,ANA          ,-23.8889 ,-48.7708  ,1981/03/24 ,2019/07/31 , 39 , 1.2 ,     32 , 17.9
+UHE CANOAS I BAIRRO MORRO CAVADO      ,02348090 ,   2 ,      64 ,BURI                ,SÃO PAULO ,CONS.CANOAS  ,-23.7122 ,-48.7042  ,2012/01/01 ,2012/12/31 ,  1 , 1.4 ,      0 ,100.0
+UHE CANOAS II FAZENDA TRÊS LAGOAS     ,02348092 ,   2 ,      64 ,ANGATUBA            ,SÃO PAULO ,CONS.CANOAS  ,-23.4283 ,-48.44    ,2012/01/01 ,2012/12/31 ,  1 ,22.4 ,      0 ,100.0
+FAZENDA PALMEIRAS                     ,02349003 ,   2 ,      64 ,IPAUÇU              ,SÃO PAULO ,DAEE-SP      ,-23.0333 ,-49.5667  ,1941/11/16 ,2014/11/30 , 74 , 1.6 ,     68 ,  8.1
+PIRAJU                                ,02349007 ,   2 ,      64 ,PIRAJU              ,SÃO PAULO ,ANA          ,-23.1858 ,-49.3903  ,1938/05/17 ,2019/06/30 , 82 , 0.2 ,     69 , 15.9
+TIMBURI                               ,02349010 ,   2 ,      64 ,TIMBURI             ,SÃO PAULO ,DAEE-SP      ,-23.2    ,-49.6167  ,1939/10/01 ,1999/12/31 , 61 ,21.4 ,     36 , 41.0
+SARUTAIA (US. BOA VISTA - CLFSC)      ,02349011 ,   2 ,      64 ,SARUTAIA            ,SÃO PAULO ,DAEE-SP      ,-23.2333 ,-49.4667  ,1938/05/01 ,2014/12/31 , 77 , 1.0 ,     70 ,  9.1
+VOLTA GRANDE                          ,02349012 ,   2 ,      64 ,ITAÍ                ,SÃO PAULO ,DAEE-SP      ,-23.3    ,-49.15    ,1971/06/01 ,2000/10/11 , 30 , 1.7 ,     25 , 16.7
+TEJUPA                                ,02349013 ,   2 ,      64 ,TEJUPÁ              ,SÃO PAULO ,DAEE-SP      ,-23.3333 ,-49.3667  ,1939/10/01 ,2012/08/13 , 74 ,18.3 ,     48 , 35.1
+FARTURA                               ,02349014 ,   2 ,      64 ,FARTURA             ,SÃO PAULO ,DAEE-SP      ,-23.3833 ,-49.5167  ,1939/10/01 ,2000/12/19 , 62 , 7.2 ,     48 , 22.6
+ITAÍ                                  ,02349015 ,   2 ,      64 ,ITAÍ                ,SÃO PAULO ,DAEE-SP      ,-23.4167 ,-49.1     ,1943/07/01 ,1999/07/31 , 57 , 5.6 ,     49 , 14.0
+TAGUAÍ (RIBEIRÓPOLIS)                 ,02349016 ,   2 ,      64 ,TAGUAÍ              ,SÃO PAULO ,DAEE-SP      ,-23.45   ,-49.4167  ,1939/10/01 ,2013/12/31 , 75 , 5.4 ,     57 , 24.0
+TAQUARITUBA                           ,02349017 ,   2 ,      64 ,TAQUARITUBA         ,SÃO PAULO ,DAEE-SP      ,-23.5333 ,-49.2333  ,1939/06/01 ,2014/11/30 , 76 ,11.0 ,     59 , 22.4
+CORONEL MACEDO                        ,02349018 ,   2 ,      64 ,CORONEL MACEDO      ,SÃO PAULO ,DAEE-SP      ,-23.6333 ,-49.3167  ,1939/06/01 ,1999/12/31 , 61 , 7.6 ,     49 , 19.7
+BARÃO DE ANTONINA                     ,02349019 ,   2 ,      64 ,BARÃO DE ANTONINA   ,SÃO PAULO ,DAEE-SP      ,-23.6333 ,-49.55    ,1937/09/01 ,2000/02/29 , 64 , 5.7 ,     46 , 28.1
+ITAPORANGA                            ,02349020 ,   2 ,      64 ,ITAPORANGA          ,SÃO PAULO ,ANA          ,-23.7078 ,-49.4764  ,1951/08/31 ,2019/06/30 , 69 , 0.4 ,     59 , 14.5
+MOSTEIRO ITAPORANGA                   ,02349022 ,   2 ,      64 ,ITAPORANGA          ,SÃO PAULO ,DAEE-SP      ,-23.7    ,-49.4833  ,1937/02/01 ,2006/01/31 , 70 ,23.7 ,     40 , 42.9
+TORIBA DO SUL                         ,02349024 ,   2 ,      64 ,ITABERÁ             ,SÃO PAULO ,DAEE-SP      ,-23.75   ,-49.2667  ,1970/05/01 ,1999/12/31 , 30 , 0.0 ,     29 ,  3.3
+RIVERSUL                              ,02349025 ,   2 ,      64 ,RIBEIRÃO DO SUL     ,SÃO PAULO ,DAEE-SP      ,-23.8333 ,-49.4333  ,1939/05/20 ,1997/11/30 , 59 , 1.5 ,     50 , 15.3
+ITABERÁ                               ,02349026 ,   2 ,      64 ,ITABERÁ             ,SÃO PAULO ,DAEE-SP      ,-23.8667 ,-49.1333  ,1939/10/01 ,1999/12/31 , 61 , 2.3 ,     46 , 24.6
+BAIRRO BOA VISTA                      ,02349027 ,   2 ,      64 ,ITARARÉ             ,SÃO PAULO ,DAEE-SP      ,-23.95   ,-49.3667  ,1965/12/22 ,1999/01/31 , 35 , 0.6 ,     31 , 11.4
+UHE JURUMIRIM BARRAMENTO              ,02349041 ,   2 ,      64 ,PIRAJU              ,SÃO PAULO ,PARANAPANEMA ,-23.2047 ,-49.2333  ,1960/05/01 ,2012/12/31 , 53 ,26.8 ,     37 , 30.2
+FAZENDA SÃO LUIZ                      ,02349052 ,   2 ,      64 ,IPAUÇU              ,SÃO PAULO ,DAEE-SP      ,-23.05   ,-49.6167  ,1943/02/01 ,2000/12/18 , 58 , 4.5 ,     48 , 17.2
+MEDONHO                               ,02349054 ,   2 ,      64 ,TAQUARITUBA         ,SÃO PAULO ,DAEE-SP      ,-23.65   ,-49.1333  ,1971/09/01 ,2000/01/18 , 30 , 1.4 ,     22 , 26.7
+MACUCO                                ,02349055 ,   2 ,      64 ,CERQUEIRA CESAR     ,SÃO PAULO ,DAEE-SP      ,-23.15   ,-49.1833  ,1971/11/01 ,2000/12/19 , 30 , 0.5 ,     26 , 13.3
+FAZENDA ITAPUA I                      ,02349067 ,   2 ,      64 ,ARANDU              ,SÃO PAULO ,DAEE-SP      ,-23.1833 ,-49.0333  ,1978/06/01 ,2000/12/19 , 23 , 1.0 ,     15 , 34.8
+UHE CHAVANTES ITAPORANGA              ,02349068 ,   2 ,      64 ,ITAPORANGA          ,SÃO PAULO ,PARANAPANEMA ,-23.7331 ,-49.4303  ,2012/01/01 ,2012/08/30 ,  1 , 1.6 ,      0 ,100.0
+UHE JURUMIRIM FAZENDA AGROLIN         ,02349074 ,   2 ,      64 ,ITABERÁ             ,SÃO PAULO ,PARANAPANEMA ,-23.7786 ,-49.0542  ,2012/01/01 ,2012/12/31 ,  1 , 1.1 ,      0 ,100.0
+UHE CHAVANTES FAZENDA SÃO JOÃO        ,02349076 ,   2 ,      64 ,RIVERSUL            ,SÃO PAULO ,PARANAPANEMA ,-23.8517 ,-49.395   ,2012/01/01 ,2012/12/31 ,  1 , 1.1 ,      0 ,100.0
+UHE CHAVANTES PIRAJU JUSANTE          ,02349077 ,   2 ,      64 ,PIRAJU              ,SÃO PAULO ,PARANAPANEMA ,-23.1792 ,-49.3922  ,2012/01/01 ,2012/12/31 ,  1 , 0.0 ,      1 ,  0.0
+UHE PIRAJU JUSANTE                    ,02349078 ,   2 ,      64 ,PIRAJU              ,SÃO PAULO ,CBA          ,-23.1603 ,-49.3786  ,2014/09/24 ,2017/12/31 ,  4 ,20.5 ,      0 ,100.0
+USINA TURVINHO                        ,02447001 ,   2 ,      64 ,SÃO MIGUEL ARCANJO  ,SÃO PAULO ,DAEE-SP      ,-24.0    ,-47.95    ,1936/10/01 ,2013/08/31 , 78 ,13.7 ,     57 , 26.9
+TAQUARAL                              ,02447007 ,   2 ,      64 ,SÃO MIGUEL ARCANJO  ,SÃO PAULO ,DAEE-SP      ,-24.05   ,-47.9997  ,1960/09/01 ,2014/11/30 , 55 , 1.5 ,     43 , 21.8
+BAIRRO DO CERRADO                     ,02448002 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-24.0167 ,-48.2667  ,1961/07/01 ,2001/01/31 , 41 , 2.1 ,     35 , 14.6
+USINA SANTA MARIA                     ,02448003 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,DAEE-SP      ,-24.0167 ,-48.7167  ,1939/09/01 ,1999/01/31 , 61 , 1.9 ,     54 , 11.5
+USINA SÃO JOSÉ                        ,02448004 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,DAEE-SP      ,-24.1333 ,-48.9667  ,1939/10/01 ,2001/03/31 , 63 , 0.9 ,     53 , 15.9
+SERTÃO DO PARANAPANEMA                ,02448005 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-24.1333 ,-48.1833  ,1971/04/14 ,1996/10/31 , 26 , 5.5 ,     19 , 26.9
+BARREIRO                              ,02448006 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-24.1667 ,-48.3333  ,1947/11/24 ,2004/01/31 , 58 ,11.6 ,     36 , 37.9
+BAIRRO DO PINHEIRO                    ,02448007 ,   2 ,      64 ,GUAPIARA            ,SÃO PAULO ,DAEE-SP      ,-24.1833 ,-48.5     ,1939/12/01 ,1998/12/31 , 60 , 1.8 ,     50 , 16.7
+PINARA                                ,02448009 ,   2 ,      64 ,RIBEIRÃO BRANCO     ,SÃO PAULO ,DAEE-SP      ,-24.2667 ,-48.9     ,1971/05/01 ,2014/11/30 , 44 , 7.7 ,     30 , 31.8
+ARACAIBA (CAPOEIRAS)                  ,02448011 ,   2 ,      81 ,APIAÍ               ,SÃO PAULO ,DAEE-SP      ,-24.4333 ,-48.85    ,1952/08/04 ,2012/07/12 , 61 ,19.6 ,     44 , 27.9
+CAPELA DO ALTO                        ,02448053 ,   2 ,      64 ,GUAPIARA            ,SÃO PAULO ,DAEE-SP      ,-24.2167 ,-48.45    ,1948/02/01 ,1997/11/30 , 50 ,25.7 ,     28 , 44.0
+FAZENDINHA                            ,02448058 ,   2 ,      64 ,GUAPIARA            ,SÃO PAULO ,DAEE-SP      ,-24.3167 ,-48.6167  ,1972/08/08 ,1998/11/30 , 27 , 0.8 ,     19 , 29.6
+FAZENDA GUAPIARA                      ,02448065 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-24.1833 ,-48.3     ,1981/12/01 ,1995/12/31 , 15 , 4.7 ,      9 , 40.0
+APIAÍ-MIRIM                           ,02448066 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,DAEE-SP      ,-24.0667 ,-48.5667  ,1982/11/10 ,1998/12/31 , 17 , 1.2 ,     14 , 17.6
+INTERVALES                            ,02448067 ,   2 ,      64 ,IPORANGA            ,SÃO PAULO ,DAEE-SP      ,-24.2669 ,-48.4114  ,1990/01/01 ,2013/11/30 , 24 , 8.1 ,     19 , 20.8
+UHE CANOAS I BAIRRO CACHIMBA          ,02448071 ,   2 ,      64 ,APIAÍ               ,SÃO PAULO ,CONS.CANOAS  ,-24.4831 ,-48.7769  ,2012/01/01 ,2012/12/31 ,  1 , 0.3 ,      0 ,100.0
+UHE CANOAS I BAIRRO CANTAGALO         ,02448072 ,   2 ,      64 ,ITAPEVA             ,SÃO PAULO ,CONS.CANOAS  ,-24.0936 ,-48.6389  ,2012/01/01 ,2012/12/31 ,  1 , 3.3 ,      0 ,100.0
+UHE CANOAS II CAPÃO LIMPO             ,02448073 ,   2 ,      64 ,CAPÃO BONITO        ,SÃO PAULO ,CONS.CANOAS  ,-24.0714 ,-48.1825  ,2012/01/01 ,2012/12/31 ,  1 , 0.3 ,      0 ,100.0
+ENGENHEIRO MAIA                       ,02449001 ,   2 ,      64 ,ITABERÁ             ,SÃO PAULO ,DAEE-SP      ,-24.05   ,-49.1     ,1939/10/01 ,2014/11/30 , 76 , 5.8 ,     47 , 38.2
+ITARARÉ                               ,02449002 ,   2 ,      64 ,ITARARÉ             ,SÃO PAULO ,DAEE-SP      ,-24.1167 ,-49.3333  ,1956/03/01 ,1999/01/31 , 44 , 2.2 ,     26 , 40.9
+ITARARÉ (RVPSC)                       ,02449005 ,   2 ,      64 ,ITARARÉ             ,SÃO PAULO ,RFFSA        ,-24.1    ,-49.3333  ,1938/09/01 ,1981/12/31 , 44 , 4.1 ,     35 , 20.5
+FAZENDA SÃO NICOLAU                   ,02449056 ,   2 ,      64 ,ITARARÉ             ,SÃO PAULO ,DAEE-SP      ,-24.2667 ,-49.1667  ,1971/04/08 ,1998/12/31 , 28 , 0.5 ,     25 , 10.7
+UHE CHAVANTES BERTANHOLI              ,02449067 ,   2 ,      64 ,ITARARÉ             ,PARANÁ    ,PARANAPANEMA ,-24.0903 ,-49.3292  ,2012/01/01 ,2012/12/31 ,  1 , 1.4 ,      0 ,100.0

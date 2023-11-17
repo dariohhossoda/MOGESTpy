@@ -88,9 +88,9 @@ class SMAP:
             ----
                 Str: 100 - 2000
                 k2t: 0.2 - 10
-                Crec: 0 - 20
+                Crec: 0 - 20%
                 Ai: 2 - 5
-                Capc: 30 - 50
+                Capc: 30 - 50%
                 kkt: 30 - 180
             """
 

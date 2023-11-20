@@ -1,22 +1,21 @@
 class Muskingum:
-    def DownstreamRouting(upstream, K, x, T):
+    def downstream_routing(upstream, K, x, T):
         """
-        O routing de montante para jusante
-        recebe um hidrograma de montante (upstream)
+        Performs downstream routing from upstream to downstream
+        using the Muskingum method.
         """
-        # Coeficientes
+        # Coefficients
         C0 = (T - (2 * K * x)) / ((2 * K * (1 - x)) + T)
         C1 = (T + (2 * K * x)) / ((2 * K * (1 - x)) + T)
         C2 = ((2 * K * (1 - x)) - T) / ((2 * K * (1 - x)) + T)
 
         n = len(upstream)
         downstream = [0] * n
-        # Valor inicial de jusante é igual ao de montante
+        # Initial downstream value is equal to upstream value
         downstream[0] = upstream[0]
-        # Loop entre segunda e última entradas
+        # Loop through from the second to the last entries
         for i in range(1, n):
-            downstream[i] = C0 * upstream[i] + C1 * upstream[i - 1]
-            + C2 * downstream[i - 1]
+            downstream[i] = C0 * upstream[i] + C1 * upstream[i - 1] + C2 * downstream[i - 1]
 
         return downstream
 

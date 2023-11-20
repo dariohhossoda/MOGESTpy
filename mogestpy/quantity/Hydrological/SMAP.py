@@ -30,6 +30,12 @@ class SMAP:
             self.P = P
             self.EP = EP
             self.n = len(P)
+            
+        def __str__(self):
+            formlist = []
+            for i in range(self.n):
+                formlist.append(f'  P{i} = {self.P[i]}, EP{i} = {self.EP[i]}')  
+            return formlist
 
     class Basin:
         """
@@ -177,14 +183,23 @@ class SMAP:
     def Calibrate(self, evaluation,
                     bounds = [[100.0, 2000.0], # Str      
                               [0., 20], # Crec
-                              [0., 1.], # TUin
-                              [0., 20], # EBin
-                              [30, 50], # Capc
-                              [30, 180], # kkt
+                            #   [0., 1.], # TUin
+                            #   [0., 20], # EBin
+                            #   [30, 50], # Capc
+                            #   [30, 180], # kkt
                               [.2, 10], # k2t
-                              [2, 5]], # Ai
+                            #   [2, 5]], # Ai
+                    ],
                     optimization_engine='minimize',
-                    x0=[1050, 10, .5, 0, 40, 105, .2, 3.5],
+                    x0=[1050,
+                        10,
+                        # .5,
+                        # 0,
+                        # 40,
+                        # 105,
+                        .2,
+                        # 3.5
+                        ],
                     maxiter=1000,
                     objective_function = 'nse'):
         """
@@ -206,16 +221,17 @@ class SMAP:
         """
         
         def objective(p):
-            Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
+            # Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
+            Str, Crec, k2t = p
             
             self.Basin.Str=Str
             self.Basin.k2t=k2t
             self.Basin.Crec=Crec
-            self.Basin.Ai=Ai
-            self.Basin.Capc=Capc
-            self.Basin.kkt=kkt
-            self.Basin.Tuin=Tuin
-            self.Basin.Ebin=Ebin
+            # self.Basin.Ai=Ai
+            # self.Basin.Capc=Capc
+            # self.Basin.kkt=kkt
+            # self.Basin.Tuin=Tuin
+            # self.Basin.Ebin=Ebin
             
             self.RunModel()
             

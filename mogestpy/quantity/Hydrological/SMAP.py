@@ -248,4 +248,70 @@ class SMAP:
             return minimize(objective, x0=x0, bounds=bounds)
         return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
         
+    def CalibrateAll(self, evaluation,
+                    bounds = [[100.0, 2000.0], # Str      
+                              [0., 20], # Crec
+                              [0., 1.], # TUin
+                              [0., 20], # EBin
+                              [30, 50], # Capc
+                              [30, 180], # kkt
+                              [.2, 10], # k2t
+                              [2, 5]], # Ai
+                    optimization_engine='minimize',
+                    x0=[1050,
+                        10,
+                        .5,
+                        0,
+                        40,
+                        105,
+                        .2,
+                        3.5
+                        ],
+                    maxiter=1000,
+                    objective_function = 'nse'):
+        """
+        Calibrate the SMAP model using scipy.minimize or
+        differential evolution on spotpy objective functions.
+
+        Args:
+            evaluation (array-like): Evaluation values to compare.
+            bounds (list, optional): SMAP parameters bounds.
+            optimization_engine (str, optional): Optimization engine,
+            'minimize' (default) or 'differential_evolution'.
+            x0 (list, optional): Initial conditions.
+            maxiter (int, optional): Max iterations for optimization.
+            objective_function (str or callable, optional): Objective function,
+            options: 'nse', 'kge', 'rmse', 'pbias', or custom.
+
+        Returns:
+            Result object: Optimization result.
+        """
+        
+        def objective(p):
+            Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
+            # Str, Crec, k2t = p
+            
+            self.Basin.Str=Str
+            self.Basin.k2t=k2t
+            self.Basin.Crec=Crec
+            self.Basin.Ai=Ai
+            self.Basin.Capc=Capc
+            self.Basin.kkt=kkt
+            self.Basin.Tuin=Tuin
+            self.Basin.Ebin=Ebin
+            
+            self.RunModel()
+            
+            obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
+                             'kge': lambda eval, Q: -kge(eval, Q),
+                             'rmse': rmse,
+                             'pbias': pbias}
+            
+            if type(objective_function) == str:
+                return obj_func_dict.get(objective_function)(evaluation, self.Q)
+            return objective_function(evaluation, self.Q)
+         
+        if optimization_engine == 'minimize':
+            return minimize(objective, x0=x0, bounds=bounds)
+        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
         

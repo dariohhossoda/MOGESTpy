@@ -3,6 +3,15 @@ class Muskingum:
         """
         Performs downstream routing from upstream to downstream
         using the Muskingum method.
+
+        Parameters:
+        - upstream (list): List of upstream values.
+        - K (float): Muskingum routing parameter.
+        - x (float): Muskingum weighting factor.
+        - T (float): Time step.
+
+        Returns:
+        - downstream (list): List of downstream values.
         """
         # Coefficients
         C0 = (T - (2 * K * x)) / ((2 * K * (1 - x)) + T)
@@ -21,68 +30,87 @@ class Muskingum:
 
     def DownstreamFORK(K, X, m, T, I):
         """
-        Modelo não-linear de Muskingum (de primeira ordem)
-        com método de Runge-Kutta de quarta ordem (routing
-        de montante para jusante). Variáveis K, X e m devem
-        ser calibradas. I refere-se a input, ou hidrograma
-        de montante, e T ao time step envolvido (neste caso,
-        24 horas)
+        Non-linear Muskingum model (first-order)
+        with fourth-order Runge-Kutta method (routing
+        from upstream to downstream). Variables K, X, and m
+        should be calibrated. I refers to the input, or upstream
+        hydrograph, and T to the time step involved (in this case,
+        24 hours).
+
+        Parameters:
+        K (float): Muskingum storage coefficient.
+        X (float): Muskingum weighting factor.
+        m (float): Muskingum exponent.
+        T (float): Time step.
+        I (list): Input hydrograph.
+
+        Returns:
+        list: Output hydrograph.
         """
         n = len(I)
 
         # Outflow
         O = [0] * n
-        # Valor inicial
+        # Initial value
         O[0] = I[0]
-        # Armazenamento
+        # Storage
         S = [0] * n
 
         for i in range(n - 1):
-            # Armazenamento atual
+            # Current storage
             S[i] = K * (X * I[i] + (1 - X) * O[i]) ** m
-            # Coeficientes
+            # Coefficients
             k1 = (-1 / (1 - X)) * ((S[i] / K) ** (1 / m) - I[i])
             k2 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k1) / K) ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
             k3 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k2) / K) ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
             k4 = (-1 / (1 - X)) * (((S[i] + 1.0 * T * k3) / K) ** (1 / m) - I[i + 1])
-            # Armazenamento seguinte
+            # Next storage
             S[i + 1] = S[i] + T * (k1 + 2 * k2 + 2 * k3 + k4) / 6
-            # Outflow seguinte
+            # Next outflow
             O[i + 1] = (1 / (1 - X)) * ((S[i + 1] / K) ** (1 / m) - X * I[i + 1])
 
         return O
 
     def UpstreamFORK(K, X, m, T, O):
         """
-        Modelo nao-linear de Muskingum (de primeira ordem)
-        com metodo de Runge-Kutta de quarta ordem (routing
-        de jusante para montante). Variaveis K, X e m devem
-        ser calibradas. O refere-se a output, ou hidrograma
-        de jusante, e T ao time step envolvido (neste caso,
-        24 horas)
-        """
+        Non-linear Muskingum model (first-order)
+        with fourth-order Runge-Kutta method (routing
+        from downstream to upstream). Variables K, X, and m
+        should be calibrated. O refers to the output, or
+        downstream hydrograph, and T refers to the time step
+        involved (in this case, 24 hours).
 
+        Parameters:
+        K (float): Muskingum storage coefficient
+        X (float): Weighting factor for inflow and outflow
+        m (float): Non-linearity coefficient
+        T (float): Time step
+        O (list): List of inflow values
+
+        Returns:
+        list: List of upstream inflow values
+        """
         n = len(O)
 
         # Inflow
         I = [0] * n
-        # Valor inicial
+        # Initial value
         I[n - 1] = O[n - 1]
 
-        # Armazenamento, taxa de variacao
+        # Storage, rate of change
         S = [0] * n
 
         for i in range(n - 1, 0, -1):
-            # Armazenamento
+            # Storage
             S[i] = K * (X * I[i] + (1 - X) * O[i]) ** m
-            # Coeficientes
+            # Coefficients
             k1 = (1 / X) * ((S[i] / K) ** (1 / m) - O[i])
             k2 = (1 / X) * (((S[i] + 0.5 * T * k1) / K) ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
             k3 = (1 / X) * (((S[i] + 0.5 * T * k2) / K) ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
             k4 = (1 / X) * (((S[i] + 1.0 * T * k3) / K) ** (1 / m) - O[i - 1])
-            # Armazenamento em t - 1 (passo anterior)
+            # Storage at t - 1 (previous step)
             S[i - 1] = S[i] - T * (k1 + 2 * k2 + 2 * k3 + k4) / 6
-            # Inflow em t - 1 (passo anterior)
+            # Inflow at t - 1 (previous step)
             I[i - 1] = (1 / X) * ((S[i - 1] / K) ** (1 / m)) - ((1 - X) / X) * O[i - 1]
 
         return I

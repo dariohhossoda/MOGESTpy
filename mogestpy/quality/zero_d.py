@@ -29,28 +29,28 @@ class ZeroDimensional:
 
     class Output:
         """
-        Saída do modelo 0D
+        Represents the output of a calculation.
 
-        Cout - Concentração de saída após o término da simulação
+        Attributes:
+            ConcentrationOut (list): A list of concentration values.
         """
+
         def __init__(self, size):
             self.ConcentrationOut = [0 for _ in range(size)]
 
     class Input:
         """
-        Inputs do modelo 0D
+        Inputs for the 0D model
         ---------------
         Volume (V) - list
 
-        Vazão de montante (Qin) - list
+        Inflow (Qin) - list
 
-        Vazão de jusante (Qout) - list
+        Outflow (Qout) - list
 
-        Concentração de montante (Cin) - list
+        Concentration at the inflow (Cin) - list
 
-        Carga de montante (Cin) - list
-
-        Área de contato (As) - list
+        Contact area (As) - list
         """
         def __init__(self,
                      volume,
@@ -67,10 +67,10 @@ class ZeroDimensional:
 
     class Params:
         """
-        Parâmetros do modelo 0D
+        Parameters of the 0D model
 
-        Coecifiente de Reação - k
-        Velocidade de Assentamento - v
+        Reaction Coefficient - k
+        Settling Velocity - v
         """
         def __init__(self, k, v):
             self.ReactionCoefficient = k

@@ -42,20 +42,25 @@ Ks = data_df['ks'].to_numpy(dtype=np.float64)
 c1 = data_df['c1'].to_numpy(dtype=np.float64)
 cqd = data_df['cq'].to_numpy(dtype=np.float64)
 
-input_folder = os.path.join(cwd,'Quantity/Hydrodynamic/SIHQUALInputs/')
+input_folder = os.path.join(cwd, 'Quantity/Hydrodynamic/SIHQUALInputs/')
 dim = int(xf / dx) + 1
 
-boundary_Q = pd.read_csv(input_folder+'boundary_Q.csv', sep=';', encoding='utf-8')
-boundary_y = pd.read_csv(input_folder+'boundary_y.csv', sep=';', encoding='utf-8')
-boundary_c = pd.read_csv(input_folder+'boundary_c.csv', sep=';', encoding='utf-8')
+boundary_Q = pd.read_csv(input_folder+'boundary_Q.csv',
+                         sep=';', encoding='utf-8')
+boundary_y = pd.read_csv(input_folder+'boundary_y.csv',
+                         sep=';', encoding='utf-8')
+boundary_c = pd.read_csv(input_folder+'boundary_c.csv',
+                         sep=';', encoding='utf-8')
 
 t_arr_Q = boundary_Q.iloc[:, 0].to_numpy(dtype=np.int32)
 t_arr_y = boundary_y.iloc[:, 0].to_numpy(dtype=np.int32)
 t_arr_c = boundary_c.iloc[:, 0].to_numpy(dtype=np.int32)
 
-def ifromx (x, L, dim):
+
+def ifromx(x, L, dim):
     r_index = int(x / L * (dim - 1))
-    return  r_index if x.size > 1 else [r_index] 
+    return r_index if x.size > 1 else [r_index]
+
 
 index_Q = ifromx(boundary_Q.columns[1:].to_numpy(dtype=np.int32), xf, dim)
 index_y = ifromx(boundary_y.columns[1:].to_numpy(dtype=np.int32), xf, dim)
@@ -66,20 +71,22 @@ by_data = boundary_y.iloc[:, 1:].T.to_numpy()
 bc_data = boundary_c.iloc[:, 1:].T.to_numpy()
 
 try:
-    lateral_Q = pd.read_csv(input_folder+'lateral_Q.csv', sep=';', encoding='utf-8', header=[0, 1])
+    lateral_Q = pd.read_csv(input_folder+'lateral_Q.csv',
+                            sep=';', encoding='utf-8', header=[0, 1])
     t_arr_lQ = lateral_Q.iloc[:, 0].to_numpy(dtype=np.int32)
     v_tuples = lateral_Q.columns[1:][:]
-    lQ_slices = [(int(int(a)/ xf * (dim - 1)),
-                  (int(int(b)/ xf * (dim - 1)))) for a, b in v_tuples]
+    lQ_slices = [(int(int(a) / xf * (dim - 1)),
+                  (int(int(b) / xf * (dim - 1)))) for a, b in v_tuples]
     lQ_data = lateral_Q.iloc[:, 1:].T.to_numpy()
 except:
     pass
 try:
-    lateral_c = pd.read_csv(input_folder+'lateral_c.csv', sep=';', encoding='utf-8', header=[0, 1])
+    lateral_c = pd.read_csv(input_folder+'lateral_c.csv',
+                            sep=';', encoding='utf-8', header=[0, 1])
     t_arr_lc = lateral_c.iloc[:, 0].to_numpy(dtype=np.int32)
     v_tuples = lateral_c.columns[1:][:]
-    lc_slices = [(int(int(a)/ xf * (dim - 1)),
-                  (int(int(b)/ xf * (dim - 1)))) for a, b in v_tuples]
+    lc_slices = [(int(int(a) / xf * (dim - 1)),
+                  (int(int(b) / xf * (dim - 1)))) for a, b in v_tuples]
     lc_data = lateral_c.iloc[:, 1:].T.to_numpy()
 except:
     pass
@@ -89,6 +96,8 @@ sections = param_df['output_sections'].to_numpy()
 g = 9.81
 
 # region Aux
+
+
 def avg(vector):
     """
     Vetor médio.
@@ -96,6 +105,7 @@ def avg(vector):
     Corresponde a média centrrada (i + 1 e i - 1).
     """
     return .5 * (vector[2:] + vector[:-2])
+
 
 def cdelta(vector):
     """
@@ -106,11 +116,13 @@ def cdelta(vector):
     """
     return vector[2:] - vector[:-2]
 
+
 def top_base(b, y, m):
     """
     Largura do topo - vetorial
     """
-    return b + 2 * m  * y
+    return b + 2 * m * y
+
 
 def wet_area(b, y, m):
     """
@@ -118,11 +130,13 @@ def wet_area(b, y, m):
     """
     return b * y + m * y * y
 
+
 def wet_perimeter(b, y, m):
     """
     Perímetro molhado
     """
     return b + 2 * y * (1 + m ** 2) ** .5
+
 
 def Rh(b, y, m):
     """
@@ -130,11 +144,13 @@ def Rh(b, y, m):
     """
     return wet_area(b, y, m) / wet_perimeter(b, y, m)
 
+
 def Sf(n, v, Rh):
     """
     Declividade da linha de energia
     """
     return n * n * v * v * Rh ** (- 4 / 3)
+
 
 def courant(dt, dx, v, g, A, B):
     """
@@ -142,6 +158,7 @@ def courant(dt, dx, v, g, A, B):
     """
     return dt / dx * (abs(v) + (g * A / B) ** .5)
 # endregion Aux
+
 
 auto_step = False
 
@@ -161,27 +178,30 @@ sim_time = 0
 
 days_total = tf // 86400 + 1
 variables = ['Q', 'y', 'c']
-cols = pd.MultiIndex.from_product([sections, variables], names=['section', 'variables'])
+cols = pd.MultiIndex.from_product(
+    [sections, variables], names=['section', 'variables'])
 t_index = pd.Index([i for i in range(days_total)], name='t')
 
 col_num = len(variables) * len(sections)
 df_data = np.zeros((days_total, col_num))
 
 while sim_time <= tf:
-    A1 = b1 * y1 + m * y1 * y1 # wet_area(b1, y1, m)
-    B1 = b1 + 2 * m  * y1 # top_base(b1, y1, m)
-    Rh1 = A1 / (b1 + 2 * y1 * (1 + m ** 2) ** .5) # Rh(b1, y1, m)
-    Sf1 =  n * n * v1 * v1 * Rh1 ** (- 4 / 3) # Sf(n, v1, Rh1)
+    A1 = b1 * y1 + m * y1 * y1  # wet_area(b1, y1, m)
+    B1 = b1 + 2 * m * y1  # top_base(b1, y1, m)
+    Rh1 = A1 / (b1 + 2 * y1 * (1 + m ** 2) ** .5)  # Rh(b1, y1, m)
+    Sf1 = n * n * v1 * v1 * Rh1 ** (- 4 / 3)  # Sf(n, v1, Rh1)
 
     if auto_step:
         dt = .5 * dt / courant_max
 
     # region Contribuição Lateral
     for i in range(len(lQ_slices)):
-        ql[slice(lQ_slices[i][0], lQ_slices[i][1])] = np.interp(sim_time + dt, t_arr_lQ, lQ_data[i])
-    
+        ql[slice(lQ_slices[i][0], lQ_slices[i][1])] = np.interp(
+            sim_time + dt, t_arr_lQ, lQ_data[i])
+
     for i in range(len(lc_slices)):
-        cqd[slice(lc_slices[i][0], lc_slices[i][1])] = np.interp(sim_time + dt, t_arr_lQ, lc_data[i])
+        cqd[slice(lc_slices[i][0], lc_slices[i][1])] = np.interp(
+            sim_time + dt, t_arr_lQ, lc_data[i])
     cq = cqd / A1
     # endregion Contribuição Lateral
 
@@ -204,7 +224,6 @@ while sim_time <= tf:
                 + mfactor * g * dy
                 + g * dt * (So[1:-1] - SSf))
 
-
     y2[-1] = y2[-2]
     v2[-1] = v2[-2]
     # endregion ModuloHidrodinamico
@@ -214,7 +233,7 @@ while sim_time <= tf:
 
     c2[1:-1] = (c1[1:-1]
                 - .5 * dt / dx * v1[1:-1] * dc
-                + DD * .5 *  dt / dx  / A1[1:-1] * dA * dc * .5 / dx
+                + DD * .5 * dt / dx / A1[1:-1] * dA * dc * .5 / dx
                 + DD * dt / dx ** 2
                 )
 
@@ -222,11 +241,14 @@ while sim_time <= tf:
     # endregion Módulo de Qualidade
 
     # region Redefinição de Variáveis
-    y2[index_y] = [np.interp(sim_time + dt, t_arr_y, by_data[i]) for i in index_y]
+    y2[index_y] = [np.interp(sim_time + dt, t_arr_y, by_data[i])
+                   for i in index_y]
     A2 = b1 * y2 + m * y2 * y2
-    v2[index_Q] = [np.interp(sim_time + dt, t_arr_y, bQ_data[i]) / A2[i] for i in index_Q]
-    c2[index_c] = [np.interp(sim_time + dt, t_arr_y, bc_data[i]) for i in index_c]
-    
+    v2[index_Q] = [np.interp(sim_time + dt, t_arr_y,
+                             bQ_data[i]) / A2[i] for i in index_Q]
+    c2[index_c] = [np.interp(sim_time + dt, t_arr_y, bc_data[i])
+                   for i in index_c]
+
     y1 = np.copy(y2)
     v1 = np.copy(v2)
     c1 = np.copy(c2)
@@ -238,7 +260,7 @@ while sim_time <= tf:
 
     # region Output
     days_elapsed = sim_time / 86400
-    if  days_elapsed >= n_index:
+    if days_elapsed >= n_index:
         k = 0
         _array = np.zeros(col_num)
         for section in sections:
@@ -252,8 +274,8 @@ while sim_time <= tf:
         n_index += 1
     # endregion Output
 
-    sim_time +=  dt
-    progress.update(n = dt)
+    sim_time += dt
+    progress.update(n=dt)
 
 output_df = pd.DataFrame(df_data, columns=cols, index=t_index)
 

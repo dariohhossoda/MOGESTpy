@@ -24,7 +24,8 @@ class Muskingum:
         downstream[0] = upstream[0]
         # Loop through from the second to the last entries
         for i in range(1, n):
-            downstream[i] = C0 * upstream[i] + C1 * upstream[i - 1] + C2 * downstream[i - 1]
+            downstream[i] = C0 * upstream[i] + C1 * \
+                upstream[i - 1] + C2 * downstream[i - 1]
 
         return downstream
 
@@ -61,13 +62,17 @@ class Muskingum:
             S[i] = K * (X * I[i] + (1 - X) * O[i]) ** m
             # Coefficients
             k1 = (-1 / (1 - X)) * ((S[i] / K) ** (1 / m) - I[i])
-            k2 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k1) / K) ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
-            k3 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k2) / K) ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
-            k4 = (-1 / (1 - X)) * (((S[i] + 1.0 * T * k3) / K) ** (1 / m) - I[i + 1])
+            k2 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k1) / K)
+                                   ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
+            k3 = (-1 / (1 - X)) * (((S[i] + 0.5 * T * k2) / K)
+                                   ** (1 / m) - 0.5 * (I[i] + I[i + 1]))
+            k4 = (-1 / (1 - X)) * \
+                (((S[i] + 1.0 * T * k3) / K) ** (1 / m) - I[i + 1])
             # Next storage
             S[i + 1] = S[i] + T * (k1 + 2 * k2 + 2 * k3 + k4) / 6
             # Next outflow
-            O[i + 1] = (1 / (1 - X)) * ((S[i + 1] / K) ** (1 / m) - X * I[i + 1])
+            O[i + 1] = (1 / (1 - X)) * ((S[i + 1] / K)
+                                        ** (1 / m) - X * I[i + 1])
 
         return O
 
@@ -105,12 +110,15 @@ class Muskingum:
             S[i] = K * (X * I[i] + (1 - X) * O[i]) ** m
             # Coefficients
             k1 = (1 / X) * ((S[i] / K) ** (1 / m) - O[i])
-            k2 = (1 / X) * (((S[i] + 0.5 * T * k1) / K) ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
-            k3 = (1 / X) * (((S[i] + 0.5 * T * k2) / K) ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
+            k2 = (1 / X) * (((S[i] + 0.5 * T * k1) / K)
+                            ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
+            k3 = (1 / X) * (((S[i] + 0.5 * T * k2) / K)
+                            ** (1 / m) - (0.5 * (O[i] + O[i - 1])))
             k4 = (1 / X) * (((S[i] + 1.0 * T * k3) / K) ** (1 / m) - O[i - 1])
             # Storage at t - 1 (previous step)
             S[i - 1] = S[i] - T * (k1 + 2 * k2 + 2 * k3 + k4) / 6
             # Inflow at t - 1 (previous step)
-            I[i - 1] = (1 / X) * ((S[i - 1] / K) ** (1 / m)) - ((1 - X) / X) * O[i - 1]
+            I[i - 1] = (1 / X) * ((S[i - 1] / K) ** (1 / m)) - \
+                ((1 - X) / X) * O[i - 1]
 
         return I

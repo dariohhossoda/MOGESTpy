@@ -4,11 +4,30 @@ from scipy.optimize import minimize, differential_evolution
 
 class SMAP:
     """
-        SMAP Class (Soil Moisture Accounting Procedure). Hydrological
-        Model for Rainfall-Runoff Simulation in Watersheds.
+    SMAP Class (Soil Moisture Accounting Procedure). Hydrological
+    Model for Rainfall-Runoff Simulation in Watersheds.
+
+    Attributes:
+        Point: A nested class representing a point in the SMAP model.
+        Basin: A nested class representing the watershed in the SMAP model.
+
+    Methods:
+        __init__: Initializes the SMAP class.
+        RunModel: Runs the SMAP model to simulate water flow processes.
+        Calibrate: Calibrates the SMAP model using optimization algorithms.
+        CalibrateAll: Calibrates the SMAP model with all parameters.
+
     """
 
     def __init__(self, point, basin):
+        """
+        Initializes the SMAP class.
+
+        Args:
+            point (Point): An instance of the Point class.
+            basin (Basin): An instance of the Basin class.
+
+        """
         self.Point = point
         self.Basin = basin
         self.Q = []
@@ -30,11 +49,11 @@ class SMAP:
             self.P = P
             self.EP = EP
             self.n = len(P)
-            
+
         def __str__(self):
             formlist = []
             for i in range(self.n):
-                formlist.append(f'  P{i} = {self.P[i]}, EP{i} = {self.EP[i]}')  
+                formlist.append(f'  P{i} = {self.P[i]}, EP{i} = {self.EP[i]}')
             return formlist
 
     class Basin:
@@ -68,9 +87,9 @@ class SMAP:
             self.k2t = k2t
             self.Ai = Ai
 
-            self.RSolo = 0 #TUin * Str
+            self.RSolo = 0  # TUin * Str
             self.RSup = 0
-            self.RSub = 0 #EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
+            self.RSub = 0  # EBin / (1 - (.5 ** (1 / kkt))) / AD * 86.4
 
         def __str__(self):
             return (
@@ -85,7 +104,7 @@ class SMAP:
                 f'  EBin = {self.Ebin},\n'
                 f'  AD = {self.AD}'
             )
-        
+
         def IsValid(self):
             """
             Checks if the values are within the model's limits.
@@ -143,7 +162,7 @@ class SMAP:
         self.Basin.RSup = 0
         self.Basin.Rsub = self.Basin.Ebin / (
             1 - (.5 ** (1 / self.Basin.kkt))) / self.Basin.AD * 86.4
-        
+
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 
@@ -181,27 +200,27 @@ class SMAP:
             self.Qd.append(ED * self.Basin.AD / 86.4)
 
     def Calibrate(self, evaluation,
-                    bounds = [[100.0, 2000.0], # Str      
-                              [0., 20], # Crec
-                            #   [0., 1.], # TUin
-                            #   [0., 20], # EBin
-                            #   [30, 50], # Capc
-                            #   [30, 180], # kkt
-                              [.2, 10], # k2t
-                            #   [2, 5]], # Ai
-                    ],
-                    optimization_engine='minimize',
-                    x0=[1050,
-                        10,
-                        # .5,
-                        # 0,
-                        # 40,
-                        # 105,
-                        .2,
-                        # 3.5
-                        ],
-                    maxiter=1000,
-                    objective_function = 'nse'):
+                  bounds=[[100.0, 2000.0],  # Str
+                          [0., 20],  # Crec
+                          #   [0., 1.], # TUin
+                          #   [0., 20], # EBin
+                          #   [30, 50], # Capc
+                          #   [30, 180], # kkt
+                          [.2, 10],  # k2t
+                          #   [2, 5]], # Ai
+                          ],
+                  optimization_engine='minimize',
+                  x0=[1050,
+                      10,
+                      # .5,
+                      # 0,
+                      # 40,
+                      # 105,
+                      .2,
+                      # 3.5
+                      ],
+                  maxiter=1000,
+                  objective_function='nse'):
         """
         Calibrate the SMAP model using scipy.minimize or
         differential evolution on spotpy objective functions.
@@ -219,56 +238,58 @@ class SMAP:
         Returns:
             Result object: Optimization result.
         """
-        
+
         def objective(p):
             # Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
             Str, Crec, k2t = p
-            
-            self.Basin.Str=Str
-            self.Basin.k2t=k2t
-            self.Basin.Crec=Crec
+
+            self.Basin.Str = Str
+            self.Basin.k2t = k2t
+            self.Basin.Crec = Crec
             # self.Basin.Ai=Ai
             # self.Basin.Capc=Capc
             # self.Basin.kkt=kkt
             # self.Basin.Tuin=Tuin
             # self.Basin.Ebin=Ebin
-            
+
             self.RunModel()
-            
+
             obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
                              'kge': lambda eval, Q: -kge(eval, Q),
                              'rmse': rmse,
                              'pbias': pbias}
-            
-            if type(objective_function) == str:
-                return obj_func_dict.get(objective_function)(evaluation, self.Q)
+
+            if type(objective_function) is str:
+                return obj_func_dict.get(objective_function)(evaluation, self.Q)  # noqa: 501
             return objective_function(evaluation, self.Q)
-         
+
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)
-        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
-        
+        return differential_evolution(objective,
+                                      bounds=bounds,
+                                      maxiter=maxiter)
+
     def CalibrateAll(self, evaluation,
-                    bounds = [[100.0, 2000.0], # Str      
-                              [0., 20], # Crec
-                              [0., 1.], # TUin
-                              [0., 20], # EBin
-                              [30, 50], # Capc
-                              [30, 180], # kkt
-                              [.2, 10], # k2t
-                              [2, 5]], # Ai
-                    optimization_engine='minimize',
-                    x0=[1050,
-                        10,
-                        .5,
-                        0,
-                        40,
-                        105,
-                        .2,
-                        3.5
-                        ],
-                    maxiter=1000,
-                    objective_function = 'nse'):
+                     bounds=[[100.0, 2000.0],  # Str
+                             [0., 20],  # Crec
+                             [0., 1.],  # TUin
+                             [0., 20],  # EBin
+                             [30, 50],  # Capc
+                             [30, 180],  # kkt
+                             [.2, 10],  # k2t
+                             [2, 5]],  # Ai
+                     optimization_engine='minimize',
+                     x0=[1050,
+                         10,
+                         .5,
+                         0,
+                         40,
+                         105,
+                         .2,
+                         3.5
+                         ],
+                     maxiter=1000,
+                     objective_function='nse'):
         """
         Calibrate the SMAP model using scipy.minimize or
         differential evolution on spotpy objective functions.
@@ -282,36 +303,34 @@ class SMAP:
             maxiter (int, optional): Max iterations for optimization.
             objective_function (str or callable, optional): Objective function,
             options: 'nse', 'kge', 'rmse', 'pbias', or custom.
-
-        Returns:
-            Result object: Optimization result.
         """
-        
+
         def objective(p):
             Str, Crec, Tuin, Ebin, Capc, kkt, k2t, Ai = p
             # Str, Crec, k2t = p
-            
-            self.Basin.Str=Str
-            self.Basin.k2t=k2t
-            self.Basin.Crec=Crec
-            self.Basin.Ai=Ai
-            self.Basin.Capc=Capc
-            self.Basin.kkt=kkt
-            self.Basin.Tuin=Tuin
-            self.Basin.Ebin=Ebin
-            
+
+            self.Basin.Str = Str
+            self.Basin.k2t = k2t
+            self.Basin.Crec = Crec
+            self.Basin.Ai = Ai
+            self.Basin.Capc = Capc
+            self.Basin.kkt = kkt
+            self.Basin.Tuin = Tuin
+            self.Basin.Ebin = Ebin
+
             self.RunModel()
-            
+
             obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
                              'kge': lambda eval, Q: -kge(eval, Q),
                              'rmse': rmse,
                              'pbias': pbias}
-            
-            if type(objective_function) == str:
-                return obj_func_dict.get(objective_function)(evaluation, self.Q)
+
+            if type(objective_function) is str:
+                return obj_func_dict.get(objective_function)(evaluation, self.Q)  # noqa: 501
             return objective_function(evaluation, self.Q)
-         
+
         if optimization_engine == 'minimize':
             return minimize(objective, x0=x0, bounds=bounds)
-        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
-        
+        return differential_evolution(objective,
+                                      bounds=bounds,
+                                      maxiter=maxiter)

@@ -3,29 +3,30 @@ class ZeroDimensional:
     Classe de Qualidade da Água em Reservatórios - Modelo 0D
     Zero-Dimensional
     """
-    def __init__(self, volume, Qin, Qout, Cin, As, k, v, timestep):
-            """
-            Initializes the ZeroD class.
 
-            Args: #FIXME
-                volume (float): The volume of the system.
-                Qin (float): The inflow rate.
-                Qout (float): The outflow rate.
-                Cin (float): The concentration of the inflow.
-                As (float): The surface area of the system.
-                k (float): The reaction rate constant.
-                v (float): The reaction volume.
-                timestep (float): The time step for simulation.
-            """
-            self.Input = ZeroDimensional.Input(volume,
-                                               Qin,
-                                               Qout,
-                                               Cin,
-                                               As)
-            self.SimCount = len(self.Input.Volume)
-            self.Output = ZeroDimensional.Output(self.SimCount)
-            self.Params = ZeroDimensional.Params(k, v)
-            self.Timestep = timestep
+    def __init__(self, volume, Qin, Qout, Cin, As, k, v, timestep):
+        """
+        Initializes the ZeroD class.
+
+        Args:
+            volume (float): The volume of the system.
+            Qin (float): The inflow rate.
+            Qout (float): The outflow rate.
+            Cin (float): The concentration of the inflow.
+            As (float): The surface area of the system.
+            k (float): The reaction rate constant.
+            v (float): The reaction volume.
+            timestep (float): The time step for simulation.
+        """
+        self.Input = ZeroDimensional.Input(volume,
+                                           Qin,
+                                           Qout,
+                                           Cin,
+                                           As)
+        self.SimCount = len(self.Input.Volume)
+        self.Output = ZeroDimensional.Output(self.SimCount)
+        self.Params = ZeroDimensional.Params(k, v)
+        self.Timestep = timestep
 
     class Output:
         """
@@ -52,6 +53,7 @@ class ZeroDimensional:
 
         Contact area (As) - list
         """
+
         def __init__(self,
                      volume,
                      inflow,
@@ -72,6 +74,7 @@ class ZeroDimensional:
         Reaction Coefficient - k
         Settling Velocity - v
         """
+
         def __init__(self, k, v):
             self.ReactionCoefficient = k
             self.SettlingVelocity = v

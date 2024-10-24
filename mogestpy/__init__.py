@@ -2,7 +2,7 @@
 
 __author__ = 'Dario Hachisu Hossoda'
 __email__ = 'dario.hossoda@usp.br'
-__version__ = '0.0.8'
+__version__ = '0.0.2'
 
 from mogestpy import quality  # noqa: F401
 from mogestpy import quantity  # noqa: F401

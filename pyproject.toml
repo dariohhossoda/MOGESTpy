@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "MOGESTpy"
-version = "0.0.7"
+version = "0.0.2"
 description = "Water resources management model based on hydrological and hydronimic models"
 authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"

@@ -5,6 +5,7 @@ description = "Water resources management model based on hydrological and hydron
 authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/dariohhossoda/MOGESTpy"
 repository = "https://github.com/dariohhossoda/MOGESTpy"
 keywords = ["hydrology", "water resouces", "hydrological model"]
 exclude = [

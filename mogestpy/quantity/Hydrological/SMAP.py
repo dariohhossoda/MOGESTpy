@@ -196,8 +196,88 @@ class SMAP:
             self.Basin.RSub += Rec - EB
 
             self.Q.append((ED + EB) * self.Basin.AD / 86.4)
+
             self.Qb.append(EB * self.Basin.AD / 86.4)
             self.Qd.append(ED * self.Basin.AD / 86.4)
+
+
+    def RunModelToDataFrame(self):
+        """
+        Runs the SMAP model, calculating the watershed's outflow by
+        simulating the water flow processes within the basin.
+
+        This function calculates the runoff and outflow based on the
+        hydrological processes occurring in the watershed.
+
+        Returns:
+            pd.DataFrame: DataFrame containing the simulated outflow values for each time step.
+        """
+
+        df = pd.DataFrame(columns=['P', 'EP', 'TU', 'ES', 'ER', 'Rec', 'RSolo',
+                                    'RSup', 'RSub', 'EB', 'ED', 'Q', 'Qb', 'Qd'])
+
+
+        KK = .5 ** (1 / self.Basin.kkt)
+        K2 = .5 ** (1 / self.Basin.k2t)
+
+        unit_factor = self.Basin.AD / 86.4
+
+        RSolo = self.Basin.Tuin * self.Basin.Str
+        RSup = 0
+        RSub = self.Basin.Ebin / (1 - KK) / unit_factor
+
+        for i in range(self.Point.n):
+            row = []
+
+            TU = RSolo / self.Basin.Str
+
+            ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
+                    / (self.Point.P[i] - self.Basin.Ai
+                        + self.Basin.Str - RSolo)
+                    if (self.Point.P[i] > self.Basin.Ai) else 0)
+
+            ER = (self.Point.EP[i] if
+                    ((self.Point.P[i] - ES) > self.Point.EP[i])
+                    else self.Point.P[i] - ES
+                    + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
+
+            Rec = (self.Basin.Crec * TU
+                    * (RSolo - self.Basin.Capc
+                        * self.Basin.Str) if (RSolo
+                                            > (self.Basin.Capc
+                                                * self.Basin.Str)) else 0)
+
+            RSolo += self.Point.P[i] - ES - ER - Rec
+
+            if RSolo > self.Basin.Str:
+                ES += RSolo - self.Basin.Str
+                RSolo = self.Basin.Str
+
+            RSup += ES
+            ED = RSup * (1 - K2)
+            RSup -= ED
+
+            EB = RSub * (1 - KK)
+            RSub += Rec - EB
+
+            row = [
+                self.Point.P[i],
+                self.Point.EP[i],
+                TU,
+                ES,
+                ER,
+                Rec,
+                RSolo,
+                RSup,
+                RSub,
+                EB,
+                ED,
+                (ED + EB) * unit_factor,
+                EB * unit_factor,
+                ED * unit_factor
+            ]
+            df.loc[len(df)] = row
+        return df
 
     def Calibrate(self, evaluation,
                   bounds=[[100.0, 2000.0],  # Str

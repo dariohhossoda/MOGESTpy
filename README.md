@@ -34,14 +34,6 @@ MOGESTpy is an acronym for **Mo**del of **Gest**ion of Water Resources developed
 
 A management model uses water quantity and quality modeling tools to assist in decision-making. This modeling is done through simulation models where natural processes are represented from precipitation in the watershed area to its transport in rivers and channels to the watershed's outlet.
 
-<!-- Thesis Figure BRITES -->
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/58784697/199972694-102a218c-bf48-4db4-b0ab-e96ff2609ebd.svg" />
-</p>
-
-Tools for the Water Resources Management Process[^Brites,2010]
-
 ## Models used in MOGESTpy
 
 The models used in MOGESTpy include:
@@ -99,6 +91,3 @@ To contribute to the project, simply create an issue. Code additions are welcome
 </div>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-[^Brites,2010]: Brites, A. P. Z. Enquadramento dos corpos de água através de metas progressivas: Probabilidade de ocorrência e custos de despoluição hídrica. Tese de Doutorado. Universidade de São Paulo, 2010.

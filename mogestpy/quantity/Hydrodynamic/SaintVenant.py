@@ -153,14 +153,14 @@ class SaintVenant:
         """
 
         # for i in range(1, self.y ):
-        
+
         raise NotImplementedError('Ainda não implementado!')
-    
+
     def RunModel(self):
         """
         Roda o modelo
         """
-        
+
         raise NotImplementedError('Ainda não implementado!')
 
 
@@ -168,17 +168,18 @@ def LateralContribution():
     """
     Define a contribuição lateral a ser incluída
     """
-    
+
     raise NotImplementedError('Ainda não implementado!')
+
 
 def Average(values_list, index):
     """
     Dado uma lista de valores e um índice, retorna a média centrado
     no índice
     """
-    
+
     try:
         return .5 * (values_list[index + 1]
                      + values_list[index - 1])
-    except:
+    except Exception:
         return None

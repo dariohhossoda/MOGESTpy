@@ -1,20 +1,24 @@
 [tool.poetry]
 name = "MOGESTpy"
-version = "0.0.3"
-description = "Water Resources Management Model"
+version = "0.0.2"
+description = "Water resources management model based on hydrological and hydronimic models"
 authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"
 readme = "README.md"
-homepage = ""
 repository = "https://github.com/dariohhossoda/MOGESTpy"
-documentation = ""
 keywords = ["hydrology", "water resouces", "hydrological model"]
+exclude = [
+    { path = "Applications"},
+    { path = "Datasets"}
+]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/dariohhossoda/MOGESTpy/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
+spotpy = "^1.6.2"
+scikit-learn = "^1.5.2"
 
 [tool.poetry.dev-dependencies]
 

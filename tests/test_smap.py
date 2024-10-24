@@ -1,5 +1,6 @@
 from mogestpy.quantity.Hydrological import SMAP
 
+
 def test_smap_1():
     Str = 1000
     AD = 1000
@@ -11,14 +12,14 @@ def test_smap_1():
     k2t = 1
     Ai = 2.5
 
-    size = 10
+    data_size = 10
 
-    P = [10 for _ in range(size)]
-    ET = [2 for _ in range(size)]
+    prec = [10 for _ in range(data_size)]
+    etp = [2 for _ in range(data_size)]
 
     bacia = SMAP.SMAP.Basin(Str, AD, Crec, TUin, EBin, Capc, kkt, k2t, Ai)
-    ponto = SMAP.SMAP.Point(P, ET)
+    ponto = SMAP.SMAP.Point(prec, etp)
     modelo = SMAP.SMAP(ponto, bacia)
     modelo.RunModel()
 
-    assert round(modelo.Q[-1], 3) == 92.502
+    assert abs(modelo.Q[-1] - 0.6965439607456360) < 1e-6

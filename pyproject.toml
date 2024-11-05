@@ -20,6 +20,7 @@ exclude = [
 python = "^3.9"
 spotpy = "^1.6.2"
 scikit-learn = "^1.5.2"
+pandas = "^2.2.3"
 
 [tool.poetry.dev-dependencies]
 

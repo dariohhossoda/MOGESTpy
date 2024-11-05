@@ -29,7 +29,7 @@
 
 ## What is MOGESTpy?
 
-MOGESTpy is an acronym for **Mo**del of **Gest**ion of Water Resources developed in the [Python3](https://www.python.org/) programming language.
+MOGESTpy is an acronym for **Mo**delo de **Gest**ão de Recursos Hídricos (in English: Water Resources Management Model) developed in the [Python3](https://www.python.org/) programming language.
 
 ### Water Resources Management Model
 

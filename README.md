@@ -20,6 +20,7 @@
   - [Models used in MOGESTpy](#models-used-in-mogestpy)
   - [Repository Structure](#repository-structure)
   - [How to Use MOGESTpy?](#how-to-use-mogestpy)
+    - [Installing MOGESTpy](#installing-mogestpy)
   - [How to Contribute to the Project?](#how-to-contribute-to-the-project)
 
 </details>
@@ -71,7 +72,19 @@ MOGESTpy
 
 ## How to Use MOGESTpy?
 
-Currently, to run MOGESTpy, you need to clone the repository to your machine and call the modules individually. In the future, a framework is planned to be included to facilitate its use.
+### Installing MOGESTpy
+
+Using the following command, you can install MOGESTpy via pip:
+
+```bash
+pip install mogestpy
+```
+
+Alternatively, you can clone the repository and install the package locally:
+
+```bash
+pip install .
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

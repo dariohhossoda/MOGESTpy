@@ -56,18 +56,19 @@ reservoirs.
         self.Eb = 0
 
     def __str__(self) -> str:
-        text = 'Smap Class Object\n'
-        text += f"Str: {self.Str}\n"
-        text += f"Crec: {self.Crec}\n"
-        text += f"Capc: {self.Capc}\n"
-        text += f"Ai: {self.Ai}\n"
-        text += f"kkt: {self.kkt}\n"
-        text += f"k2t: {self.k2t}\n"
-        text += f"Ad: {self.Ad}\n"
-        text += f"Tuin: {self.Tuin}\n"
-        text += f"Ebin: {self.Ebin}"
 
-        return text
+        return (
+            'Smap Class Object\n'
+            f"Str = {self.Str}\n"
+            f"Crec = {self.Crec}\n"
+            f"Capc = {self.Capc}\n"
+            f"Ai = {self.Ai}\n"
+            f"kkt = {self.kkt}\n"
+            f"k2t = {self.k2t}\n"
+            f"Ad = {self.Ad}\n"
+            f"Tuin = {self.Tuin}\n"
+            f"Ebin = {self.Ebin}"
+        )
 
     def bounds(self) -> dict:
         return {

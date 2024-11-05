@@ -1,3 +1,4 @@
+import pandas as pd
 from spotpy.objectivefunctions import kge, nashsutcliffe, rmse, pbias
 from scipy.optimize import minimize, differential_evolution
 
@@ -200,7 +201,6 @@ class SMAP:
             self.Qb.append(EB * self.Basin.AD / 86.4)
             self.Qd.append(ED * self.Basin.AD / 86.4)
 
-
     def RunModelToDataFrame(self):
         """
         Runs the SMAP model, calculating the watershed's outflow by
@@ -214,8 +214,7 @@ class SMAP:
         """
 
         df = pd.DataFrame(columns=['P', 'EP', 'TU', 'ES', 'ER', 'Rec', 'RSolo',
-                                    'RSup', 'RSub', 'EB', 'ED', 'Q', 'Qb', 'Qd'])
-
+                                   'RSup', 'RSub', 'EB', 'ED', 'Q', 'Qb', 'Qd'])
 
         KK = .5 ** (1 / self.Basin.kkt)
         K2 = .5 ** (1 / self.Basin.k2t)
@@ -232,20 +231,20 @@ class SMAP:
             TU = RSolo / self.Basin.Str
 
             ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
-                    / (self.Point.P[i] - self.Basin.Ai
-                        + self.Basin.Str - RSolo)
-                    if (self.Point.P[i] > self.Basin.Ai) else 0)
+                  / (self.Point.P[i] - self.Basin.Ai
+                     + self.Basin.Str - RSolo)
+                  if (self.Point.P[i] > self.Basin.Ai) else 0)
 
             ER = (self.Point.EP[i] if
-                    ((self.Point.P[i] - ES) > self.Point.EP[i])
-                    else self.Point.P[i] - ES
-                    + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
+                  ((self.Point.P[i] - ES) > self.Point.EP[i])
+                  else self.Point.P[i] - ES
+                  + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
 
             Rec = (self.Basin.Crec * TU
-                    * (RSolo - self.Basin.Capc
-                        * self.Basin.Str) if (RSolo
+                   * (RSolo - self.Basin.Capc
+                      * self.Basin.Str) if (RSolo
                                             > (self.Basin.Capc
-                                                * self.Basin.Str)) else 0)
+                                               * self.Basin.Str)) else 0)
 
             RSolo += self.Point.P[i] - ES - ER - Rec
 

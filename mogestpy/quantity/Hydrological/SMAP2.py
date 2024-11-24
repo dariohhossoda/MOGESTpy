@@ -29,8 +29,10 @@ reservoirs.
     >>> smap.RunStep(10, 5)
 
     Running the model with a list of precipitation and evapotranspiration
-    >>> smap.Run([1., 1., 2., 0., 1.],
-                 [.1, .1, .1, .1, .1])
+    >>> discharge = list(smap.Run(
+        [1., 1., 2., 0., 1.],
+        [.1, .1, .1, .1, .1])
+        )
     """
 
     def __init__(self, Str=100.0, Crec=0.0, Capc=40.0, kkt=30.0,
@@ -40,13 +42,14 @@ reservoirs.
 
         Parameters:
         - Str (float): Soil Saturation (mm) (default: 100)
-        - Crec (float): Recession Coeficient (default: 0)
-        - Capc (float): Field Capacity (default: 40)
-        - kkt (float): Base flow recession coefficient (default: 30)
-        - k2t (float): Surface runoff recession coefficient (default: 0.2)
+        - Crec (float): Recession Coeficient (%) (default: 0)
+        - Capc (float): Field Capacity (%) (default: 40)
+        - kkt (float): Base flow recession coefficient (d^-1) (default: 30)
+        - k2t (float): Surface runoff recession coefficient (d^-1)
+        (default: 0.2)
         - Ad (float): Drainage area (km2) (default: 1)
         - Tuin (float): Initial soil moisture content (default: 0)
-        - Ebin (float): Initial base flow (default: 0)
+        - Ebin (float): Initial base flow (mm) (default: 0)
         - Ai (float): Initial Abstraction (default: 2.5)
         """
         self.i = 0

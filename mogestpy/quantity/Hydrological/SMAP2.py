@@ -2,7 +2,8 @@
 Soil Moisture Accounting Procedure (SMAP) model alternative implementation
 (WIP)
 """
-# import numpy as np
+from scipy.optimize import differential_evolution
+from spotpy.objectivefunctions import kge
 
 
 class Smap:
@@ -10,23 +11,46 @@ class Smap:
     Soil Moisture Accounting Procedure (SMAP) model.
     The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
+
+    Example:
+
+    Initialization of Smap object:
+    >>> smap = Smap(Ad=1,
+                    Str=100,
+                    Crec=0.1,
+                    Capc=40,
+                    kkt=30,
+                    k2t=.2,
+                    Tuin=0,
+                    Ebin=0,
+                    Ai=2.5)
+
+    Running a single step of the model:
+    >>> smap.RunStep(10, 5)
+
+    Running the model with a list of precipitation and evapotranspiration
+    >>> discharge = list(smap.Run(
+        [1., 1., 2., 0., 1.],
+        [.1, .1, .1, .1, .1])
+        )
     """
 
     def __init__(self, Str=100.0, Crec=0.0, Capc=40.0, kkt=30.0,
-                 k2t=.2, Ad=1.0, Tuin=0.0, Ebin=0.0, Ai=2.0):
+                 k2t=.2, Ad=1.0, Tuin=0.0, Ebin=0.0, Ai=2.5):
         """
-        Initializes an instance of the SMAP2 class.
+        Initializes an instance of the Smap class.
 
         Parameters:
         - Str (float): Soil Saturation (mm) (default: 100)
-        - Crec (float): Recession Coeficient (default: 0)
-        - Capc (float): Field Capacity (default: 40)
-        - kkt (float): TODO: Add description (default: 30)
-        - k2t (float): TODO: Add description (default: 0.2)
+        - Crec (float): Recession Coeficient (%) (default: 0)
+        - Capc (float): Field Capacity (%) (default: 40)
+        - kkt (float): Base flow recession coefficient (d^-1) (default: 30)
+        - k2t (float): Surface runoff recession coefficient (d^-1)
+        (default: 0.2)
         - Ad (float): Drainage area (km2) (default: 1)
         - Tuin (float): Initial soil moisture content (default: 0)
-        - Ebin (float): Initial base flow (default: 0)
-        - Ai (float): Initial Abstraction (default: 2)
+        - Ebin (float): Initial base flow (mm) (default: 0)
+        - Ai (float): Initial Abstraction (default: 2.5)
         """
         self.i = 0
 
@@ -56,20 +80,33 @@ reservoirs.
         self.Eb = 0
 
     def __str__(self) -> str:
-        text = 'Smap Class Object\n'
-        text += f"Str: {self.Str}\n"
-        text += f"Crec: {self.Crec}\n"
-        text += f"Capc: {self.Capc}\n"
-        text += f"Ai: {self.Ai}\n"
-        text += f"kkt: {self.kkt}\n"
-        text += f"k2t: {self.k2t}\n"
-        text += f"Ad: {self.Ad}\n"
-        text += f"Tuin: {self.Tuin}\n"
-        text += f"Ebin: {self.Ebin}"
-
-        return text
+        return (
+            f"Smap Class Object\n"
+            f"Str = {self.Str}\n"
+            f"Crec = {self.Crec}\n"
+            f"Capc = {self.Capc}\n"
+            f"Ai = {self.Ai}\n"
+            f"kkt = {self.kkt}\n"
+            f"k2t = {self.k2t}\n"
+            f"Ad = {self.Ad}\n"
+            f"Tuin = {self.Tuin}\n"
+            f"Ebin = {self.Ebin}"
+        )
 
     def bounds(self) -> dict:
+        """
+        Returns the bounds for various hydrological parameters.
+
+        Returns:
+            dict: A dictionary containing the bounds for the
+            following parameters:
+            - "Str": (100, 2000) - Saturation
+            - "Crec": (0, 20) - Recharge coefficient
+            - "Capc": (30, 50) - Field capacity
+            - "kkt": (30, 180) - Base flow recession coefficient
+            - "k2t": (0.2, 10) - Surface runoff recession coefficient
+            - "Ai": (2, 5) - Initial abstraction
+        """
         return {
             "Str": (100, 2000),
             "Crec": (0, 20),
@@ -108,9 +145,10 @@ reservoirs.
     def RSup0(self) -> float:
         return 0
 
-    # endregion
+    # endregion Reservoirs Functions
 
     # region: Transfer Functions
+
     def Es_calc(self, P, Ai, Str, Rsolo):
         inf = P - Ai
         if inf > 0:
@@ -139,12 +177,16 @@ reservoirs.
     def Tu_calc(self, RSolo, Str):
         return RSolo / Str
 
-    # endregion
+    # endregion Transfer Functions
 
     def discharge_calc(self, Ed, Eb, Ad):
         return (Ed + Eb) * Ad / 86.4
 
     def RunStep(self, prec, etp, reset=False) -> float:
+        """
+        Executes a single step of the hydrological model with the given
+        precipitation and evapotranspiration values.
+        """
         if reset or self.i == 0:
             self.i = 0
             self.Rsolo = self.Rsolo0(self.Tuin, self.Str)
@@ -169,7 +211,22 @@ reservoirs.
         return self.discharge_calc(self.Ed, self.Eb, self.Ad)
 
     def Run(self, prec_arr, etp_arr, reset=True):
-        if reset:
+        """
+        Executes the hydrological model with the given precipitation and
+        evapotranspiration values as iterables.
+
+        Parameters:
+        prec_arr (iterable): An iterable of precipitation values.
+        etp_arr (iterable): An iterable of evapotranspiration values.
+        reset (bool): If True, resets the model state before running.
+        Default is True.
+
+        Yields:
+        The result of each RunStep call for the given precipitation and
+        evapotranspiration values.
+        """
+
+        if reset or self.i == 0:
             self.Rsolo = self.Rsolo0(self.Tuin, self.Str)
             self.Rsub = self.RSub0(self.Ebin, self.kkt, self.Ad)
             self.Rsup = 0
@@ -177,5 +234,68 @@ reservoirs.
         for prec, etp in zip(prec_arr, etp_arr):
             yield self.RunStep(prec, etp)
 
-    def Calibrate():
-        return NotImplementedError('Calibration not implemented yet')
+    def RunToList(self, prec_arr, etp_arr, reset=True):
+        """
+        Executes the hydrological model with the given precipitation and
+        evapotranspiration values as iterables and returns the results as a
+        list.
+
+        Parameters:
+        prec_arr (iterable): An iterable of precipitation values.
+        etp_arr (iterable): An iterable of evapotranspiration values.
+        reset (bool): If True, resets the model state before running.
+        Default is True.
+
+        Returns:
+        A list containing the results of each RunStep call for the given
+        precipitation and evapotranspiration values.
+        """
+
+        return list(self.Run(prec_arr, etp_arr, reset))
+
+    def Calibrate(self, prec_arr, etp_arr, eval_arr,
+                  variables: list[str], obj_func=None):
+        """
+        Calibration method for the SMAP model using
+        Differential Evolution algorithm from scipy.optimize.
+
+        Note that the objective function will be minimized, therefore
+        objective functions such as KGE and NSE should be multiplied by -1.
+
+        - prec_arr (iterable): An iterable of precipitation values
+        - etp_arr (iterable): An iterable of evapotranspiration values
+        - eval_arr (iterable): An iterable of observed values
+        - variables (list[str]): A list of variables to be optimized
+        - obj_func (callable): A callable function that receives the
+        observed and simulated values and returns a float value. If None,
+        the KGE objective function will be used. The objective function
+        parameters are (observed, simulated).
+
+        Returns:
+        A scipy.optimize.OptimizeResult object.
+        """
+
+        invalid_vars = [var for var in variables if var not in self.__dict__]
+        if invalid_vars:
+            raise ValueError(
+                f"Variables {', '.join(invalid_vars)} do not exist."
+            )
+
+        bounds = [self.bounds()[var] for var in variables]
+
+        if obj_func is None:
+            def default_obj_func(obs, sim):
+                return -kge(obs, sim)
+            obj_func = default_obj_func
+
+        def objective(params):
+            self.__dict__.update(
+                {var: val for var, val in zip(variables, params)}
+            )
+
+            return obj_func(eval_arr, list(self.Run(prec_arr, etp_arr)))
+
+        result = differential_evolution(func=objective,
+                                        bounds=bounds)
+
+        return result

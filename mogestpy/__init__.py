@@ -2,7 +2,8 @@
 
 __author__ = 'Dario Hachisu Hossoda'
 __email__ = 'dario.hossoda@usp.br'
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 
 from mogestpy import quality  # noqa: F401
 from mogestpy import quantity  # noqa: F401
+from mogestpy.quantity.Hydrological.SMAP2 import Smap  # noqa: F401

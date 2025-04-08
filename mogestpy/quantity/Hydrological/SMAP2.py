@@ -1,6 +1,7 @@
 """
-Soil Moisture Accounting Procedure (SMAP) model alternative implementation
-(WIP)
+Soil Moisture Accounting Procedure (SMAP) model.
+The SMAP model is a lumped rainfall-runoff model based on conceptual
+reservoirs.
 """
 from scipy.optimize import differential_evolution
 from spotpy.objectivefunctions import kge
@@ -15,28 +16,40 @@ reservoirs.
     Example:
 
     Initialization of Smap object:
-    >>> smap = Smap(Ad=1,
-                    Str=100,
-                    Crec=0.1,
-                    Capc=40,
-                    kkt=30,
-                    k2t=.2,
-                    Tuin=0,
-                    Ebin=0,
-                    Ai=2.5)
+    >>> smap = Smap(
+        Ad=1,
+        Str=100,
+        Crec=0.1,
+        Capc=40,
+        kkt=30,
+        k2t=.2,
+        Tuin=0,
+        Ebin=0,
+        Ai=2.5
+    )
 
     Running a single step of the model:
     >>> smap.RunStep(10, 5)
 
     Running the model with a list of precipitation and evapotranspiration
     >>> discharge = list(smap.Run(
-        [1., 1., 2., 0., 1.],
-        [.1, .1, .1, .1, .1])
+        [1.0, 1.0, 2.0, 0.0, 1.0],
+        [0.1, 0.1, 0.1, 0.1, 0.1])
         )
     """
 
-    def __init__(self, Str=100.0, Crec=0.0, Capc=40.0, kkt=30.0,
-                 k2t=.2, Ad=1.0, Tuin=0.0, Ebin=0.0, Ai=2.5):
+    def __init__(
+        self,
+        Str=100.0,
+        Crec=0.0,
+        Capc=40.0,
+        kkt=30.0,
+        k2t=0.2,
+        Ad=1.0,
+        Tuin=0.0,
+        Ebin=0.0,
+        Ai=2.5
+    ) -> None:
         """
         Initializes an instance of the Smap class.
 
@@ -80,7 +93,6 @@ reservoirs.
         self.Eb = 0
 
     def __str__(self) -> str:
-
         return (
             'Smap Class Object\n'
             f"Str = {self.Str}\n"
@@ -101,12 +113,12 @@ reservoirs.
         Returns:
             dict: A dictionary containing the bounds for the
             following parameters:
-            - "Str": (100, 2000) - Saturation
-            - "Crec": (0, 20) - Recharge coefficient
-            - "Capc": (30, 50) - Field capacity
-            - "kkt": (30, 180) - Base flow recession coefficient
-            - "k2t": (0.2, 10) - Surface runoff recession coefficient
-            - "Ai": (2, 5) - Initial abstraction
+            - "Str": (100, 2000) - Saturation (mm)
+            - "Crec": (0, 20) - Recharge coefficient (%)
+            - "Capc": (30, 50) - Field capacity (%)
+            - "kkt": (30, 180) - Base flow recession coefficient (d^-1)
+            - "k2t": (0.2, 10) - Surface runoff recession coefficient (d^-1)
+            - "Ai": (2, 5) - Initial abstraction (mm)
         """
         return {
             "Str": (100, 2000),
@@ -137,13 +149,22 @@ reservoirs.
         return Rsub + Rec - Eb
 
     def Rsolo0(self, Tuin, Str) -> float:
+        """
+        Initial Soil Reservoir Calculation
+        """
         return Tuin * Str
 
     def RSub0(self, Ebin, kkt, Ad) -> float:
+        """
+        Initial Subsurface Reservoir Calculation
+        """
         kt = .5 ** (1 / kkt)
         return Ebin / (1 - kt) / Ad * 86.4
 
     def RSup0(self) -> float:
+        """
+        Initial Surface Reservoir Calculation
+        """
         return 0
 
     # endregion Reservoirs Functions
@@ -187,6 +208,9 @@ reservoirs.
         """
         Executes a single step of the hydrological model with the given
         precipitation and evapotranspiration values.
+
+        The model uses the given parameters to calculate the discharge
+        based on the SMAP model equations.
         """
         if reset or self.i == 0:
             self.i = 0
@@ -254,8 +278,14 @@ reservoirs.
 
         return list(self.Run(prec_arr, etp_arr, reset))
 
-    def Calibrate(self, prec_arr, etp_arr, eval_arr,
-                  variables: list[str], obj_func=None):
+    def Calibrate(
+        self,
+        prec_arr,
+        etp_arr,
+        eval_arr,
+        variables: list[str],
+        obj_func=None
+    ):
         """
         Calibration method for the SMAP model using
         Differential Evolution algorithm from scipy.optimize.
@@ -296,7 +326,9 @@ reservoirs.
 
             return obj_func(eval_arr, list(self.Run(prec_arr, etp_arr)))
 
-        result = differential_evolution(func=objective,
-                                        bounds=bounds)
+        result = differential_evolution(
+            func=objective,
+            bounds=bounds
+        )
 
         return result

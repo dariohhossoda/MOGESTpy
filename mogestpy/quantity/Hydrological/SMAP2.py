@@ -3,6 +3,8 @@ Soil Moisture Accounting Procedure (SMAP) model.
 The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
 """
+import warnings
+
 from scipy.optimize import differential_evolution
 from spotpy.objectivefunctions import kge
 
@@ -32,10 +34,12 @@ reservoirs.
     >>> smap.RunStep(10, 5)
 
     Running the model with a list of precipitation and evapotranspiration
-    >>> discharge = list(smap.Run(
+    >>> discharge = smap.RunToList(
         [1.0, 1.0, 2.0, 0.0, 1.0],
-        [0.1, 0.1, 0.1, 0.1, 0.1])
+        [0.1, 0.1, 0.1, 0.1, 0.1]
         )
+    The result will be a list of discharges with the same length as the
+    input lists.
     """
 
     def __init__(
@@ -204,7 +208,7 @@ reservoirs.
     def discharge_calc(self, Ed, Eb, Ad):
         return (Ed + Eb) * Ad / 86.4
 
-    def RunStep(self, prec, etp, reset=False) -> float:
+    def run_step(self, prec, etp, reset=False) -> float:
         """
         Executes a single step of the hydrological model with the given
         precipitation and evapotranspiration values.
@@ -235,7 +239,7 @@ reservoirs.
         self.i += 1
         return self.discharge_calc(self.Ed, self.Eb, self.Ad)
 
-    def Run(self, prec_arr, etp_arr, reset=True):
+    def run(self, prec_arr, etp_arr, reset=True):
         """
         Executes the hydrological model with the given precipitation and
         evapotranspiration values as iterables.
@@ -259,7 +263,7 @@ reservoirs.
         for prec, etp in zip(prec_arr, etp_arr):
             yield self.RunStep(prec, etp)
 
-    def RunToList(self, prec_arr, etp_arr, reset=True):
+    def run_to_list(self, prec_arr, etp_arr, reset=True):
         """
         Executes the hydrological model with the given precipitation and
         evapotranspiration values as iterables and returns the results as a
@@ -278,7 +282,7 @@ reservoirs.
 
         return list(self.Run(prec_arr, etp_arr, reset))
 
-    def Calibrate(
+    def calibrate(
         self,
         prec_arr,
         etp_arr,
@@ -298,9 +302,9 @@ reservoirs.
         - eval_arr (iterable): An iterable of observed values
         - variables (list[str]): A list of variables to be optimized
         - obj_func (callable): A callable function that receives the
-        observed and simulated values and returns a float value. If None,
-        the KGE objective function will be used. The objective function
-        parameters are (observed, simulated).
+        observed and simulated values and returns a float to be minimized.
+        If None, the KGE objective function will be used. The objective
+        function parameters are (observed, simulated).
 
         Returns:
         A scipy.optimize.OptimizeResult object.
@@ -332,3 +336,40 @@ reservoirs.
         )
 
         return result
+
+    # Deprecated method names with warnings
+    def RunStep(self, *args, **kwargs):
+        warnings.warn(
+            "RunStep is deprecated and will be removed in a future version. "
+            "Use run_step instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.run_step(*args, **kwargs)
+
+    def Run(self, *args, **kwargs):
+        warnings.warn(
+            "Run is deprecated and will be removed in a future version. "
+            "Use run instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.run(*args, **kwargs)
+
+    def RunToList(self, *args, **kwargs):
+        warnings.warn(
+            "RunToList is deprecated and will be removed in a future version. "
+            "Use run_to_list instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.run_to_list(*args, **kwargs)
+
+    def Calibrate(self, *args, **kwargs):
+        warnings.warn(
+            "Calibrate is deprecated and will be removed in a future version. "
+            "Use calibrate instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.calibrate(*args, **kwargs)

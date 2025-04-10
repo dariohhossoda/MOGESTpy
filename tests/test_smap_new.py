@@ -1,11 +1,11 @@
-from mogestpy.quantity.Hydrological import SMAP2
+from mogestpy.quantity.Hydrological.SMAP2 import Smap
 
 
 def test_smap2_init():
     """
     Tests initialization of SMAP2 class
     """
-    smap = SMAP2.Smap()
+    smap = Smap()
     assert smap.i == 0
 
 
@@ -13,7 +13,7 @@ def test_smap2_discharge_calc():
     """
     Tests Discharge Calculation of SMAP2 class
     """
-    smap = SMAP2.Smap()
+    smap = Smap()
     assert abs(smap.discharge_calc(
         0.0, 0.991415730337079, 17800) - 204.25) < 1e-6
 
@@ -22,7 +22,7 @@ def test_smap2_transfer_functions():
     """
     Tests Transfer Functions of SMAP2 class
     """
-    smap = SMAP2.Smap()
+    smap = Smap()
     smap.Str = 165.060822610565
     smap.Ad = 17800.0
     smap.Crec = 20.0
@@ -40,7 +40,7 @@ def test_smap2_transfer_functions2():
     """
     Tests Transfer Functions of SMAP2 class
     """
-    smap = SMAP2.Smap(
+    smap = Smap(
         Str=165.060822610565,
         Ad=17800.0,
         Crec=20.0,
@@ -76,7 +76,7 @@ def test_smap2_reservoir_init():
     """
     Tests Rsolo_calc method of SMAP2 class
     """
-    smap = SMAP2.Smap()
+    smap = Smap()
     assert abs(smap.Rsolo0(0.8, 165.060822610565) - 132.048658) < 1e-6
     assert smap.RSup0() == 0
     assert abs(smap.RSub0(204.25, 120, 17800) - 172.133452) < 1e-6
@@ -86,7 +86,7 @@ def test_smap2_run_step():
     """
     Tests RunStep method of SMAP2 class
     """
-    smap = SMAP2.Smap(
+    smap = Smap(
         Str=165.060822610565,
         Ad=17800.0,
         Crec=20.0,
@@ -99,16 +99,17 @@ def test_smap2_run_step():
     )
 
     smap.Tu = smap.Tu_calc(smap.Rsolo, smap.Str)
-    assert abs(smap.Tu -
-               0.8) < 1e-6, f"Tu: {smap.Tu}"
-    assert abs(smap.RunStep(0, 2.4) - 204.250000) < 1e-6
+    assert abs(
+        smap.Tu
+        - 0.8) < 1e-6, f"Tu: {smap.Tu}"
+    assert abs(smap.run_step(0, 2.4) - 204.250000) < 1e-6
 
 
 def test_smap2_run_step_multiple():
     """
     Tests RunStep method of SMAP2 class
     """
-    smap = SMAP2.Smap(
+    smap = Smap(
         Str=165,
         Ad=17800.0,
         Crec=20.0,
@@ -120,9 +121,9 @@ def test_smap2_run_step_multiple():
         Ai=4.0
     )
 
-    step_1 = smap.RunStep(0, 2.4)
-    step_2 = smap.RunStep(0, 2.4)
-    step_3 = smap.RunStep(0, 2.4)
+    step_1 = smap.run_step(0, 2.4)
+    step_2 = smap.run_step(0, 2.4)
+    step_3 = smap.run_step(0, 2.4)
 
     assert abs(step_1 - 204.25) < 1e-6, f"Step 1: {step_1}"
     assert abs(step_2 - 215.6038845) < 1e-6, f"Step 2: {step_2}"

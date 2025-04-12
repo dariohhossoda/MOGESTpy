@@ -64,7 +64,8 @@ class Smap:
     ...     [0.1, 0.1, 0.1, 0.1, 0.1]
     ... )
 
-    The result will be a list of discharges with the same length as the input lists.
+    The result will be a list of discharges with the same length as the input
+    lists.
     """
 
     def __init__(

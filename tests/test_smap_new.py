@@ -84,7 +84,7 @@ def test_smap2_reservoir_init():
 
 def test_smap2_run_step():
     """
-    Tests RunStep method of SMAP2 class
+    Tests run_step method of SMAP2 class
     """
     smap = Smap(
         Str=165.060822610565,
@@ -107,7 +107,7 @@ def test_smap2_run_step():
 
 def test_smap2_run_step_multiple():
     """
-    Tests RunStep method of SMAP2 class
+    Tests run_step method of SMAP2 class
     """
     smap = Smap(
         Str=165,

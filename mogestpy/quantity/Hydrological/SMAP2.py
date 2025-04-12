@@ -4,6 +4,7 @@ The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
 """
 import warnings
+import pandas as pd  # Ensure pandas is imported
 
 from scipy.optimize import differential_evolution
 from spotpy.objectivefunctions import kge
@@ -457,6 +458,68 @@ class Smap:
         """
 
         return list(self.Run(prec_arr, etp_arr, reset))
+
+    def run_to_dataframe(self, prec_arr, etp_arr, reset=True):
+        """
+        Executes the hydrological model and stores all intermediate variables
+        and results into a Pandas DataFrame.
+
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        reset : bool, optional
+            If True, resets the model state before running. Default is True.
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing all intermediate variables and results for
+            each step.
+        """
+        if reset or self.i == 0:
+            self.Rsolo = self.Rsolo0(self.Tuin, self.Str)
+            self.Rsub = self.RSub0(self.Ebin, self.kkt, self.Ad)
+            self.Rsup = 0
+
+        data = []
+
+        for prec, etp in zip(prec_arr, etp_arr):
+            self.Tu = self.Tu_calc(self.Rsolo, self.Str)
+            self.Es = self.Es_calc(prec, self.Ai, self.Str, self.Rsolo)
+            self.Er = self.Er_calc(prec, etp, self.Es, self.Tu)
+            self.Rec = self.Rec_calc(
+                self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str)
+
+            self.Rsolo = self.Rsolo_calc(
+                self.Rsolo, prec, self.Es, self.Er, self.Rec)
+            self.Ed = self.Ed_calc(self.Rsup, self.k2t)
+            self.Eb = self.Eb_calc(self.Rsub, self.kkt)
+
+            self.Rsup = self.Rsup_calc(self.Rsup, self.Es, self.Ed)
+            self.Rsub = self.Rsub_calc(self.Rsub, self.Rec, self.Eb)
+
+            discharge = self.discharge_calc(self.Ed, self.Eb, self.Ad)
+
+            # Store all variables for the current step
+            data.append({
+                "prec": prec,
+                "etp": etp,
+                "Rsolo": self.Rsolo,
+                "Rsub": self.Rsub,
+                "Rsup": self.Rsup,
+                "Tu": self.Tu,
+                "Es": self.Es,
+                "Er": self.Er,
+                "Rec": self.Rec,
+                "Ed": self.Ed,
+                "Eb": self.Eb,
+                "discharge": discharge
+            })
+
+        return pd.DataFrame(data)
 
     def calibrate(
         self,

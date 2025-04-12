@@ -13,7 +13,20 @@ class Smap:
     """
     Soil Moisture Accounting Procedure (SMAP) model.
     The SMAP model is a lumped rainfall-runoff model based on conceptual
-reservoirs.
+reservoirs. The model consists of three reservoirs: soil, surface, and
+subsurface.
+
+    This SMAP implementation uses the following parameters and units:
+    - Str (float): Soil Saturation (mm) (default: 100)
+    - Crec (float): Recession Coeficient (%) (default: 0)
+    - Capc (float): Field Capacity (%) (default: 40)
+    - kkt (float): Base flow recession coefficient (d^-1) (default: 30)
+    - k2t (float): Surface runoff recession coefficient (d^-1)
+    (default: 0.2)
+    - Ad (float): Drainage area (km2) (default: 1)
+    - Tuin (float): Initial soil moisture content (-) (default: 0)
+    - Ebin (float): Initial base flow (mm) (default: 0)
+    - Ai (float): Initial Abstraction (default: 2.5)
 
     Example:
 
@@ -34,7 +47,7 @@ reservoirs.
     >>> smap.RunStep(10, 5)
 
     Running the model with a list of precipitation and evapotranspiration
-    >>> discharge = smap.RunToList(
+    >>> discharge = smap.run_to_list(
         [1.0, 1.0, 2.0, 0.0, 1.0],
         [0.1, 0.1, 0.1, 0.1, 0.1]
         )
@@ -56,18 +69,6 @@ reservoirs.
     ) -> None:
         """
         Initializes an instance of the Smap class.
-
-        Parameters:
-        - Str (float): Soil Saturation (mm) (default: 100)
-        - Crec (float): Recession Coeficient (%) (default: 0)
-        - Capc (float): Field Capacity (%) (default: 40)
-        - kkt (float): Base flow recession coefficient (d^-1) (default: 30)
-        - k2t (float): Surface runoff recession coefficient (d^-1)
-        (default: 0.2)
-        - Ad (float): Drainage area (km2) (default: 1)
-        - Tuin (float): Initial soil moisture content (default: 0)
-        - Ebin (float): Initial base flow (mm) (default: 0)
-        - Ai (float): Initial Abstraction (default: 2.5)
         """
         self.i = 0
 
@@ -132,6 +133,24 @@ reservoirs.
             "k2t": (.2, 10),
             "Ai": (2, 5)
         }
+
+    def check_bounds(self, params: dict) -> bool:
+        """
+        Checks if the given parameters are within the defined bounds.
+
+        Args:
+            params (dict): A dictionary containing parameter names as keys
+            and their values.
+
+        Returns:
+            bool: True if all parameters are within bounds, False otherwise.
+        """
+        for param, value in params.items():
+            if param in self.bounds():
+                lower, upper = self.bounds()[param]
+                if not (lower <= value <= upper):
+                    return False
+        return True
     # region: Reservoirs Functions
 
     def Rsolo_calc(self, Rsolo, P, Es, Er, Rec) -> float:

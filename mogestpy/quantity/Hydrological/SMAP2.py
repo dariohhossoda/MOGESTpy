@@ -12,47 +12,59 @@ from spotpy.objectivefunctions import kge
 class Smap:
     """
     Soil Moisture Accounting Procedure (SMAP) model.
+
     The SMAP model is a lumped rainfall-runoff model based on conceptual
-reservoirs. The model consists of three reservoirs: soil, surface, and
-subsurface.
+    reservoirs. It consists of three reservoirs: soil, surface, and subsurface.
 
-    This SMAP implementation uses the following parameters and units:
-    - Str (float): Soil Saturation (mm) (default: 100)
-    - Crec (float): Recession Coeficient (%) (default: 0)
-    - Capc (float): Field Capacity (%) (default: 40)
-    - kkt (float): Base flow recession coefficient (d^-1) (default: 30)
-    - k2t (float): Surface runoff recession coefficient (d^-1)
-    (default: 0.2)
-    - Ad (float): Drainage area (km2) (default: 1)
-    - Tuin (float): Initial soil moisture content (-) (default: 0)
-    - Ebin (float): Initial base flow (mm) (default: 0)
-    - Ai (float): Initial Abstraction (default: 2.5)
+    Attributes
+    ----------
+    Str : float
+        Soil Saturation (mm). Default is 100.
+    Crec : float
+        Recession Coefficient (%). Default is 0.
+    Capc : float
+        Field Capacity (%). Default is 40.
+    kkt : float
+        Base flow recession coefficient (d⁻¹). Default is 30.
+    k2t : float
+        Surface runoff recession coefficient (d⁻¹). Default is 0.2.
+    Ad : float
+        Drainage area (km²). Default is 1.
+    Tuin : float
+        Initial soil moisture content (-). Default is 0.
+    Ebin : float
+        Initial base flow (mm). Default is 0.
+    Ai : float
+        Initial abstraction. Default is 2.5.
 
-    Example:
+    Examples
+    --------
+    Initialize a Smap object:
 
-    Initialization of Smap object:
     >>> smap = Smap(
-        Ad=1,
-        Str=100,
-        Crec=0.1,
-        Capc=40,
-        kkt=30,
-        k2t=.2,
-        Tuin=0,
-        Ebin=0,
-        Ai=2.5
-    )
+    ...     Ad=1,
+    ...     Str=100,
+    ...     Crec=0.1,
+    ...     Capc=40,
+    ...     kkt=30,
+    ...     k2t=0.2,
+    ...     Tuin=0,
+    ...     Ebin=0,
+    ...     Ai=2.5
+    ... )
 
-    Running a single step of the model:
+    Run a single step of the model:
+
     >>> smap.RunStep(10, 5)
 
-    Running the model with a list of precipitation and evapotranspiration
+    Run the model with a list of precipitation and evapotranspiration:
+
     >>> discharge = smap.run_to_list(
-        [1.0, 1.0, 2.0, 0.0, 1.0],
-        [0.1, 0.1, 0.1, 0.1, 0.1]
-        )
-    The result will be a list of discharges with the same length as the
-    input lists.
+    ...     [1.0, 1.0, 2.0, 0.0, 1.0],
+    ...     [0.1, 0.1, 0.1, 0.1, 0.1]
+    ... )
+
+    The result will be a list of discharges with the same length as the input lists.
     """
 
     def __init__(
@@ -68,7 +80,28 @@ subsurface.
         Ai=2.5
     ) -> None:
         """
-        Initializes an instance of the Smap class.
+        Initialize an instance of the Smap class.
+
+        Parameters
+        ----------
+        Str : float, optional
+            Soil Saturation (mm). Default is 100.0.
+        Crec : float, optional
+            Recession Coefficient (%). Default is 0.0.
+        Capc : float, optional
+            Field Capacity (%). Default is 40.0.
+        kkt : float, optional
+            Base flow recession coefficient (d⁻¹). Default is 30.0.
+        k2t : float, optional
+            Surface runoff recession coefficient (d⁻¹). Default is 0.2.
+        Ad : float, optional
+            Drainage area (km²). Default is 1.0.
+        Tuin : float, optional
+            Initial soil moisture content (-). Default is 0.0.
+        Ebin : float, optional
+            Initial base flow (mm). Default is 0.0.
+        Ai : float, optional
+            Initial abstraction. Default is 2.5.
         """
         self.i = 0
 
@@ -98,6 +131,15 @@ subsurface.
         self.Eb = 0
 
     def __str__(self) -> str:
+        """
+        Returns a string representation of the Smap object.
+
+        Returns
+        -------
+        str
+            A string that includes the values of all parameters used in
+            the model.
+        """
         return (
             'Smap Class Object\n'
             f"Str = {self.Str}\n"
@@ -115,15 +157,22 @@ subsurface.
         """
         Returns the bounds for various hydrological parameters.
 
-        Returns:
-            dict: A dictionary containing the bounds for the
-            following parameters:
-            - "Str": (100, 2000) - Saturation (mm)
-            - "Crec": (0, 20) - Recharge coefficient (%)
-            - "Capc": (30, 50) - Field capacity (%)
-            - "kkt": (30, 180) - Base flow recession coefficient (d^-1)
-            - "k2t": (0.2, 10) - Surface runoff recession coefficient (d^-1)
-            - "Ai": (2, 5) - Initial abstraction (mm)
+        Returns
+        -------
+        dict
+            A dictionary containing the bounds for the following parameters:
+            - "Str" : tuple of float
+            Saturation (mm), range (100, 2000).
+            - "Crec" : tuple of float
+            Recharge coefficient (%), range (0, 20).
+            - "Capc" : tuple of float
+            Field capacity (%), range (30, 50).
+            - "kkt" : tuple of float
+            Base flow recession coefficient (d⁻¹), range (30, 180).
+            - "k2t" : tuple of float
+            Surface runoff recession coefficient (d⁻¹), range (0.2, 10).
+            - "Ai" : tuple of float
+            Initial abstraction (mm), range (2, 5).
         """
         return {
             "Str": (100, 2000),
@@ -136,14 +185,15 @@ subsurface.
 
     def check_bounds(self, params: dict) -> bool:
         """
-        Checks if the given parameters are within the defined bounds.
+        Parameters
+        ----------
+        params : dict
+            A dictionary containing parameter names as keys and their values.
 
-        Args:
-            params (dict): A dictionary containing parameter names as keys
-            and their values.
-
-        Returns:
-            bool: True if all parameters are within bounds, False otherwise.
+        Returns
+        -------
+        bool
+            True if all parameters are within bounds, False otherwise.
         """
         for param, value in params.items():
             if param in self.bounds():
@@ -155,38 +205,115 @@ subsurface.
 
     def Rsolo_calc(self, Rsolo, P, Es, Er, Rec) -> float:
         """
-        Soil Reservoir Calculation
+        Soil Reservoir Calculation.
+
+        Parameters
+        ----------
+        Rsolo : float
+            Initial soil reservoir value.
+        P : float
+            Precipitation input.
+        Es : float
+            Soil evaporation.
+        Er : float
+            Runoff or surface water flow.
+        Rec : float
+            Recharge or infiltration to groundwater.
+
+        Returns
+        -------
+        float
+            Updated soil reservoir value.
         """
         return Rsolo + P - Es - Er - Rec
 
     def Rsup_calc(self, Rsup, Es, Ed) -> float:
         """
-        Surface Reservoir Calculation
+        Surface Reservoir Calculation.
+
+        Parameters
+        ----------
+        Rsup : float
+            Initial surface reservoir value.
+        Es : float
+            Soil evaporation.
+        Ed : float
+            Surface runoff.
+
+        Returns
+        -------
+        float
+            Updated surface reservoir value.
         """
         return Rsup + Es - Ed
 
     def Rsub_calc(self, Rsub, Rec, Eb) -> float:
         """
-        Subsurface Reservoir Calculation
+        Subsurface Reservoir Calculation.
+
+        Parameters
+        ----------
+        Rsub : float
+            Initial subsurface reservoir value.
+        Rec : float
+            Recharge or infiltration to groundwater.
+        Eb : float
+            Base flow.
+
+        Returns
+        -------
+        float
+            Updated subsurface reservoir value.
         """
         return Rsub + Rec - Eb
 
     def Rsolo0(self, Tuin, Str) -> float:
         """
-        Initial Soil Reservoir Calculation
+        Calculate the initial soil reservoir value.
+
+        Parameters
+        ----------
+        Tuin : float
+            Initial soil moisture content (-).
+        Str : float
+            Soil saturation (mm).
+
+        Returns
+        -------
+        float
+            Initial soil reservoir value.
         """
         return Tuin * Str
 
     def RSub0(self, Ebin, kkt, Ad) -> float:
         """
-        Initial Subsurface Reservoir Calculation
+        Calculate the initial subsurface reservoir value.
+
+        Parameters
+        ----------
+        Ebin : float
+            Initial base flow (mm).
+        kkt : float
+            Base flow recession coefficient (d⁻¹).
+        Ad : float
+            Drainage area (km²).
+
+        Returns
+        -------
+        float
+            Initial subsurface reservoir value.
         """
         kt = .5 ** (1 / kkt)
         return Ebin / (1 - kt) / Ad * 86.4
 
     def RSup0(self) -> float:
         """
-        Initial Surface Reservoir Calculation
+        Calculate the initial surface reservoir value.
+
+        Returns
+        -------
+        float
+            The initial value of the surface reservoir, which is set to 0.
         """
         return 0
 
@@ -229,11 +356,30 @@ subsurface.
 
     def run_step(self, prec, etp, reset=False) -> float:
         """
-        Executes a single step of the hydrological model with the given
-        precipitation and evapotranspiration values.
+        Executes a single step of the hydrological model using the SMAP model
+        equations.
 
-        The model uses the given parameters to calculate the discharge
-        based on the SMAP model equations.
+        Parameters
+        ----------
+        prec : float
+            Precipitation value for the current step.
+        etp : float
+            Evapotranspiration value for the current step.
+        reset : bool, optional
+            If True, resets the model state to its initial conditions
+            (default is False).
+
+        Returns
+        -------
+        float
+            The calculated discharge value for the current step.
+
+        Notes
+        -----
+        This method updates the internal state of the model, including
+        variables such as soil moisture, subsurface flow, and surface flow,
+        based on the input precipitation and evapotranspiration values.
+        The calculations are performed using the SMAP model equations
         """
         if reset or self.i == 0:
             self.i = 0
@@ -263,15 +409,20 @@ subsurface.
         Executes the hydrological model with the given precipitation and
         evapotranspiration values as iterables.
 
-        Parameters:
-        prec_arr (iterable): An iterable of precipitation values.
-        etp_arr (iterable): An iterable of evapotranspiration values.
-        reset (bool): If True, resets the model state before running.
-        Default is True.
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        reset : bool, optional
+            If True, resets the model state before running. Default is True.
 
-        Yields:
-        The result of each RunStep call for the given precipitation and
-        evapotranspiration values.
+        Yields
+        ------
+        float
+            The result of each RunStep call for the given precipitation and
+            evapotranspiration values.
         """
 
         if reset or self.i == 0:
@@ -288,15 +439,20 @@ subsurface.
         evapotranspiration values as iterables and returns the results as a
         list.
 
-        Parameters:
-        prec_arr (iterable): An iterable of precipitation values.
-        etp_arr (iterable): An iterable of evapotranspiration values.
-        reset (bool): If True, resets the model state before running.
-        Default is True.
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        reset : bool, optional
+            If True, resets the model state before running. Default is True.
 
-        Returns:
-        A list containing the results of each RunStep call for the given
-        precipitation and evapotranspiration values.
+        Returns
+        -------
+        list
+            A list containing the results of each RunStep call for the given
+            precipitation and evapotranspiration values.
         """
 
         return list(self.Run(prec_arr, etp_arr, reset))
@@ -310,23 +466,33 @@ subsurface.
         obj_func=None
     ):
         """
-        Calibration method for the SMAP model using
-        Differential Evolution algorithm from scipy.optimize.
+        Calibrate the SMAP model using the Differential Evolution algorithm.
 
-        Note that the objective function will be minimized, therefore
-        objective functions such as KGE and NSE should be multiplied by -1.
+        This method optimizes the specified model parameters to minimize the
+        given objective function. Note that the objective function will be
+        minimized, so metrics like KGE and NSE should be multiplied by -1.
 
-        - prec_arr (iterable): An iterable of precipitation values
-        - etp_arr (iterable): An iterable of evapotranspiration values
-        - eval_arr (iterable): An iterable of observed values
-        - variables (list[str]): A list of variables to be optimized
-        - obj_func (callable): A callable function that receives the
-        observed and simulated values and returns a float to be minimized.
-        If None, the KGE objective function will be used. The objective
-        function parameters are (observed, simulated).
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        eval_arr : iterable
+            An iterable of observed values.
+        variables : list of str
+            A list of variable names to be optimized.
+        obj_func : callable, optional
+            A callable function that takes observed and simulated values as
+            input and returns a float to be minimized. If None, the KGE
+            objective function will be used. The function signature should be
+            `obj_func(observed, simulated)`.
 
-        Returns:
-        A scipy.optimize.OptimizeResult object.
+        Returns
+        -------
+        scipy.optimize.OptimizeResult
+            The result of the optimization process, as returned by
+            `scipy.optimize.differential_evolution`.
         """
 
         invalid_vars = [var for var in variables if var not in self.__dict__]

@@ -4,7 +4,10 @@ The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
 """
 import warnings
-import pandas as pd  # Ensure pandas is imported
+import numpy as np
+
+import pandas as pd
+import pyswarms as ps
 
 from scipy.optimize import differential_evolution
 from spotpy.objectivefunctions import kge
@@ -131,6 +134,17 @@ class Smap:
         self.Rec = 0
         self.Ed = 0
         self.Eb = 0
+
+        # if not self.check_bounds():
+        #     warnings.warn(
+        #         "Some parameters are out of bounds. Please check the bounds."
+        #     )
+
+        if self.Tuin > 1:
+            warnings.warn(
+                "Initial soil moisture content (Tuin) "
+                "should be between 0 and 1. Is this a percentage?"
+            )
 
     def __str__(self) -> str:
         """
@@ -527,7 +541,8 @@ class Smap:
         etp_arr,
         eval_arr,
         variables: list[str],
-        obj_func=None
+        obj_func=None,
+        disp=False
     ):
         """
         Calibrate the SMAP model using the Differential Evolution algorithm.
@@ -581,10 +596,122 @@ class Smap:
 
         result = differential_evolution(
             func=objective,
-            bounds=bounds
+            bounds=bounds,
+            disp=disp
         )
 
         return result
+
+    def pso_calibrate(
+        self,
+        prec_arr,
+        etp_arr,
+        eval_arr,
+        variables: list[str],
+        obj_func=None,
+        options=None,
+        n_particles=50,
+        iters=100
+    ):
+        """
+        Calibrate the SMAP model using Particle Swarm Optimization (PSO) BETA.
+
+        This method optimizes the specified model parameters to minimize the
+        given objective function. Note that the objective function will be
+        minimized, so metrics like KGE and NSE should be multiplied by -1.
+
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        eval_arr : iterable
+            An iterable of observed values.
+        variables : list of str
+            A list of variable names to be optimized.
+        obj_func : callable, optional
+            A callable function that takes observed and simulated values as
+            input and returns a float to be minimized. If None, the KGE
+            objective function will be used. The function signature should be
+            `obj_func(observed, simulated)`.
+        options : dict, optional
+            A dictionary of options for the PSO algorithm. Default is None.
+            - c1: represents the cognitive component (default is 1.5).
+            - c2: represents the social component (default is 1.5).
+            - w: represents the inertia weight (default is 0.5).
+        n_particles : int, optional
+            Number of particles in the swarm. Default is 50.
+        iters : int, optional
+            Number of iterations for the PSO algorithm. Default is 100.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the best parameters and the best objective
+            function value.
+        """
+
+        invalid_vars = [var for var in variables if var not in self.__dict__]
+        if invalid_vars:
+            raise ValueError(
+                f"Variables {', '.join(invalid_vars)} do not exist."
+            )
+
+        for var in variables:
+            if var not in self.bounds():
+                raise ValueError(f"Variable '{var}' is not defined in bounds.")
+
+        bounds = [self.bounds()[var] for var in variables]
+        lower_bounds, upper_bounds = zip(*bounds)
+        print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
+
+        if obj_func is None:
+            def default_obj_func(obs, sim):
+                result = kge(obs, sim)
+                if hasattr(result, "item"):
+                    return -float(result.item())
+                return -float(result)
+            obj_func = default_obj_func
+
+        def objective(params):
+            if params.ndim > 1:
+                costs = []
+                for p in params:
+                    self.__dict__.update(
+                        {var: val for var, val in zip(variables, p)}
+                    )
+                    simulated = self.run_to_list(prec_arr, etp_arr)
+                    cost = obj_func(eval_arr, simulated)
+                    costs.append(float(cost))
+                return np.array(costs)
+            else:
+                self.__dict__.update(
+                    {var: val for var, val in zip(variables, params)}
+                )
+                simulated = self.run_to_list(prec_arr, etp_arr)
+                cost = obj_func(eval_arr, simulated)
+                return float(cost)
+
+        if options is None:
+            options = {'c1': 1.5, 'c2': 1.5, 'w': 0.5}
+
+        optimizer = ps.single.GlobalBestPSO(
+            n_particles=n_particles,
+            dimensions=len(variables),
+            options=options,
+            bounds=(lower_bounds, upper_bounds)
+        )
+
+        best_cost, best_pos = optimizer.optimize(objective, iters=iters)
+
+        for var, val in zip(variables, best_pos):
+            setattr(self, var, val)
+
+        return {
+            "best_cost": best_cost,
+            "best_params": {var: val for var, val in zip(variables, best_pos)}
+        }
 
     # Deprecated method names with warnings
     def RunStep(self, *args, **kwargs):

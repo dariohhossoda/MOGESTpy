@@ -4,7 +4,7 @@ from scipy.optimize import differential_evolution
 
 from Otimizacoes import *
 from Upstream import *
-import Quantity.Hydrological.Muskingum as Muskingum
+import Quantity.Hydrological.muskingum as Muskingum
 import Quantity.Hydrological.SMAP as SMAP
 
 

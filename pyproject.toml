@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "MOGESTpy"
-version = "0.1.0"
+version = "1.0.0"
 description = "Water resources management model based on hydrological and hydronimic models"
 authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"
@@ -23,7 +23,9 @@ spotpy = "^1.6.2"
 scikit-learn = "^1.5.2"
 pandas = "^2.2.3"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+matplotlib = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

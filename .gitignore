@@ -3,3 +3,4 @@
 .gitignore
 Applications/~$0d.xlsx
 .vscode/settings.json
+*.log

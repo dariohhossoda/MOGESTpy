@@ -114,7 +114,8 @@ m: {self.m:.3f}'
 
     def area_depth(self, area):
         """
-        Calculate the water depth for a given wet area using Newton-Raphson method.
+        Calculate the water depth for a given wet area
+        using Newton-Raphson method.
 
         Args:
             area (float): Wet area (m²)
@@ -154,7 +155,16 @@ class SaintVenant:
         g (float): Gravitational acceleration (m/s²)
     """
 
-    def __init__(self, cross_section, discharge, manning_n, slope, dt, dx, g=9.81):
+    def __init__(
+        self,
+        cross_section,
+        discharge,
+        manning_n,
+        slope,
+        dt,
+        dx,
+        g=9.81
+    ):
         """
         Initialize the Saint-Venant model.
 
@@ -165,7 +175,8 @@ class SaintVenant:
             slope (float): Channel bed slope (m/m)
             dt (float): Time step (s)
             dx (float): Space step (m)
-            g (float, optional): Gravitational acceleration (m/s²). Defaults to 9.81.
+            g (float, optional): Gravitational acceleration (m/s²).
+            Defaults to 9.81.
         """
         self.cross_section = cross_section
         self.discharge = discharge
@@ -216,7 +227,9 @@ class SaintVenant:
         area = self.cross_section.wet_area()
         hydraulic_radius = self.cross_section.hydraulic_radius
 
-        return (self.discharge * math.fabs(self.discharge) * self.manning_n ** 2 /
+        return (self.discharge 
+                * math.fabs(self.discharge) *
+                self.manning_n ** 2 /
                 (area ** 2 * hydraulic_radius ** (4 / 3)))
 
     def update_values(self):

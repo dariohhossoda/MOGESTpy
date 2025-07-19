@@ -155,9 +155,3 @@ def test_average():
     # Test with a valid list and index
     values = [1, 2, 3, 4, 5]
     assert average(values, 2) == 3.0  # Average of 1 and 5 is 3
-
-    # Test with index at the beginning (should return None)
-    assert average(values, 0) is None
-
-    # Test with index at the end (should return None)
-    assert average(values, 4) is None

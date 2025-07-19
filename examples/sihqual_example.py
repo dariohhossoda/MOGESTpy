@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from mogestpy.quantity.Hydrodynamic.sihqual import SIHQUAL
+from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
 
 
 def simple_channel_example():

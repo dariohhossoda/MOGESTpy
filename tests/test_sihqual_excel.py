@@ -8,7 +8,7 @@ import pytest
 import tempfile
 from pathlib import Path
 
-from mogestpy.quantity.Hydrodynamic.sihqual import SIHQUAL
+from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
 
 
 class TestSIHQUALExcel:

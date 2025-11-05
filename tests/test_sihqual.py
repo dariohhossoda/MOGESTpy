@@ -3,7 +3,6 @@ Tests for the SIHQUAL module.
 """
 import os
 import tempfile
-from pathlib import Path
 
 import numpy as np
 import pandas as pd

@@ -4,7 +4,6 @@ Example usage of the improved SIHQUAL class for hydrodynamic and water quality s
 from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
 import os
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 

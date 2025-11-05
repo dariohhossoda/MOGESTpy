@@ -154,4 +154,4 @@ def test_average():
     """Test the average function."""
     # Test with a valid list and index
     values = [1, 2, 3, 4, 5]
-    assert average(values, 2) == 3.0  # Average of 1 and 5 is 3
+    assert average(values, 2) == 3.0

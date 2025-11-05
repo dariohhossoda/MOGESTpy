@@ -3,11 +3,11 @@ Soil Moisture Accounting Procedure (SMAP) model.
 The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
 """
+
 import warnings
 import numpy as np
 
 import pandas as pd
-import pyswarms as ps
 
 from scipy.optimize import differential_evolution
 from spotpy.objectivefunctions import kge
@@ -82,7 +82,7 @@ class Smap:
         Ad=1.0,
         Tuin=0.0,
         Ebin=0.0,
-        Ai=2.5
+        Ai=2.5,
     ) -> None:
         """
         Initialize an instance of the Smap class.
@@ -157,7 +157,7 @@ class Smap:
             the model.
         """
         return (
-            'Smap Class Object\n'
+            "Smap Class Object\n"
             f"Str = {self.Str}\n"
             f"Crec = {self.Crec}\n"
             f"Capc = {self.Capc}\n"
@@ -195,8 +195,8 @@ class Smap:
             "Crec": (0, 20),
             "Capc": (30, 50),
             "kkt": (30, 180),
-            "k2t": (.2, 10),
-            "Ai": (2, 5)
+            "k2t": (0.2, 10),
+            "Ai": (2, 5),
         }
 
     def check_bounds(self, params: dict) -> bool:
@@ -217,6 +217,7 @@ class Smap:
                 if not (lower <= value <= upper):
                     return False
         return True
+
     # region: Reservoirs Functions
 
     def Rsolo_calc(self, Rsolo, P, Es, Er, Rec) -> float:
@@ -319,7 +320,7 @@ class Smap:
         float
             Initial subsurface reservoir value.
         """
-        kt = .5 ** (1 / kkt)
+        kt = 0.5 ** (1 / kkt)
         return Ebin / (1 - kt) / Ad * 86.4
 
     def RSup0(self) -> float:
@@ -340,7 +341,7 @@ class Smap:
     def Es_calc(self, P, Ai, Str, Rsolo):
         inf = P - Ai
         if inf > 0:
-            return inf ** 2 / (inf + Str - Rsolo)
+            return inf**2 / (inf + Str - Rsolo)
         return 0
 
     def Er_calc(self, P, Ep, Es, Tu):
@@ -355,11 +356,11 @@ class Smap:
         return 0
 
     def Ed_calc(self, Rsup, k2t):
-        k2 = .5 ** (1 / k2t)
+        k2 = 0.5 ** (1 / k2t)
         return Rsup * (1 - k2)
 
     def Eb_calc(self, Rsub, kkt):
-        kt = .5 ** (1 / kkt)
+        kt = 0.5 ** (1 / kkt)
         return Rsub * (1 - kt)
 
     def Tu_calc(self, RSolo, Str):
@@ -406,11 +407,9 @@ class Smap:
         self.Tu = self.Tu_calc(self.Rsolo, self.Str)
         self.Es = self.Es_calc(prec, self.Ai, self.Str, self.Rsolo)
         self.Er = self.Er_calc(prec, etp, self.Es, self.Tu)
-        self.Rec = self.Rec_calc(
-            self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str)
+        self.Rec = self.Rec_calc(self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str)
 
-        self.Rsolo = self.Rsolo_calc(
-            self.Rsolo, prec, self.Es, self.Er, self.Rec)
+        self.Rsolo = self.Rsolo_calc(self.Rsolo, prec, self.Es, self.Er, self.Rec)
         self.Ed = self.Ed_calc(self.Rsup, self.k2t)
         self.Eb = self.Eb_calc(self.Rsub, self.kkt)
 
@@ -505,10 +504,10 @@ class Smap:
             self.Es = self.Es_calc(prec, self.Ai, self.Str, self.Rsolo)
             self.Er = self.Er_calc(prec, etp, self.Es, self.Tu)
             self.Rec = self.Rec_calc(
-                self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str)
+                self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str
+            )
 
-            self.Rsolo = self.Rsolo_calc(
-                self.Rsolo, prec, self.Es, self.Er, self.Rec)
+            self.Rsolo = self.Rsolo_calc(self.Rsolo, prec, self.Es, self.Er, self.Rec)
             self.Ed = self.Ed_calc(self.Rsup, self.k2t)
             self.Eb = self.Eb_calc(self.Rsub, self.kkt)
 
@@ -518,20 +517,22 @@ class Smap:
             discharge = self.discharge_calc(self.Ed, self.Eb, self.Ad)
 
             # Store all variables for the current step
-            data.append({
-                "prec": prec,
-                "etp": etp,
-                "Rsolo": self.Rsolo,
-                "Rsub": self.Rsub,
-                "Rsup": self.Rsup,
-                "Tu": self.Tu,
-                "Es": self.Es,
-                "Er": self.Er,
-                "Rec": self.Rec,
-                "Ed": self.Ed,
-                "Eb": self.Eb,
-                "discharge": discharge
-            })
+            data.append(
+                {
+                    "prec": prec,
+                    "etp": etp,
+                    "Rsolo": self.Rsolo,
+                    "Rsub": self.Rsub,
+                    "Rsup": self.Rsup,
+                    "Tu": self.Tu,
+                    "Es": self.Es,
+                    "Er": self.Er,
+                    "Rec": self.Rec,
+                    "Ed": self.Ed,
+                    "Eb": self.Eb,
+                    "discharge": discharge,
+                }
+            )
 
         return pd.DataFrame(data)
 
@@ -542,7 +543,7 @@ class Smap:
         eval_arr,
         variables: list[str],
         obj_func=None,
-        disp=False
+        disp=False,
     ):
         """
         Calibrate the SMAP model using the Differential Evolution algorithm.
@@ -576,29 +577,23 @@ class Smap:
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
         if invalid_vars:
-            raise ValueError(
-                f"Variables {', '.join(invalid_vars)} do not exist."
-            )
+            raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
 
         bounds = [self.bounds()[var] for var in variables]
 
         if obj_func is None:
+
             def default_obj_func(obs, sim):
                 return -kge(obs, sim)
+
             obj_func = default_obj_func
 
         def objective(params):
-            self.__dict__.update(
-                {var: val for var, val in zip(variables, params)}
-            )
+            self.__dict__.update({var: val for var, val in zip(variables, params)})
 
             return obj_func(eval_arr, list(self.Run(prec_arr, etp_arr)))
 
-        result = differential_evolution(
-            func=objective,
-            bounds=bounds,
-            disp=disp
-        )
+        result = differential_evolution(func=objective, bounds=bounds, disp=disp)
 
         return result
 
@@ -611,7 +606,7 @@ class Smap:
         obj_func=None,
         options=None,
         n_particles=50,
-        iters=100
+        iters=100,
     ):
         """
         Calibrate the SMAP model using Particle Swarm Optimization (PSO) BETA.
@@ -651,12 +646,17 @@ class Smap:
             A dictionary containing the best parameters and the best objective
             function value.
         """
+        try:
+            import pyswarms as ps
+        except ImportError:
+            raise ImportError(
+                "pyswarms is required for PSO calibration. "
+                "Please install it via 'pip install pyswarms'."
+            )
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
         if invalid_vars:
-            raise ValueError(
-                f"Variables {', '.join(invalid_vars)} do not exist."
-            )
+            raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
 
         for var in variables:
             if var not in self.bounds():
@@ -667,40 +667,38 @@ class Smap:
         print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
 
         if obj_func is None:
+
             def default_obj_func(obs, sim):
                 result = kge(obs, sim)
                 if hasattr(result, "item"):
                     return -float(result.item())
                 return -float(result)
+
             obj_func = default_obj_func
 
         def objective(params):
             if params.ndim > 1:
                 costs = []
                 for p in params:
-                    self.__dict__.update(
-                        {var: val for var, val in zip(variables, p)}
-                    )
+                    self.__dict__.update({var: val for var, val in zip(variables, p)})
                     simulated = self.run_to_list(prec_arr, etp_arr)
                     cost = obj_func(eval_arr, simulated)
                     costs.append(float(cost))
                 return np.array(costs)
             else:
-                self.__dict__.update(
-                    {var: val for var, val in zip(variables, params)}
-                )
+                self.__dict__.update({var: val for var, val in zip(variables, params)})
                 simulated = self.run_to_list(prec_arr, etp_arr)
                 cost = obj_func(eval_arr, simulated)
                 return float(cost)
 
         if options is None:
-            options = {'c1': 1.5, 'c2': 1.5, 'w': 0.5}
+            options = {"c1": 1.5, "c2": 1.5, "w": 0.5}
 
         optimizer = ps.single.GlobalBestPSO(
             n_particles=n_particles,
             dimensions=len(variables),
             options=options,
-            bounds=(lower_bounds, upper_bounds)
+            bounds=(lower_bounds, upper_bounds),
         )
 
         best_cost, best_pos = optimizer.optimize(objective, iters=iters)
@@ -710,7 +708,7 @@ class Smap:
 
         return {
             "best_cost": best_cost,
-            "best_params": {var: val for var, val in zip(variables, best_pos)}
+            "best_params": {var: val for var, val in zip(variables, best_pos)},
         }
 
     # Deprecated method names with warnings
@@ -719,7 +717,7 @@ class Smap:
             "RunStep is deprecated and will be removed in a future version. "
             "Use run_step instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self.run_step(*args, **kwargs)
 
@@ -728,7 +726,7 @@ class Smap:
             "Run is deprecated and will be removed in a future version. "
             "Use run instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self.run(*args, **kwargs)
 
@@ -737,7 +735,7 @@ class Smap:
             "RunToList is deprecated and will be removed in a future version. "
             "Use run_to_list instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self.run_to_list(*args, **kwargs)
 
@@ -746,6 +744,6 @@ class Smap:
             "Calibrate is deprecated and will be removed in a future version. "
             "Use calibrate instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self.calibrate(*args, **kwargs)

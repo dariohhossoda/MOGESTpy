@@ -1,4 +1,18 @@
-"""Top-level package for MOGESTpy."""
+"""
+MOGESTpy
+========
+
+A water resources modeling library for Python.
+
+The package is divided into two main submodules:
+- `quantity`: Contains classes and functions related to water quantity modeling, such as the SMAP model.
+- `quality`: Contains classes and functions related to water quality modeling.
+
+Use the import as the examples below to access the different components of the library:
+  >>> from mogestpy.quantity.Hydrological import SMAP2
+
+Check the project repository for examples and documentation on how to use the library effectively at https://github.com/dariohhossoda/MOGESTpy
+"""
 
 from importlib.metadata import PackageNotFoundError, version
 

@@ -4,9 +4,10 @@ from importlib.metadata import PackageNotFoundError, version
 
 __author__ = "Dario Hachisu Hossoda"
 __email__ = "dario.hossoda@usp.br"
+_DIST_NAME = "MOGESTpy"
 
 try:
-    __version__ = version("mogestpy")
+    __version__ = version(_DIST_NAME)
 except PackageNotFoundError:
     # Fallback for local, non-installed usage
     __version__ = "0+unknown"

@@ -62,6 +62,7 @@ MOGESTpy
 └─ Quantity
 ├─ Hydrological
 │ ├─ SMAP.py
+│ ├─ SMAPm.py
 │ ├─ Muskingum.py
 │ └─ MassBalance.py
 └─ Hydrodynamic

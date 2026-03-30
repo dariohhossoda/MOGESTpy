@@ -1,18 +1,19 @@
-<div id="top"></div>
-
-<div align=center>
-<!-- https://user-images.githubusercontent.com/58784697/200683473-b94e7a80-6f62-405d-8ba9-06ac5620044e.svg -->
+<div align="center">
 
 # MOGESTpy
 
-<p>
-  <img src="https://user-images.githubusercontent.com/58784697/210153011-0ccac06f-5ff8-4c80-a2ad-d03528e71e3e.svg"
-  width = 200/>
-</p>
+Hydrological and water resources management modeling library in Python, supporting quantity and quality simulations for decision-making.
+
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/) [![PyPI](https://img.shields.io/pypi/v/MOGESTpy)](https://pypi.org/project/MOGESTpy/) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19308873.svg)](https://doi.org/10.5281/zenodo.19308873)
+
+<img src="https://user-images.githubusercontent.com/58784697/210153011-0ccac06f-5ff8-4c80-a2ad-d03528e71e3e.svg" width="200"/>
+
 </div>
 
+---
+
 <details>
-<Summary><font size="5">Table of Contents</font></Summary>
+<summary><strong>Table of Contents</strong></summary>
 
 - [MOGESTpy](#mogestpy)
   - [What is MOGESTpy?](#what-is-mogestpy)
@@ -21,87 +22,124 @@
   - [Repository Structure](#repository-structure)
   - [How to Use MOGESTpy?](#how-to-use-mogestpy)
     - [Installing MOGESTpy](#installing-mogestpy)
+      - [Locally](#locally)
+      - [Using pip](#using-pip)
+      - [Using Poetry](#using-poetry)
   - [How to Contribute to the Project?](#how-to-contribute-to-the-project)
+  - [Citation](#citation)
 
 </details>
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+---
 
 ## What is MOGESTpy?
 
-MOGESTpy is an acronym for **Mo**delo de **Gest**ão de Recursos Hídricos (in English: Water Resources Management Model) developed in the [Python3](https://www.python.org/) programming language.
+MOGESTpy is an acronym for **Mo**delo de **Gest**ão de Recursos Hídricos (Water Resources Management Model), developed in Python.
 
 ### Water Resources Management Model
 
-A management model uses water quantity and quality modeling tools to assist in decision-making. This modeling is done through simulation models where natural processes are represented from precipitation in the watershed area to its transport in rivers and channels to the watershed's outlet.
+A water resources management model integrates quantity and quality modeling tools to support decision-making processes. These models simulate natural processes, from precipitation over the watershed to flow routing in rivers and channels, ultimately representing the system response at the watershed outlet.
+
+---
 
 ## Models used in MOGESTpy
 
-The models used in MOGESTpy include:
+The models currently available in MOGESTpy include:
 
-- [SIHQUAL](Quantity/Hydrodynamic/)
-- [SMAP](Quantity/Hydrological)
-- [0D (Zero Dimensional)](Quality/)
-- [BuildUp-Washoff](Quality/)
+* [SIHQUAL](mogestpy/quantity/Hydrodynamic/)
+* [SMAP](mogestpy/quantity/Hydrological)
+* [0D (Zero Dimensional)](mogestpy/quality/)
+* [BuildUp-Washoff](mogestpy/quality/)
 
-For more details, check the documentation within the repository.
+For more details, please refer to the documentation within the repository.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+---
 
 ## Repository Structure
 
-The repository is divided into three main parts: quality models (Quality), quantitative models (Quantity), and simulation data for testing and examples of how each module works (Datasets).
+The repository is organized into three main components:
+
+* **Quality models** (`Quality`)
+* **Quantity models** (`Quantity`)
+* **Datasets and simulation examples** (`Datasets`)
 
 ```
 MOGESTpy
 ├─ Datasets
-│ └─ Results
+│  └─ Results
 ├─ Quality
-│ ├─ BuWo.py
-│ └─ ZeroD.py
+│  ├─ BuWo.py
+│  └─ ZeroD.py
 └─ Quantity
-├─ Hydrological
-│ ├─ SMAP.py
-│ ├─ SMAPm.py
-│ ├─ Muskingum.py
-│ └─ MassBalance.py
-└─ Hydrodynamic
-└─ SIHQUAL.py
+   ├─ Hydrological
+   │  ├─ SMAP.py
+   │  ├─ SMAPm.py
+   │  ├─ Muskingum.py
+   │  └─ MassBalance.py
+   └─ Hydrodynamic
+      └─ SIHQUAL.py
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+---
 
 ## How to Use MOGESTpy?
 
 ### Installing MOGESTpy
 
-Using the following command, you can install MOGESTpy via pip:
+#### Locally
+Clone the repository and install the package using pip:
+
+```bash
+pip install . e
+```
+
+#### Using pip
 
 ```bash
 pip install mogestpy
 ```
 
-Alternatively, you can clone the repository and install the package locally:
+#### Using Poetry
 
 ```bash
-pip install .
+poetry add mogestpy
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+---
+
 
 ## How to Contribute to the Project?
 
-To contribute to the project, simply create an issue. Code additions are welcome; just follow our [contributing document](CONTRIBUTING.md).
+Contributions are welcome!
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+* Open an issue to report bugs or suggest features
+* Submit pull requests with improvements or new models
 
-<div align=center>
+Please make sure to follow the guidelines described in the [contributing document](CONTRIBUTING.md).
 
-|Acknowledgments|
-|:---:|
-|![LogoLabSid](https://user-images.githubusercontent.com/58784697/200078179-ea05ba48-2b67-4f30-bea0-78e1c1507ae1.svg)|
-|[Laboratory of Decision Support Systems](https://sites.usp.br/labsid)|
+---
+
+## Citation
+
+If you use MOGESTpy in your research, please cite:
+
+```bibtex
+@software{mogestpy,
+  author = {Dario Hachisu Hossoda},
+  title = {MOGESTpy},
+  year = {2026},
+  url = {https://github.com/dariohhossoda/MOGESTpy},
+  doi = {https://doi.org/10.5281/zenodo.19308873}
+}
+```
+
+---
+
+<div align="center">
+
+|                                                    Acknowledgments                                                   |
+| :------------------------------------------------------------------------------------------------------------------: |
+| ![LogoLabSid](https://user-images.githubusercontent.com/58784697/200078179-ea05ba48-2b67-4f30-bea0-78e1c1507ae1.svg) |
+|                         [Laboratory of Decision Support Systems](https://labsid.poli.usp.br/)                        |
 
 </div>
-
-<p align="right">(<a href="#top">back to top</a>)</p>

@@ -17,7 +17,9 @@ class Muskingum:
     """
 
     @staticmethod
-    def downstream_routing(upstream: Sequence[float], k: float, x: float, dt: float) -> list[float]:
+    def downstream_routing(
+        upstream: Sequence[float], k: float, x: float, dt: float
+    ) -> list[float]:
         """
         Perform downstream routing from upstream to downstream using the linear Muskingum method.
 
@@ -85,7 +87,9 @@ class Muskingum:
         return k1, k2, k3, k4
 
     @staticmethod
-    def downstream_fork(k: float, x: float, m: float, dt: float, inflow: Sequence[float]) -> list[float]:
+    def downstream_fork(
+        k: float, x: float, m: float, dt: float, inflow: Sequence[float]
+    ) -> list[float]:
         """
         Non-linear Muskingum model with fourth-order Runge-Kutta method for routing
         from upstream to downstream.
@@ -126,7 +130,9 @@ class Muskingum:
         return outflow
 
     @staticmethod
-    def upstream_fork(k: float, x: float, m: float, dt: float, outflow: Sequence[float]) -> list[float]:
+    def upstream_fork(
+        k: float, x: float, m: float, dt: float, outflow: Sequence[float]
+    ) -> list[float]:
         """
         Non-linear Muskingum model with fourth-order Runge-Kutta method for routing
         from downstream to upstream.

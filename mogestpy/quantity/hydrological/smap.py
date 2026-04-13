@@ -18,6 +18,7 @@ from spotpy.objectivefunctions import kge
 
 CONVERSION_FACTOR = 2630  # 30.44 days/month * 86.4 s/mm/day
 
+
 # region Daily Model
 class SmapD:
     """
@@ -772,6 +773,7 @@ class SmapD:
             stacklevel=2,
         )
         return self.calibrate(*args, **kwargs)
+
 
 # region Monthly Model
 class SmapM:

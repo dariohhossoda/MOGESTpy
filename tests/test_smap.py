@@ -1,25 +1,25 @@
 from mogestpy.quantity.hydrological.smap import SmapD as Smap
 
 
-def test_smap2_init():
+def test_smapd_init():
     """
-    Tests initialization of SMAP2 class
+    Tests initialization of SmapD class
     """
     smap = Smap()
     assert smap.i == 0
 
 
-def test_smap2_discharge_calc():
+def test_smapd_discharge_calc():
     """
-    Tests Discharge Calculation of SMAP2 class
+    Tests Discharge Calculation of SmapD class
     """
     smap = Smap()
     assert abs(smap.discharge_calc(0.0, 0.991415730337079, 17800) - 204.25) < 1e-6
 
 
-def test_smap2_transfer_functions():
+def test_smapd_transfer_functions():
     """
-    Tests Transfer Functions of SMAP2 class
+    Tests Transfer Functions of SmapD class
     """
     smap = Smap()
     smap.Str = 165.060822610565
@@ -35,9 +35,9 @@ def test_smap2_transfer_functions():
     assert smap.Es_calc(0, smap.Ai, smap.Str, 132.048658088452) == 0
 
 
-def test_smap2_transfer_functions2():
+def test_smapd_transfer_functions2():
     """
-    Tests Transfer Functions of SMAP2 class
+    Tests Transfer Functions of SmapD class
     """
     smap = Smap(
         Str=165.060822610565,
@@ -71,9 +71,9 @@ def test_smap2_transfer_functions2():
     assert abs(Rec_calc - Rec_ref) < 1e-6, f"Rec: {Rec_calc} | {Rec_ref}"
 
 
-def test_smap2_reservoir_init():
+def test_smapd_reservoir_init():
     """
-    Tests Rsolo_calc method of SMAP2 class
+    Tests Rsolo_calc method of SmapD class
     """
     smap = Smap()
     assert abs(smap.Rsolo0(0.8, 165.060822610565) - 132.048658) < 1e-6
@@ -81,9 +81,9 @@ def test_smap2_reservoir_init():
     assert abs(smap.RSub0(204.25, 120, 17800) - 172.133452) < 1e-6
 
 
-def test_smap2_run_step():
+def test_smapd_run_step():
     """
-    Tests run_step method of SMAP2 class
+    Tests run_step method of SmapD class
     """
     smap = Smap(
         Str=165.060822610565,
@@ -102,9 +102,9 @@ def test_smap2_run_step():
     assert abs(smap.run_step(0, 2.4) - 204.250000) < 1e-6
 
 
-def test_smap2_run_step_multiple():
+def test_smapd_run_step_multiple():
     """
-    Tests run_step method of SMAP2 class
+    Tests run_step method of SmapD class
     """
     smap = Smap(
         Str=165,

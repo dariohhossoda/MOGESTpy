@@ -66,10 +66,10 @@ The repository is organized into three main components:
 MOGESTpy
 ├─ Datasets
 │  └─ Results
-├─ Quality
+├─ quality
 │  ├─ BuWo.py
 │  └─ ZeroD.py
-└─ Quantity
+└─ quantity
    ├─ Hydrological
    │  ├─ SMAP.py
    │  ├─ SMAPm.py

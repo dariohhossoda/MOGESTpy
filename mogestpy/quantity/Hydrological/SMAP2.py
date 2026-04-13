@@ -5,11 +5,13 @@ reservoirs.
 """
 
 import warnings
+from typing import Any, Callable, Iterable, Iterator, Optional, Union
+
 import numpy as np
 
 import pandas as pd
 
-from scipy.optimize import differential_evolution
+from scipy.optimize import OptimizeResult, differential_evolution
 from spotpy.objectivefunctions import kge
 
 
@@ -74,15 +76,15 @@ class Smap:
 
     def __init__(
         self,
-        Str=100.0,
-        Crec=0.0,
-        Capc=40.0,
-        kkt=30.0,
-        k2t=0.2,
-        Ad=1.0,
-        Tuin=0.0,
-        Ebin=0.0,
-        Ai=2.5,
+        Str: float = 100.0,
+        Crec: float = 0.0,
+        Capc: float = 40.0,
+        kkt: float = 30.0,
+        k2t: float = 0.2,
+        Ad: float = 1.0,
+        Tuin: float = 0.0,
+        Ebin: float = 0.0,
+        Ai: float = 2.5,
     ) -> None:
         """
         Initialize an instance of the Smap class.
@@ -169,7 +171,7 @@ class Smap:
             f"Ebin = {self.Ebin}"
         )
 
-    def bounds(self) -> dict:
+    def bounds(self) -> dict[str, tuple[float, float]]:
         """
         Returns the bounds for various hydrological parameters.
 
@@ -199,7 +201,7 @@ class Smap:
             "Ai": (2, 5),
         }
 
-    def check_bounds(self, params: dict) -> bool:
+    def check_bounds(self, params: dict[str, float]) -> bool:
         """
         Parameters
         ----------
@@ -220,7 +222,9 @@ class Smap:
 
     # region: Reservoirs Functions
 
-    def Rsolo_calc(self, Rsolo, P, Es, Er, Rec) -> float:
+    def Rsolo_calc(
+        self, Rsolo: float, P: float, Es: float, Er: float, Rec: float
+    ) -> float:
         """
         Soil Reservoir Calculation.
 
@@ -244,7 +248,7 @@ class Smap:
         """
         return Rsolo + P - Es - Er - Rec
 
-    def Rsup_calc(self, Rsup, Es, Ed) -> float:
+    def Rsup_calc(self, Rsup: float, Es: float, Ed: float) -> float:
         """
         Surface Reservoir Calculation.
 
@@ -264,7 +268,7 @@ class Smap:
         """
         return Rsup + Es - Ed
 
-    def Rsub_calc(self, Rsub, Rec, Eb) -> float:
+    def Rsub_calc(self, Rsub: float, Rec: float, Eb: float) -> float:
         """
         Subsurface Reservoir Calculation.
 
@@ -284,7 +288,7 @@ class Smap:
         """
         return Rsub + Rec - Eb
 
-    def Rsolo0(self, Tuin, Str) -> float:
+    def Rsolo0(self, Tuin: float, Str: float) -> float:
         """
         Calculate the initial soil reservoir value.
 
@@ -302,7 +306,7 @@ class Smap:
         """
         return Tuin * Str
 
-    def RSub0(self, Ebin, kkt, Ad) -> float:
+    def RSub0(self, Ebin: float, kkt: float, Ad: float) -> float:
         """
         Calculate the initial subsurface reservoir value.
 
@@ -338,40 +342,42 @@ class Smap:
 
     # region: Transfer Functions
 
-    def Es_calc(self, P, Ai, Str, Rsolo):
+    def Es_calc(self, P: float, Ai: float, Str: float, Rsolo: float) -> float:
         inf = P - Ai
         if inf > 0:
             return inf**2 / (inf + Str - Rsolo)
         return 0
 
-    def Er_calc(self, P, Ep, Es, Tu):
+    def Er_calc(self, P: float, Ep: float, Es: float, Tu: float) -> float:
         k = P - Es
         if k > Ep:
             return Ep
         return k + (Ep - k) * Tu
 
-    def Rec_calc(self, Crec, Tu, Rsolo, Capc, Str):
+    def Rec_calc(
+        self, Crec: float, Tu: float, Rsolo: float, Capc: float, Str: float
+    ) -> float:
         if Rsolo > Capc / 100 * Str:
             return Crec / 100 * Tu * (Rsolo - Capc / 100 * Str)
         return 0
 
-    def Ed_calc(self, Rsup, k2t):
+    def Ed_calc(self, Rsup: float, k2t: float) -> float:
         k2 = 0.5 ** (1 / k2t)
         return Rsup * (1 - k2)
 
-    def Eb_calc(self, Rsub, kkt):
+    def Eb_calc(self, Rsub: float, kkt: float) -> float:
         kt = 0.5 ** (1 / kkt)
         return Rsub * (1 - kt)
 
-    def Tu_calc(self, RSolo, Str):
+    def Tu_calc(self, RSolo: float, Str: float) -> float:
         return RSolo / Str
 
     # endregion Transfer Functions
 
-    def discharge_calc(self, Ed, Eb, Ad):
+    def discharge_calc(self, Ed: float, Eb: float, Ad: float) -> float:
         return (Ed + Eb) * Ad / 86.4
 
-    def run_step(self, prec, etp, reset=False) -> float:
+    def run_step(self, prec: float, etp: float, reset: bool = False) -> float:
         """
         Executes a single step of the hydrological model using the SMAP model
         equations.
@@ -419,7 +425,12 @@ class Smap:
         self.i += 1
         return self.discharge_calc(self.Ed, self.Eb, self.Ad)
 
-    def run(self, prec_arr, etp_arr, reset=True):
+    def run(
+        self,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        reset: bool = True,
+    ) -> Iterator[float]:
         """
         Executes the hydrological model with the given precipitation and
         evapotranspiration values as iterables.
@@ -448,7 +459,12 @@ class Smap:
         for prec, etp in zip(prec_arr, etp_arr):
             yield self.RunStep(prec, etp)
 
-    def run_to_list(self, prec_arr, etp_arr, reset=True):
+    def run_to_list(
+        self,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        reset: bool = True,
+    ) -> list[float]:
         """
         Executes the hydrological model with the given precipitation and
         evapotranspiration values as iterables and returns the results as a
@@ -472,7 +488,12 @@ class Smap:
 
         return list(self.Run(prec_arr, etp_arr, reset))
 
-    def run_to_dataframe(self, prec_arr, etp_arr, reset=True):
+    def run_to_dataframe(
+        self,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        reset: bool = True,
+    ) -> pd.DataFrame:
         """
         Executes the hydrological model and stores all intermediate variables
         and results into a Pandas DataFrame.
@@ -538,13 +559,13 @@ class Smap:
 
     def calibrate(
         self,
-        prec_arr,
-        etp_arr,
-        eval_arr,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        eval_arr: Iterable[float],
         variables: list[str],
-        obj_func=None,
-        disp=False,
-    ):
+        obj_func: Optional[Callable[[Iterable[float], Iterable[float]], float]] = None,
+        disp: bool = False,
+    ) -> OptimizeResult:
         """
         Calibrate the SMAP model using the Differential Evolution algorithm.
 
@@ -583,12 +604,12 @@ class Smap:
 
         if obj_func is None:
 
-            def default_obj_func(obs, sim):
+            def default_obj_func(obs: Iterable[float], sim: Iterable[float]) -> float:
                 return -kge(obs, sim)
 
             obj_func = default_obj_func
 
-        def objective(params):
+        def objective(params: np.ndarray) -> float:
             self.__dict__.update({var: val for var, val in zip(variables, params)})
 
             return obj_func(eval_arr, list(self.Run(prec_arr, etp_arr)))
@@ -599,15 +620,15 @@ class Smap:
 
     def pso_calibrate(
         self,
-        prec_arr,
-        etp_arr,
-        eval_arr,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        eval_arr: Iterable[float],
         variables: list[str],
-        obj_func=None,
-        options=None,
-        n_particles=50,
-        iters=100,
-    ):
+        obj_func: Optional[Callable[[Iterable[float], Iterable[float]], float]] = None,
+        options: Optional[dict[str, float]] = None,
+        n_particles: int = 50,
+        iters: int = 100,
+    ) -> dict[str, Any]:
         """
         Calibrate the SMAP model using Particle Swarm Optimization (PSO) BETA.
 
@@ -668,7 +689,7 @@ class Smap:
 
         if obj_func is None:
 
-            def default_obj_func(obs, sim):
+            def default_obj_func(obs: Iterable[float], sim: Iterable[float]) -> float:
                 result = kge(obs, sim)
                 if hasattr(result, "item"):
                     return -float(result.item())
@@ -676,7 +697,7 @@ class Smap:
 
             obj_func = default_obj_func
 
-        def objective(params):
+        def objective(params: np.ndarray) -> Union[np.ndarray, float]:
             if params.ndim > 1:
                 costs = []
                 for p in params:
@@ -712,7 +733,7 @@ class Smap:
         }
 
     # Deprecated method names with warnings
-    def RunStep(self, *args, **kwargs):
+    def RunStep(self, *args: Any, **kwargs: Any) -> float:
         warnings.warn(
             "RunStep is deprecated and will be removed in a future version. "
             "Use run_step instead.",
@@ -721,7 +742,7 @@ class Smap:
         )
         return self.run_step(*args, **kwargs)
 
-    def Run(self, *args, **kwargs):
+    def Run(self, *args: Any, **kwargs: Any) -> Iterator[float]:
         warnings.warn(
             "Run is deprecated and will be removed in a future version. "
             "Use run instead.",
@@ -730,7 +751,7 @@ class Smap:
         )
         return self.run(*args, **kwargs)
 
-    def RunToList(self, *args, **kwargs):
+    def RunToList(self, *args: Any, **kwargs: Any) -> list[float]:
         warnings.warn(
             "RunToList is deprecated and will be removed in a future version. "
             "Use run_to_list instead.",
@@ -739,7 +760,7 @@ class Smap:
         )
         return self.run_to_list(*args, **kwargs)
 
-    def Calibrate(self, *args, **kwargs):
+    def Calibrate(self, *args: Any, **kwargs: Any) -> OptimizeResult:
         warnings.warn(
             "Calibrate is deprecated and will be removed in a future version. "
             "Use calibrate instead.",

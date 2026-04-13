@@ -5,23 +5,17 @@ on:
     branches: [main]
     paths-ignore:
       - "*.md"
-      - "LICENSE"
-      - "Dockerfile"
-      - ".dockerignore"
+      - "LICENSE
       - ".github/ISSUE_TEMPLATE/**"
       - ".github/pull_request_template.md"
-      - "app/templates/images/**"
 
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - "*.md"
       - "LICENSE"
-      - "Dockerfile"
-      - ".dockerignore"
       - ".github/ISSUE_TEMPLATE/**"
       - ".github/pull_request_template.md"
-      - "app/templates/images/**"
 
 env:
   PYTHON_VERSION: "3.12"
@@ -91,23 +85,13 @@ jobs:
         run: poetry install --only main,test --no-interaction --no-ansi
 
       - name: Run fast tests
-        run: poetry run pytest -m "not slow" --cov=app --cov-report=term-missing
+        run: poetry run pytest -m "not slow" --cov=mogestpy --cov-report=term-missing
 
   test-slow:
-    name: Test (slow / PDF)
+    name: Test (slow)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
-      - name: Install LaTeX dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            texlive-xetex \
-            texlive-fonts-recommended \
-            texlive-lang-portuguese \
-            lmodern \
-            latexmk
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -133,12 +117,3 @@ jobs:
 
       - name: Run slow tests
         run: poetry run pytest -m slow
-
-  docker-build:
-    name: Docker Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Build Docker image
-        run: docker build -t grande-abc-boletim:ci .

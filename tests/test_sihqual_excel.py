@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 import tempfile
 
-from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
 
 
 class TestSIHQUALExcel:

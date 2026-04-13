@@ -4,7 +4,7 @@ Unit tests for the Saint-Venant module using pytest.
 
 import math
 import pytest
-from mogestpy.quantity.Hydrodynamic.saint_venant import (
+from mogestpy.quantity.hydrodynamic.saint_venant import (
     TrapezoidalCrossSection,
     SaintVenant,
     average,

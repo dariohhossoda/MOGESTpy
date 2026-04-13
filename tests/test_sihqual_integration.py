@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
 
 
 class TestSIHQUALIntegration:

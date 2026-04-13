@@ -1,4 +1,6 @@
 import math
+from typing import Callable
+
 import numpy as np
 
 
@@ -9,21 +11,21 @@ class BuildUpWashoff:
 
     def __init__(
         self,
-        Bmax,
-        Nb,
-        Kb,
-        threshold_flow,
-        Nw,
-        Kw,
-        BuMethod,
-        WoMethod,
-        timestep_h,
-        initial_buildup,
-        area,
-        area_fraction,
-        surface_flow,
-        landuse_name,
-        aggregate=False,
+        Bmax: float,
+        Nb: float,
+        Kb: float,
+        threshold_flow: float,
+        Nw: float,
+        Kw: float,
+        BuMethod: int,
+        WoMethod: int,
+        timestep_h: float,
+        initial_buildup: float,
+        area: float,
+        area_fraction: float,
+        surface_flow: np.ndarray,
+        landuse_name: str,
+        aggregate: bool = False,
     ):
         """Initialize a Buwo object.
 
@@ -44,35 +46,35 @@ class BuildUpWashoff:
             landuse_name (str): Name of the landuse.
             aggregate (bool, optional): If True, aggregate the results. Defaults to False.
         """
-        self.LanduseName = landuse_name
+        self.LanduseName: str = landuse_name
 
-        self.Bmax = Bmax
-        self.Nb = Nb
-        self.Kb = Kb
-        self.Kw = Kw
-        self.Nw = Nw
+        self.Bmax: float = Bmax
+        self.Nb: float = Nb
+        self.Kb: float = Kb
+        self.Kw: float = Kw
+        self.Nw: float = Nw
 
-        self.timestep_h = timestep_h
-        self.timestep_d = self.timestep_h / 24
+        self.timestep_h: float = timestep_h
+        self.timestep_d: float = self.timestep_h / 24
 
-        self.Washoff = []
-        self.BuildUp = []
-        self.EffectiveWashoff = []
+        self.Washoff: list[float] = []
+        self.BuildUp: list[float] = []
+        self.EffectiveWashoff: list[float] = []
 
-        self.Aggregate = aggregate
-        self.InitialBuildUp = initial_buildup
+        self.Aggregate: bool = aggregate
+        self.InitialBuildUp: float = initial_buildup
 
-        self.Area = area
-        self.AreaFraction = area_fraction
+        self.Area: float = area
+        self.AreaFraction: float = area_fraction
 
-        self.SurfaceFlow = surface_flow
-        self.ThresholdFlow = threshold_flow
+        self.SurfaceFlow: np.ndarray = surface_flow
+        self.ThresholdFlow: float = threshold_flow
 
-        self.BuMethod = BuMethod
-        self.WoMethod = WoMethod
+        self.BuMethod: int = BuMethod
+        self.WoMethod: int = WoMethod
 
     # region Time from BuildUp Equations
-    def TimeFromBuildUpPow(self, buildup):
+    def TimeFromBuildUpPow(self, buildup: float) -> float:
         """
         Returns time from buildup using the power equation.
         """
@@ -84,7 +86,7 @@ class BuildUpWashoff:
 
         return time
 
-    def TimeFromBuildUpExp(self, buildup):
+    def TimeFromBuildUpExp(self, buildup: float) -> float:
         """
         Returns time from buildup using the exponential equation.
         """
@@ -96,7 +98,7 @@ class BuildUpWashoff:
 
         return time
 
-    def TimeFromBuildUpSat(self, buildup):
+    def TimeFromBuildUpSat(self, buildup: float) -> float:
         """
         Returns time from buildup using the saturation equation.
         """
@@ -111,64 +113,64 @@ class BuildUpWashoff:
     # endregion Time from BuildUp Equations
 
     # region BuildUp Equations
-    def BuildUpPow(self, time):
+    def BuildUpPow(self, time: float) -> float:
         return math.min(self.Bmax, self.Kb * (time**self.Nb))
 
-    def BuildUpExp(self, time):
+    def BuildUpExp(self, time: float) -> float:
         return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
-    def BuildUpSat(self, time):
+    def BuildUpSat(self, time: float) -> float:
         return self.Bmax * time / (self.Kb + time)
 
     # endregion BuildUp Equations
 
     # region Washoff Equations
-    def WashoffExp(self, surface_flow, buildup_mass):
+    def WashoffExp(self, surface_flow: float, buildup_mass: float) -> float:
         return self.Kw * (surface_flow**self.Nw) * buildup_mass
 
-    def WashoffRating(self, surface_flow, watershed_area):
+    def WashoffRating(self, surface_flow: float, watershed_area: float) -> float:
         return self.Kw * (1000 * surface_flow * watershed_area) ** self.Nw
 
-    def WashoffEMC(self, surface_flow, watershed_area):
+    def WashoffEMC(self, surface_flow: float, watershed_area: float) -> float:
         return self.Kw * surface_flow * watershed_area
 
     # endregion Washoff Equations
 
-    def Process(self, verbose=False):
+    def Process(self, verbose: bool = False) -> None:
         """
         Run the BuildUp and Washoff model, calculating pollutant.
         """
-        buildup_mass = self.InitialBuildUp / (self.Area * self.AreaFraction)
+        buildup_mass: float = self.InitialBuildUp / (self.Area * self.AreaFraction)
 
-        time_from_buildup = {
+        time_from_buildup: dict[int, Callable[[float], float]] = {
             1: self.TimeFromBuildUpPow,
             2: self.TimeFromBuildUpExp,
             3: self.TimeFromBuildUpSat,
         }
 
-        bu_time = time_from_buildup.get(self.BuMethod)(buildup_mass)
+        bu_time: float = time_from_buildup.get(self.BuMethod)(buildup_mass)
 
         for i in range(len(self.SurfaceFlow)):
             if self.SurfaceFlow[i] < self.ThresholdFlow:
                 bu_time += self.timestep_d
                 self.Washoff.append(0)
 
-                buildup_curve = {
+                buildup_curve: dict[int, Callable[[float], float]] = {
                     1: self.BuildUpPow,
                     2: self.BuildUpExp,
                     3: self.BuildUpSat,
                 }
 
-                buildup_specific = buildup_curve.get(self.BuMethod)(bu_time)
+                buildup_specific: float = buildup_curve.get(self.BuMethod)(bu_time)
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
             else:
-                washoff_curve = {
+                washoff_curve: dict[int, Callable[[float, float], float]] = {
                     1: self.WashoffExp,
                     2: self.WashoffRating,
                     3: self.WashoffEMC,
                 }
 
-                washoff_rate = washoff_curve.get(self.WoMethod)(
+                washoff_rate: float = washoff_curve.get(self.WoMethod)(
                     self.SurfaceFlow[i], buildup_mass
                 )
 

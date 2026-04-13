@@ -54,7 +54,7 @@ class SMAP:
         def __str__(self):
             formlist = []
             for i in range(self.n):
-                formlist.append(f'  P{i} = {self.P[i]}, EP{i} = {self.EP[i]}')
+                formlist.append(f"  P{i} = {self.P[i]}, EP{i} = {self.EP[i]}")
             return formlist
 
     class Basin:
@@ -74,9 +74,18 @@ class SMAP:
             TUin: initial moisture content (-).
         """
 
-        def __init__(self,  AD: float, Str=1000, Crec=10,
-                     TUin=0, EBin=0, Capc=40,
-                     kkt=100, k2t=5, Ai=2.5):
+        def __init__(
+            self,
+            AD: float,
+            Str=1000,
+            Crec=10,
+            TUin=0,
+            EBin=0,
+            Capc=40,
+            kkt=100,
+            k2t=5,
+            Ai=2.5,
+        ):
 
             self.Str = Str
             self.Crec = Crec / 100
@@ -94,16 +103,16 @@ class SMAP:
 
         def __str__(self):
             return (
-                f'SMAP Basin Object:\n'
-                f'  Str = {self.Str},\n'
-                f'  Crec = {self.Crec},\n'
-                f'  Capc = {self.Capc},\n'
-                f'  kkt = {self.kkt},\n'
-                f'  k2t = {self.k2t},\n'
-                f'  Ai = {self.Ai},\n'
-                f'  TUin = {self.Tuin},\n'
-                f'  EBin = {self.Ebin},\n'
-                f'  AD = {self.AD}'
+                f"SMAP Basin Object:\n"
+                f"  Str = {self.Str},\n"
+                f"  Crec = {self.Crec},\n"
+                f"  Capc = {self.Capc},\n"
+                f"  kkt = {self.kkt},\n"
+                f"  k2t = {self.k2t},\n"
+                f"  Ai = {self.Ai},\n"
+                f"  TUin = {self.Tuin},\n"
+                f"  EBin = {self.Ebin},\n"
+                f"  AD = {self.AD}"
             )
 
         def IsValid(self):
@@ -120,24 +129,21 @@ class SMAP:
                 kkt: 30 - 180
             """
 
-            param_dict = {0: 'Str',
-                          1: 'k2t',
-                          2: 'Crec',
-                          3: 'Ai',
-                          4: 'Capc',
-                          5: 'kkt'}
+            param_dict = {0: "Str", 1: "k2t", 2: "Crec", 3: "Ai", 4: "Capc", 5: "kkt"}
 
-            param_ranges = [100 <= self.Str <= 2000,
-                            .2 <= self.k2t <= 10,
-                            0 <= self.Crec <= 20/100,
-                            2 <= self.Ai <= 5,
-                            30/100 <= self.Capc <= 50/100,
-                            30 <= self.kkt <= 180]
+            param_ranges = [
+                100 <= self.Str <= 2000,
+                0.2 <= self.k2t <= 10,
+                0 <= self.Crec <= 20 / 100,
+                2 <= self.Ai <= 5,
+                30 / 100 <= self.Capc <= 50 / 100,
+                30 <= self.kkt <= 180,
+            ]
 
             for index, verification in enumerate(param_ranges):
                 if verification is False:
                     param_name = param_dict.get(index)
-                    message = f'{param_name} is outside the specified limits.'
+                    message = f"{param_name} is outside the specified limits."
                     print(message)
                     return False
             return True
@@ -161,27 +167,35 @@ class SMAP:
 
         self.Basin.RSolo = self.Basin.Tuin * self.Basin.Str
         self.Basin.RSup = 0
-        self.Basin.Rsub = self.Basin.Ebin / (
-            1 - (.5 ** (1 / self.Basin.kkt))) / self.Basin.AD * 86.4
+        self.Basin.Rsub = (
+            self.Basin.Ebin / (1 - (0.5 ** (1 / self.Basin.kkt))) / self.Basin.AD * 86.4
+        )
 
         for i in range(self.Point.n):
             TU = self.Basin.RSolo / self.Basin.Str
 
-            ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
-                  / (self.Point.P[i] - self.Basin.Ai
-                     + self.Basin.Str - self.Basin.RSolo)
-                  if (self.Point.P[i] > self.Basin.Ai) else 0)
+            ES = (
+                (self.Point.P[i] - self.Basin.Ai) ** 2
+                / (self.Point.P[i] - self.Basin.Ai + self.Basin.Str - self.Basin.RSolo)
+                if (self.Point.P[i] > self.Basin.Ai)
+                else 0
+            )
 
-            ER = (self.Point.EP[i] if
-                  ((self.Point.P[i] - ES) > self.Point.EP[i])
-                  else self.Point.P[i] - ES
-                  + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
+            ER = (
+                self.Point.EP[i]
+                if ((self.Point.P[i] - ES) > self.Point.EP[i])
+                else self.Point.P[i]
+                - ES
+                + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU)
+            )
 
-            Rec = (self.Basin.Crec * TU
-                   * (self.Basin.RSolo - self.Basin.Capc
-                      * self.Basin.Str) if (self.Basin.RSolo
-                                            > (self.Basin.Capc
-                                               * self.Basin.Str)) else 0)
+            Rec = (
+                self.Basin.Crec
+                * TU
+                * (self.Basin.RSolo - self.Basin.Capc * self.Basin.Str)
+                if (self.Basin.RSolo > (self.Basin.Capc * self.Basin.Str))
+                else 0
+            )
 
             self.Basin.RSolo += self.Point.P[i] - ES - ER - Rec
 
@@ -190,10 +204,10 @@ class SMAP:
                 self.Basin.RSolo = self.Basin.Str
 
             self.Basin.RSup += ES
-            ED = self.Basin.RSup * (1 - (.5 ** (1 / self.Basin.k2t)))
+            ED = self.Basin.RSup * (1 - (0.5 ** (1 / self.Basin.k2t)))
             self.Basin.RSup -= ED
 
-            EB = self.Basin.RSub * (1 - (.5 ** (1 / self.Basin.kkt)))
+            EB = self.Basin.RSub * (1 - (0.5 ** (1 / self.Basin.kkt)))
             self.Basin.RSub += Rec - EB
 
             self.Q.append((ED + EB) * self.Basin.AD / 86.4)
@@ -213,11 +227,27 @@ class SMAP:
             pd.DataFrame: DataFrame containing the simulated outflow values for each time step.
         """
 
-        df = pd.DataFrame(columns=['P', 'EP', 'TU', 'ES', 'ER', 'Rec', 'RSolo',
-                                   'RSup', 'RSub', 'EB', 'ED', 'Q', 'Qb', 'Qd'])
+        df = pd.DataFrame(
+            columns=[
+                "P",
+                "EP",
+                "TU",
+                "ES",
+                "ER",
+                "Rec",
+                "RSolo",
+                "RSup",
+                "RSub",
+                "EB",
+                "ED",
+                "Q",
+                "Qb",
+                "Qd",
+            ]
+        )
 
-        KK = .5 ** (1 / self.Basin.kkt)
-        K2 = .5 ** (1 / self.Basin.k2t)
+        KK = 0.5 ** (1 / self.Basin.kkt)
+        K2 = 0.5 ** (1 / self.Basin.k2t)
 
         unit_factor = self.Basin.AD / 86.4
 
@@ -230,21 +260,26 @@ class SMAP:
 
             TU = RSolo / self.Basin.Str
 
-            ES = ((self.Point.P[i] - self.Basin.Ai) ** 2
-                  / (self.Point.P[i] - self.Basin.Ai
-                     + self.Basin.Str - RSolo)
-                  if (self.Point.P[i] > self.Basin.Ai) else 0)
+            ES = (
+                (self.Point.P[i] - self.Basin.Ai) ** 2
+                / (self.Point.P[i] - self.Basin.Ai + self.Basin.Str - RSolo)
+                if (self.Point.P[i] > self.Basin.Ai)
+                else 0
+            )
 
-            ER = (self.Point.EP[i] if
-                  ((self.Point.P[i] - ES) > self.Point.EP[i])
-                  else self.Point.P[i] - ES
-                  + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU))
+            ER = (
+                self.Point.EP[i]
+                if ((self.Point.P[i] - ES) > self.Point.EP[i])
+                else self.Point.P[i]
+                - ES
+                + ((self.Point.EP[i] - self.Point.P[i] + ES) * TU)
+            )
 
-            Rec = (self.Basin.Crec * TU
-                   * (RSolo - self.Basin.Capc
-                      * self.Basin.Str) if (RSolo
-                                            > (self.Basin.Capc
-                                               * self.Basin.Str)) else 0)
+            Rec = (
+                self.Basin.Crec * TU * (RSolo - self.Basin.Capc * self.Basin.Str)
+                if (RSolo > (self.Basin.Capc * self.Basin.Str))
+                else 0
+            )
 
             RSolo += self.Point.P[i] - ES - ER - Rec
 
@@ -273,33 +308,38 @@ class SMAP:
                 ED,
                 (ED + EB) * unit_factor,
                 EB * unit_factor,
-                ED * unit_factor
+                ED * unit_factor,
             ]
             df.loc[len(df)] = row
         return df
 
-    def Calibrate(self, evaluation,
-                  bounds=[[100.0, 2000.0],  # Str
-                          [0., 20],  # Crec
-                          #   [0., 1.], # TUin
-                          #   [0., 20], # EBin
-                          #   [30, 50], # Capc
-                          #   [30, 180], # kkt
-                          [.2, 10],  # k2t
-                          #   [2, 5]], # Ai
-                          ],
-                  optimization_engine='minimize',
-                  x0=[1050,
-                      10,
-                      # .5,
-                      # 0,
-                      # 40,
-                      # 105,
-                      .2,
-                      # 3.5
-                      ],
-                  maxiter=1000,
-                  objective_function='nse'):
+    def Calibrate(
+        self,
+        evaluation,
+        bounds=[
+            [100.0, 2000.0],  # Str
+            [0.0, 20],  # Crec
+            #   [0., 1.], # TUin
+            #   [0., 20], # EBin
+            #   [30, 50], # Capc
+            #   [30, 180], # kkt
+            [0.2, 10],  # k2t
+            #   [2, 5]], # Ai
+        ],
+        optimization_engine="minimize",
+        x0=[
+            1050,
+            10,
+            # .5,
+            # 0,
+            # 40,
+            # 105,
+            0.2,
+            # 3.5
+        ],
+        maxiter=1000,
+        objective_function="nse",
+    ):
         """
         Calibrate the SMAP model using scipy.minimize or
         differential evolution on spotpy objective functions.
@@ -333,42 +373,41 @@ class SMAP:
 
             self.RunModel()
 
-            obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
-                             'kge': lambda eval, Q: -kge(eval, Q),
-                             'rmse': rmse,
-                             'pbias': pbias}
+            obj_func_dict = {
+                "nse": lambda eval, Q: -nashsutcliffe(eval, Q),
+                "kge": lambda eval, Q: -kge(eval, Q),
+                "rmse": rmse,
+                "pbias": pbias,
+            }
 
             if type(objective_function) is str:
-                return obj_func_dict.get(objective_function)(evaluation, self.Q)  # noqa: 501
+                return obj_func_dict.get(objective_function)(
+                    evaluation, self.Q
+                )  # noqa: 501
             return objective_function(evaluation, self.Q)
 
-        if optimization_engine == 'minimize':
+        if optimization_engine == "minimize":
             return minimize(objective, x0=x0, bounds=bounds)
-        return differential_evolution(objective,
-                                      bounds=bounds,
-                                      maxiter=maxiter)
+        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)
 
-    def CalibrateAll(self, evaluation,
-                     bounds=[[100.0, 2000.0],  # Str
-                             [0., 20],  # Crec
-                             [0., 1.],  # TUin
-                             [0., 20],  # EBin
-                             [30, 50],  # Capc
-                             [30, 180],  # kkt
-                             [.2, 10],  # k2t
-                             [2, 5]],  # Ai
-                     optimization_engine='minimize',
-                     x0=[1050,
-                         10,
-                         .5,
-                         0,
-                         40,
-                         105,
-                         .2,
-                         3.5
-                         ],
-                     maxiter=1000,
-                     objective_function='nse'):
+    def CalibrateAll(
+        self,
+        evaluation,
+        bounds=[
+            [100.0, 2000.0],  # Str
+            [0.0, 20],  # Crec
+            [0.0, 1.0],  # TUin
+            [0.0, 20],  # EBin
+            [30, 50],  # Capc
+            [30, 180],  # kkt
+            [0.2, 10],  # k2t
+            [2, 5],
+        ],  # Ai
+        optimization_engine="minimize",
+        x0=[1050, 10, 0.5, 0, 40, 105, 0.2, 3.5],
+        maxiter=1000,
+        objective_function="nse",
+    ):
         """
         Calibrate the SMAP model using scipy.minimize or
         differential evolution on spotpy objective functions.
@@ -399,17 +438,19 @@ class SMAP:
 
             self.RunModel()
 
-            obj_func_dict = {'nse': lambda eval, Q: -nashsutcliffe(eval, Q),
-                             'kge': lambda eval, Q: -kge(eval, Q),
-                             'rmse': rmse,
-                             'pbias': pbias}
+            obj_func_dict = {
+                "nse": lambda eval, Q: -nashsutcliffe(eval, Q),
+                "kge": lambda eval, Q: -kge(eval, Q),
+                "rmse": rmse,
+                "pbias": pbias,
+            }
 
             if type(objective_function) is str:
-                return obj_func_dict.get(objective_function)(evaluation, self.Q)  # noqa: 501
+                return obj_func_dict.get(objective_function)(
+                    evaluation, self.Q
+                )  # noqa: 501
             return objective_function(evaluation, self.Q)
 
-        if optimization_engine == 'minimize':
+        if optimization_engine == "minimize":
             return minimize(objective, x0=x0, bounds=bounds)
-        return differential_evolution(objective,
-                                      bounds=bounds,
-                                      maxiter=maxiter)
+        return differential_evolution(objective, bounds=bounds, maxiter=maxiter)

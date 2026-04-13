@@ -1,8 +1,12 @@
 """
 Integration tests for hydrodynamic and hydrological modules using pytest.
 """
+
 import pytest
-from mogestpy.quantity.Hydrodynamic.saint_venant import TrapezoidalCrossSection, SaintVenant
+from mogestpy.quantity.Hydrodynamic.saint_venant import (
+    TrapezoidalCrossSection,
+    SaintVenant,
+)
 from mogestpy.quantity.Hydrological.muskingum import Muskingum
 
 
@@ -25,21 +29,21 @@ class TestHydrodynamicIntegration:
         dx = 1000.0  # 1 km in meters
 
         return {
-            'hydrograph': hydrograph,
-            'cross_section': cross_section,
-            'manning_n': manning_n,
-            'slope': slope,
-            'dt': dt,
-            'dx': dx
+            "hydrograph": hydrograph,
+            "cross_section": cross_section,
+            "manning_n": manning_n,
+            "slope": slope,
+            "dt": dt,
+            "dx": dx,
         }
 
     def test_normal_depth_consistency(self, setup_data):
         """Test consistency of normal depth calculations."""
         # Get test data
-        hydrograph = setup_data['hydrograph']
-        cross_section = setup_data['cross_section']
-        manning_n = setup_data['manning_n']
-        slope = setup_data['slope']
+        hydrograph = setup_data["hydrograph"]
+        cross_section = setup_data["cross_section"]
+        manning_n = setup_data["manning_n"]
+        slope = setup_data["slope"]
 
         # For each discharge in the hydrograph, calculate normal depth
         depths = []
@@ -49,10 +53,10 @@ class TestHydrodynamicIntegration:
 
         # Verify depths increase with discharge
         for i in range(1, len(hydrograph)):
-            if hydrograph[i] > hydrograph[i-1]:
-                assert depths[i] > depths[i-1]
-            elif hydrograph[i] < hydrograph[i-1]:
-                assert depths[i] < depths[i-1]
+            if hydrograph[i] > hydrograph[i - 1]:
+                assert depths[i] > depths[i - 1]
+            elif hydrograph[i] < hydrograph[i - 1]:
+                assert depths[i] < depths[i - 1]
 
     def test_muskingum_saint_venant_comparison(self, setup_data):
         """
@@ -62,8 +66,8 @@ class TestHydrodynamicIntegration:
         the Saint-Venant equations reasonably well.
         """
         # Get test data
-        hydrograph = setup_data['hydrograph']
-        dt = setup_data['dt']
+        hydrograph = setup_data["hydrograph"]
+        dt = setup_data["dt"]
 
         # Route the hydrograph using Muskingum
         k = 3600.0  # 1 hour in seconds
@@ -88,31 +92,27 @@ class TestHydrodynamicIntegration:
         outflow_volume = sum(muskingum_outflow)
         assert outflow_volume == pytest.approx(inflow_volume, rel=0.05)
 
-    @pytest.mark.parametrize("dt,dx,expected_stable", [
-        (3600, 5000, True),   # stable case
-        (3600, 1000, None),   # potentially stable, depends on actual calculation
-        (3600, 100, False)    # likely unstable
-    ])
+    @pytest.mark.parametrize(
+        "dt,dx,expected_stable",
+        [
+            (3600, 5000, True),  # stable case
+            (3600, 1000, None),  # potentially stable, depends on actual calculation
+            (3600, 100, False),  # likely unstable
+        ],
+    )
     def test_courant_stability(self, setup_data, dt, dx, expected_stable):
         """Test Courant stability condition for different parameters."""
         # Get test data
-        cross_section = setup_data['cross_section']
-        manning_n = setup_data['manning_n']
-        slope = setup_data['slope']
-        hydrograph = setup_data['hydrograph']
+        cross_section = setup_data["cross_section"]
+        manning_n = setup_data["manning_n"]
+        slope = setup_data["slope"]
+        hydrograph = setup_data["hydrograph"]
 
         # Use the peak discharge for worst-case scenario
         peak_discharge = max(hydrograph)
 
         # Create Saint-Venant model
-        sv = SaintVenant(
-            cross_section,
-            peak_discharge,
-            manning_n,
-            slope,
-            dt,
-            dx
-        )
+        sv = SaintVenant(cross_section, peak_discharge, manning_n, slope, dt, dx)
 
         # Calculate Courant number
         courant = sv.courant()

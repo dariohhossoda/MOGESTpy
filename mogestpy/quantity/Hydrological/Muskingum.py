@@ -43,9 +43,7 @@ class Muskingum:
         # Loop through from the second to the last entries
         for i in range(1, n):
             downstream[i] = (
-                c0 * upstream[i]
-                + c1 * upstream[i - 1]
-                + c2 * downstream[i - 1]
+                c0 * upstream[i] + c1 * upstream[i - 1] + c2 * downstream[i - 1]
             )
         return downstream
 

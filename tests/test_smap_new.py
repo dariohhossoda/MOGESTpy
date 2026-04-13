@@ -14,8 +14,7 @@ def test_smap2_discharge_calc():
     Tests Discharge Calculation of SMAP2 class
     """
     smap = Smap()
-    assert abs(smap.discharge_calc(
-        0.0, 0.991415730337079, 17800) - 204.25) < 1e-6
+    assert abs(smap.discharge_calc(0.0, 0.991415730337079, 17800) - 204.25) < 1e-6
 
 
 def test_smap2_transfer_functions():
@@ -49,7 +48,7 @@ def test_smap2_transfer_functions2():
         Capc=40.0,
         kkt=120.0,
         k2t=7.97306669390268,
-        Ai=4.0
+        Ai=4.0,
     )
 
     prec = 21.0
@@ -67,9 +66,9 @@ def test_smap2_transfer_functions2():
     Rec_calc = smap.Rec_calc(smap.Crec, Tu, Rsolo, smap.Capc, smap.Str)
     Rec_ref = 1.4612599
 
-    assert abs(Es_calc - Es_ref) < 1e-6, f'Es: {Es_calc} | {Es_ref}'
-    assert abs(Er_calc - Er_ref) < 1e-6, f'Er: {Er_calc} | {Er_ref}'
-    assert abs(Rec_calc - Rec_ref) < 1e-6, f'Rec: {Rec_calc} | {Rec_ref}'
+    assert abs(Es_calc - Es_ref) < 1e-6, f"Es: {Es_calc} | {Es_ref}"
+    assert abs(Er_calc - Er_ref) < 1e-6, f"Er: {Er_calc} | {Er_ref}"
+    assert abs(Rec_calc - Rec_ref) < 1e-6, f"Rec: {Rec_calc} | {Rec_ref}"
 
 
 def test_smap2_reservoir_init():
@@ -95,13 +94,11 @@ def test_smap2_run_step():
         Capc=40.0,
         kkt=120.0,
         k2t=7.97306669390268,
-        Ai=4.0
+        Ai=4.0,
     )
 
     smap.Tu = smap.Tu_calc(smap.Rsolo, smap.Str)
-    assert abs(
-        smap.Tu
-        - 0.8) < 1e-6, f"Tu: {smap.Tu}"
+    assert abs(smap.Tu - 0.8) < 1e-6, f"Tu: {smap.Tu}"
     assert abs(smap.run_step(0, 2.4) - 204.250000) < 1e-6
 
 
@@ -118,7 +115,7 @@ def test_smap2_run_step_multiple():
         Capc=40.0,
         kkt=120.0,
         k2t=8,
-        Ai=4.0
+        Ai=4.0,
     )
 
     step_1 = smap.run_step(0, 2.4)

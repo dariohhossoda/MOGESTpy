@@ -5,7 +5,7 @@ def test_smap_1():
     Str = 1000
     AD = 1000
     Crec = 20
-    TUin = 100/100
+    TUin = 100 / 100
     EBin = 0
     Capc = 30
     kkt = 30

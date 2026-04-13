@@ -622,7 +622,10 @@ class SmapM:
             raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
 
         # Multiply bounds by 10000 to work with integers
-        bounds = [(round(lb * 10000), round(ub * 10000)) for lb, ub in [self.bounds()[var] for var in variables]]
+        bounds = [
+            (round(lb * 10000), round(ub * 10000))
+            for lb, ub in [self.bounds()[var] for var in variables]
+        ]
 
         if obj_func is None:
 
@@ -634,7 +637,9 @@ class SmapM:
         def objective(params):
             # Divide by 10000 to get the actual parameter values
             actual_params = [p / 10000 for p in params]
-            self.__dict__.update({var: val for var, val in zip(variables, actual_params)})
+            self.__dict__.update(
+                {var: val for var, val in zip(variables, actual_params)}
+            )
 
             return obj_func(eval_arr, list(self.run(prec_arr, etp_arr)))
 
@@ -642,10 +647,7 @@ class SmapM:
         integrality = [True] * len(variables)
 
         result = differential_evolution(
-            func=objective,
-            bounds=bounds,
-            integrality=integrality,
-            disp=disp
+            func=objective, bounds=bounds, integrality=integrality, disp=disp
         )
 
         # Scale the result back to original range

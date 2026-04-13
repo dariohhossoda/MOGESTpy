@@ -29,6 +29,5 @@ class MassBalance:
         """
         vol = [self.Vin]
         for i in range(len(self.Qin) - 1):
-            vol.append(vol[-1] + (self.Qin[i + 1] -
-                       self.Qout[i + 1]) * self.Delta_t)
+            vol.append(vol[-1] + (self.Qin[i + 1] - self.Qout[i + 1]) * self.Delta_t)
         return vol

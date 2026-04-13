@@ -2,6 +2,7 @@
 Simulação Hidrodinâmica e de Qualidade da Água (SIHQUAL)
 Class-based implementation for hydrodynamic and water quality simulation.
 """
+
 import os
 import numpy as np
 import pandas as pd
@@ -19,10 +20,10 @@ def _to_numpy_array(data, dtype=None):
     Returns:
         numpy array
     """
-    if hasattr(data, 'to_numpy'):
+    if hasattr(data, "to_numpy"):
         # pandas Series/DataFrame
         return data.to_numpy(dtype=dtype) if dtype else data.to_numpy()
-    elif hasattr(data, 'values'):
+    elif hasattr(data, "values"):
         # pandas Series/DataFrame (older versions)
         return np.array(data.values, dtype=dtype) if dtype else np.array(data.values)
     else:
@@ -84,8 +85,8 @@ class SIHQUAL:
 
         # Initialize arrays
         self.b1 = None  # Bottom width
-        self.m = None   # Side slope
-        self.n = None   # Manning's coefficient
+        self.m = None  # Side slope
+        self.n = None  # Manning's coefficient
         self.So = None  # Bed slope
 
         self.y1 = None  # Water depth
@@ -145,7 +146,7 @@ class SIHQUAL:
             bottom_width=bottom_width,
             side_slope=side_slope,
             manning_coef=manning_coef,
-            bed_slope=bed_slope
+            bed_slope=bed_slope,
         )
         return self
 
@@ -235,11 +236,13 @@ class SIHQUAL:
         self.set_initial_conditions(
             initial_depth=depth,
             initial_velocity=velocity,
-            initial_concentration=concentration
+            initial_concentration=concentration,
         )
         return self
 
-    def set_initial_conditions(self, initial_depth, initial_velocity, initial_concentration):
+    def set_initial_conditions(
+        self, initial_depth, initial_velocity, initial_concentration
+    ):
         """
         Set initial conditions.
 
@@ -285,11 +288,9 @@ class SIHQUAL:
             initial_concentration_arr = _to_numpy_array(initial_concentration)
             # Interpolate if array length doesn't match dim
             if len(initial_concentration_arr) != self.dim:
-                x_points = np.linspace(
-                    0, self.xf, len(initial_concentration_arr))
+                x_points = np.linspace(0, self.xf, len(initial_concentration_arr))
                 x_full = np.linspace(0, self.xf, self.dim)
-                self.c1 = np.interp(
-                    x_full, x_points, initial_concentration_arr)
+                self.c1 = np.interp(x_full, x_points, initial_concentration_arr)
             else:
                 self.c1 = initial_concentration_arr
 
@@ -309,10 +310,7 @@ class SIHQUAL:
         Returns:
             self: For method chaining
         """
-        self.set_reaction_parameters(
-            decay_coef=decay_coef,
-            source_coef=source_coef
-        )
+        self.set_reaction_parameters(decay_coef=decay_coef, source_coef=source_coef)
         return self
 
     def set_reaction_parameters(self, decay_coef, source_coef):
@@ -393,7 +391,7 @@ class SIHQUAL:
             boundary_positions: Dictionary with positions for each boundary type
                 {'Q': [positions], 'y': [positions], 'c': [positions]}
             boundary_data: Dictionary with time series data for each boundary type
-                {'Q': {'time': array, 'values': array}, 
+                {'Q': {'time': array, 'values': array},
                  'y': {'time': array, 'values': array},
                  'c': {'time': array, 'values': array}}
 
@@ -401,25 +399,22 @@ class SIHQUAL:
             self: For method chaining
         """
         # Flow boundaries
-        if 'Q' in boundary_positions and 'Q' in boundary_data:
-            self.index_Q = [self._x_to_index(pos)
-                            for pos in boundary_positions['Q']]
-            self.t_arr_Q = _to_numpy_array(boundary_data['Q']['time'])
-            self.bQ_data = _to_numpy_array(boundary_data['Q']['values'])
+        if "Q" in boundary_positions and "Q" in boundary_data:
+            self.index_Q = [self._x_to_index(pos) for pos in boundary_positions["Q"]]
+            self.t_arr_Q = _to_numpy_array(boundary_data["Q"]["time"])
+            self.bQ_data = _to_numpy_array(boundary_data["Q"]["values"])
 
         # Water level boundaries
-        if 'y' in boundary_positions and 'y' in boundary_data:
-            self.index_y = [self._x_to_index(pos)
-                            for pos in boundary_positions['y']]
-            self.t_arr_y = _to_numpy_array(boundary_data['y']['time'])
-            self.by_data = _to_numpy_array(boundary_data['y']['values'])
+        if "y" in boundary_positions and "y" in boundary_data:
+            self.index_y = [self._x_to_index(pos) for pos in boundary_positions["y"]]
+            self.t_arr_y = _to_numpy_array(boundary_data["y"]["time"])
+            self.by_data = _to_numpy_array(boundary_data["y"]["values"])
 
         # Concentration boundaries
-        if 'c' in boundary_positions and 'c' in boundary_data:
-            self.index_c = [self._x_to_index(pos)
-                            for pos in boundary_positions['c']]
-            self.t_arr_c = _to_numpy_array(boundary_data['c']['time'])
-            self.bc_data = _to_numpy_array(boundary_data['c']['values'])
+        if "c" in boundary_positions and "c" in boundary_data:
+            self.index_c = [self._x_to_index(pos) for pos in boundary_positions["c"]]
+            self.t_arr_c = _to_numpy_array(boundary_data["c"]["time"])
+            self.bc_data = _to_numpy_array(boundary_data["c"]["values"])
 
         return self
 
@@ -449,11 +444,12 @@ class SIHQUAL:
             # Ensure flow_values and times have the same length
             if len(flow_values_arr) != len(times):
                 raise ValueError(
-                    f"flow_values length ({len(flow_values_arr)}) must match times length ({len(times)})")
+                    f"flow_values length ({len(flow_values_arr)}) must match times length ({len(times)})"
+                )
             flow_values = np.array([flow_values_arr])
 
-        boundary_positions = {'Q': [0.0]}
-        boundary_data = {'Q': {'time': times, 'values': flow_values}}
+        boundary_positions = {"Q": [0.0]}
+        boundary_data = {"Q": {"time": times, "values": flow_values}}
 
         return self.set_boundary_conditions(boundary_positions, boundary_data)
 
@@ -483,16 +479,22 @@ class SIHQUAL:
             # Ensure level_values and times have the same length
             if len(level_values_arr) != len(times):
                 raise ValueError(
-                    f"level_values length ({len(level_values_arr)}) must match times length ({len(times)})")
+                    f"level_values length ({len(level_values_arr)}) must match times length ({len(times)})"
+                )
             level_values = np.array([level_values_arr])
 
-        boundary_positions = {'y': [self.xf]}
-        boundary_data = {'y': {'time': times, 'values': level_values}}
+        boundary_positions = {"y": [self.xf]}
+        boundary_data = {"y": {"time": times, "values": level_values}}
 
         return self.set_boundary_conditions(boundary_positions, boundary_data)
 
-    def set_lateral_inflows(self, lateral_Q_segments=None, lateral_Q_data=None,
-                            lateral_c_segments=None, lateral_c_data=None):
+    def set_lateral_inflows(
+        self,
+        lateral_Q_segments=None,
+        lateral_Q_data=None,
+        lateral_c_segments=None,
+        lateral_c_data=None,
+    ):
         """
         Set lateral inflows.
 
@@ -509,17 +511,21 @@ class SIHQUAL:
         """
         # Lateral flow
         if lateral_Q_segments is not None and lateral_Q_data is not None:
-            self.lQ_slices = [(self._x_to_index(start), self._x_to_index(end))
-                              for start, end in lateral_Q_segments]
-            self.t_arr_lQ = _to_numpy_array(lateral_Q_data['time'])
-            self.lQ_data = _to_numpy_array(lateral_Q_data['values'])
+            self.lQ_slices = [
+                (self._x_to_index(start), self._x_to_index(end))
+                for start, end in lateral_Q_segments
+            ]
+            self.t_arr_lQ = _to_numpy_array(lateral_Q_data["time"])
+            self.lQ_data = _to_numpy_array(lateral_Q_data["values"])
 
         # Lateral concentration
         if lateral_c_segments is not None and lateral_c_data is not None:
-            self.lc_slices = [(self._x_to_index(start), self._x_to_index(end))
-                              for start, end in lateral_c_segments]
-            self.t_arr_lc = _to_numpy_array(lateral_c_data['time'])
-            self.lc_data = _to_numpy_array(lateral_c_data['values'])
+            self.lc_slices = [
+                (self._x_to_index(start), self._x_to_index(end))
+                for start, end in lateral_c_segments
+            ]
+            self.t_arr_lc = _to_numpy_array(lateral_c_data["time"])
+            self.lc_data = _to_numpy_array(lateral_c_data["values"])
 
         return self
 
@@ -560,17 +566,18 @@ class SIHQUAL:
 
         # Initialize progress bar
         if show_progress:
-            progress = tqdm(total=self.tf, desc='SIHQUAL', unit='s_(sim)')
+            progress = tqdm(total=self.tf, desc="SIHQUAL", unit="s_(sim)")
 
         # Initialize output variables
         n_index = 0
         sim_time = 0
 
         days_total = int(self.tf // 86400) + 1
-        variables = ['Q', 'y', 'c']
+        variables = ["Q", "y", "c"]
         cols = pd.MultiIndex.from_product(
-            [self.output_sections, variables], names=['section', 'variables'])
-        t_index = pd.Index(list(range(days_total)), name='t')
+            [self.output_sections, variables], names=["section", "variables"]
+        )
+        t_index = pd.Index(list(range(days_total)), name="t")
 
         col_num = len(variables) * len(self.output_sections)
         df_data = np.zeros((days_total, col_num))
@@ -591,12 +598,14 @@ class SIHQUAL:
             for i, (start, end) in enumerate(self.lQ_slices):
                 if self.t_arr_lQ is not None and self.lQ_data is not None:
                     ql[slice(start, end)] = np.interp(
-                        sim_time + self.dt, self.t_arr_lQ, self.lQ_data[i])
+                        sim_time + self.dt, self.t_arr_lQ, self.lQ_data[i]
+                    )
 
             for i, (start, end) in enumerate(self.lc_slices):
                 if self.t_arr_lc is not None and self.lc_data is not None:
                     cqd[slice(start, end)] = np.interp(
-                        sim_time + self.dt, self.t_arr_lc, self.lc_data[i])
+                        sim_time + self.dt, self.t_arr_lc, self.lc_data[i]
+                    )
 
             # Avoid division by zero
             mask = A1 > 0
@@ -611,16 +620,22 @@ class SIHQUAL:
             SSf = self._avg(Sf1)
 
             mfactor = -0.5 * self.dt / self.dx
-            y2[1:-1] = (self.alpha * self.y1[1:-1] + (1 - self.alpha) * yy
-                        + mfactor * vv * dy
-                        + mfactor * vv * dA / BB
-                        + mfactor * AA * dv / BB
-                        + ql[1:-1] * self.dt / BB)
+            y2[1:-1] = (
+                self.alpha * self.y1[1:-1]
+                + (1 - self.alpha) * yy
+                + mfactor * vv * dy
+                + mfactor * vv * dA / BB
+                + mfactor * AA * dv / BB
+                + ql[1:-1] * self.dt / BB
+            )
 
-            v2[1:-1] = (self.alpha * self.v1[1:-1] + (1 - self.alpha) * vv
-                        + mfactor * vv * dv
-                        + mfactor * self.gravity * dy
-                        + self.gravity * self.dt * (self.So[1:-1] - SSf))
+            v2[1:-1] = (
+                self.alpha * self.v1[1:-1]
+                + (1 - self.alpha) * vv
+                + mfactor * vv * dv
+                + mfactor * self.gravity * dy
+                + self.gravity * self.dt * (self.So[1:-1] - SSf)
+            )
 
             y2[-1] = y2[-2]
             v2[-1] = v2[-2]
@@ -634,16 +649,22 @@ class SIHQUAL:
 
             # Only update concentration where we have water
             if np.any(mask):
-                c2_update = (self.c1[1:-1][mask]
-                             - 0.5 * self.dt / self.dx *
-                             self.v1[1:-1][mask] * dc[mask]
-                             + self.dispersion_coef * 0.5 *
-                             self.dt / self.dx / A1[1:-1][mask]
-                             * dA[mask] * dc[mask] * 0.5 / self.dx
-                             + self.dispersion_coef * self.dt / self.dx ** 2
-                             - self.Kd[1:-1][mask] *
-                             self.c1[1:-1][mask] * self.dt
-                             + self.Ks[1:-1][mask] * self.dt)
+                c2_update = (
+                    self.c1[1:-1][mask]
+                    - 0.5 * self.dt / self.dx * self.v1[1:-1][mask] * dc[mask]
+                    + self.dispersion_coef
+                    * 0.5
+                    * self.dt
+                    / self.dx
+                    / A1[1:-1][mask]
+                    * dA[mask]
+                    * dc[mask]
+                    * 0.5
+                    / self.dx
+                    + self.dispersion_coef * self.dt / self.dx**2
+                    - self.Kd[1:-1][mask] * self.c1[1:-1][mask] * self.dt
+                    + self.Ks[1:-1][mask] * self.dt
+                )
                 c2[1:-1][mask] = c2_update
 
             c2[-1] = c2[-2]
@@ -651,21 +672,25 @@ class SIHQUAL:
             # Apply boundary conditions
             for i, idx in enumerate(self.index_y):
                 if self.t_arr_y is not None and self.by_data is not None:
-                    y2[idx] = np.interp(sim_time + self.dt,
-                                        self.t_arr_y, self.by_data[i])
+                    y2[idx] = np.interp(
+                        sim_time + self.dt, self.t_arr_y, self.by_data[i]
+                    )
 
             A2 = self._wet_area(self.b1, y2, self.m)
 
             for i, idx in enumerate(self.index_Q):
                 if self.t_arr_Q is not None and self.bQ_data is not None:
                     if A2[idx] > 0:
-                        v2[idx] = np.interp(
-                            sim_time + self.dt, self.t_arr_Q, self.bQ_data[i]) / A2[idx]
+                        v2[idx] = (
+                            np.interp(sim_time + self.dt, self.t_arr_Q, self.bQ_data[i])
+                            / A2[idx]
+                        )
 
             for i, idx in enumerate(self.index_c):
                 if self.t_arr_c is not None and self.bc_data is not None:
-                    c2[idx] = np.interp(sim_time + self.dt,
-                                        self.t_arr_c, self.bc_data[i])
+                    c2[idx] = np.interp(
+                        sim_time + self.dt, self.t_arr_c, self.bc_data[i]
+                    )
 
             # Update variables for next time step
             self.y1 = np.copy(y2)
@@ -674,14 +699,16 @@ class SIHQUAL:
 
             # Check stability
             courant_values = self._courant_number(
-                self.dt, self.dx, self.v1, self.gravity, A1, B1)
+                self.dt, self.dx, self.v1, self.gravity, A1, B1
+            )
             # Filter out NaN and inf values that might occur with zero depth
             valid_courant = courant_values[np.isfinite(courant_values)]
             if len(valid_courant) > 0:
                 self.courant_max = valid_courant.max()
                 if self.courant_max >= 1 and not self.auto_step:
                     raise ValueError(
-                        f'Stability error! Courant number = {self.courant_max:.4f} >= 1.0')
+                        f"Stability error! Courant number = {self.courant_max:.4f} >= 1.0"
+                    )
 
             # Store output
             days_elapsed = sim_time / 86400
@@ -692,8 +719,8 @@ class SIHQUAL:
                     # Ensure positive flow values for output
                     flow = max(0.0, self.v1[section] * A1[section])  # Flow
                     _array[k] = flow
-                    _array[k+1] = self.y1[section]              # Depth
-                    _array[k+2] = self.c1[section]              # Concentration
+                    _array[k + 1] = self.y1[section]  # Depth
+                    _array[k + 2] = self.c1[section]  # Concentration
                     k += 3
                 df_data[int(days_elapsed)] = _array
 
@@ -732,7 +759,7 @@ class SIHQUAL:
             print(f"Error saving results: {e}")
             return False
 
-    def plot_results(self, results, variable='Q', figsize=(10, 6), dpi=100):
+    def plot_results(self, results, variable="Q", figsize=(10, 6), dpi=100):
         """
         Plot simulation results.
 
@@ -750,29 +777,29 @@ class SIHQUAL:
         fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
         # Get sections
-        sections = results.columns.get_level_values('section').unique()
+        sections = results.columns.get_level_values("section").unique()
 
         # Plot variable at each section
         for section in sections:
-            ax.plot(results.index, results[(section, variable)],
-                    label=f'Section {section}')
+            ax.plot(
+                results.index, results[(section, variable)], label=f"Section {section}"
+            )
 
         # Set labels and title
         variable_labels = {
-            'Q': 'Flow (m³/s)',
-            'y': 'Water Depth (m)',
-            'c': 'Concentration (mg/L)'
+            "Q": "Flow (m³/s)",
+            "y": "Water Depth (m)",
+            "c": "Concentration (mg/L)",
         }
 
         variable_titles = {
-            'Q': 'Flow at Different Sections',
-            'y': 'Water Depth at Different Sections',
-            'c': 'Concentration at Different Sections'
+            "Q": "Flow at Different Sections",
+            "y": "Water Depth at Different Sections",
+            "c": "Concentration at Different Sections",
         }
 
-        ax.set_title(variable_titles.get(
-            variable, f'{variable} at Different Sections'))
-        ax.set_xlabel('Time (days)')
+        ax.set_title(variable_titles.get(variable, f"{variable} at Different Sections"))
+        ax.set_xlabel("Time (days)")
         ax.set_ylabel(variable_labels.get(variable, variable))
         ax.grid(True)
         ax.legend()
@@ -786,7 +813,8 @@ class SIHQUAL:
 
         if self.y1 is None or self.v1 is None or self.c1 is None:
             raise ValueError(
-                "Initial conditions not set. Call set_initial_conditions() first.")
+                "Initial conditions not set. Call set_initial_conditions() first."
+            )
 
         if self.Kd is None or self.Ks is None:
             # Set default values if not provided
@@ -904,8 +932,7 @@ class SIHQUAL:
         # Avoid division by zero
         mask = rh > 0
         result = np.zeros_like(rh)
-        result[mask] = n[mask] * n[mask] * \
-            v[mask] * v[mask] * rh[mask] ** (-4/3)
+        result[mask] = n[mask] * n[mask] * v[mask] * v[mask] * rh[mask] ** (-4 / 3)
         return result
 
     def _courant_number(self, dt, dx, v, g, A, B):
@@ -926,14 +953,24 @@ class SIHQUAL:
         # Avoid division by zero and negative values
         mask = (B > 0) & (A > 0)
         result = np.zeros_like(v)
-        result[mask] = dt / dx * \
-            (np.abs(v[mask]) + np.sqrt(g * A[mask] / B[mask]))
+        result[mask] = dt / dx * (np.abs(v[mask]) + np.sqrt(g * A[mask] / B[mask]))
         return result
 
     @classmethod
-    def create_simple_channel(cls, length, dx=100.0, dt=10.0, simulation_time=3600.0,
-                              bottom_width=10.0, side_slope=0.0, manning=0.03, slope=0.001,
-                              depth=2.0, velocity=0.5, concentration=0.0):
+    def create_simple_channel(
+        cls,
+        length,
+        dx=100.0,
+        dt=10.0,
+        simulation_time=3600.0,
+        bottom_width=10.0,
+        side_slope=0.0,
+        manning=0.03,
+        slope=0.001,
+        depth=2.0,
+        velocity=0.5,
+        concentration=0.0,
+    ):
         """
         Create a simple rectangular channel with uniform properties.
 
@@ -964,14 +1001,12 @@ class SIHQUAL:
             bottom_width=bottom_width,
             side_slope=side_slope,
             manning_coef=manning,
-            bed_slope=slope
+            bed_slope=slope,
         )
 
         # Set initial conditions
         model.set_uniform_initial_conditions(
-            depth=depth,
-            velocity=velocity,
-            concentration=concentration
+            depth=depth, velocity=velocity, concentration=concentration
         )
 
         # Set default output sections
@@ -992,58 +1027,62 @@ class SIHQUAL:
         """
         try:
             # Read data from Excel
-            data_df = pd.read_excel(filename, sheet_name='Data')
-            param_df = pd.read_excel(filename, sheet_name='Parameters')
+            data_df = pd.read_excel(filename, sheet_name="Data")
+            param_df = pd.read_excel(filename, sheet_name="Parameters")
 
             # Get parameters
-            dx = param_df['dx'][0]
-            dt = param_df['dt'][0]
-            xf = param_df['xf'][0]
-            tf = param_df['tf'][0]
-            alpha = param_df['alpha'][0]
-            dispersion_coef = param_df['D'][0]
+            dx = param_df["dx"][0]
+            dt = param_df["dt"][0]
+            xf = param_df["xf"][0]
+            tf = param_df["tf"][0]
+            alpha = param_df["alpha"][0]
+            dispersion_coef = param_df["D"][0]
 
             # Create model
-            model = cls(dx=dx, dt=dt, xf=xf, tf=tf, alpha=alpha,
-                        dispersion_coef=dispersion_coef)
+            model = cls(
+                dx=dx, dt=dt, xf=xf, tf=tf, alpha=alpha, dispersion_coef=dispersion_coef
+            )
 
             # Get geometry
-            b1 = _to_numpy_array(data_df['b1'], dtype=np.float64)
-            m = _to_numpy_array(data_df['m'], dtype=np.float64)
-            n = _to_numpy_array(data_df['n'], dtype=np.float64)
-            So = _to_numpy_array(data_df['So'], dtype=np.float64)
+            b1 = _to_numpy_array(data_df["b1"], dtype=np.float64)
+            m = _to_numpy_array(data_df["m"], dtype=np.float64)
+            n = _to_numpy_array(data_df["n"], dtype=np.float64)
+            So = _to_numpy_array(data_df["So"], dtype=np.float64)
 
             # Set geometry
             model.set_geometry(b1, m, n, So)
 
             # Get initial conditions
-            y1 = _to_numpy_array(data_df['y1'], dtype=np.float64)
-            v1 = _to_numpy_array(data_df['v1'], dtype=np.float64)
-            c1 = _to_numpy_array(data_df['c1'], dtype=np.float64)
+            y1 = _to_numpy_array(data_df["y1"], dtype=np.float64)
+            v1 = _to_numpy_array(data_df["v1"], dtype=np.float64)
+            c1 = _to_numpy_array(data_df["c1"], dtype=np.float64)
 
             # Set initial conditions
             model.set_initial_conditions(y1, v1, c1)
 
             # Get reaction parameters
-            Kd = _to_numpy_array(data_df['kd'], dtype=np.float64)
-            Ks = _to_numpy_array(data_df['ks'], dtype=np.float64)
+            Kd = _to_numpy_array(data_df["kd"], dtype=np.float64)
+            Ks = _to_numpy_array(data_df["ks"], dtype=np.float64)
 
             # Set reaction parameters
             model.set_reaction_parameters(Kd, Ks)
 
             # Get output sections
-            if 'output_sections' in param_df.columns:
-                sections_data = param_df['output_sections'][0]
+            if "output_sections" in param_df.columns:
+                sections_data = param_df["output_sections"][0]
                 # Handle case where output_sections is stored as a string representation of a list
                 if isinstance(sections_data, str):
                     # Try to evaluate the string as a Python literal
                     try:
                         import ast
+
                         sections = ast.literal_eval(sections_data)
                     except (ValueError, SyntaxError):
                         # If that fails, try to parse as comma-separated values
-                        sections = [float(x.strip())
-                                    for x in sections_data.strip('[]').split(',')]
+                        sections = [
+                            float(x.strip())
+                            for x in sections_data.strip("[]").split(",")
+                        ]
                 else:
                     # If it's already a list or array, use it directly
                     sections = sections_data
@@ -1055,59 +1094,79 @@ class SIHQUAL:
             # Try to load boundary conditions
             input_folder = os.path.dirname(filename)
             # Check if SIHQUALInputs directory exists in the same folder as the Excel file
-            sihqual_inputs_dir = os.path.join(input_folder, 'SIHQUALInputs')
+            sihqual_inputs_dir = os.path.join(input_folder, "SIHQUALInputs")
             if os.path.isdir(sihqual_inputs_dir):
                 input_folder = sihqual_inputs_dir
 
             try:
                 # Load boundary conditions
-                boundary_Q = pd.read_csv(os.path.join(input_folder, 'boundary_Q.csv'),
-                                         sep=';', encoding='utf-8')
-                boundary_y = pd.read_csv(os.path.join(input_folder, 'boundary_y.csv'),
-                                         sep=';', encoding='utf-8')
-                boundary_c = pd.read_csv(os.path.join(input_folder, 'boundary_c.csv'),
-                                         sep=';', encoding='utf-8')
+                boundary_Q = pd.read_csv(
+                    os.path.join(input_folder, "boundary_Q.csv"),
+                    sep=";",
+                    encoding="utf-8",
+                )
+                boundary_y = pd.read_csv(
+                    os.path.join(input_folder, "boundary_y.csv"),
+                    sep=";",
+                    encoding="utf-8",
+                )
+                boundary_c = pd.read_csv(
+                    os.path.join(input_folder, "boundary_c.csv"),
+                    sep=";",
+                    encoding="utf-8",
+                )
 
                 # Process boundary conditions
-                t_arr_Q = _to_numpy_array(
-                    boundary_Q.iloc[:, 0], dtype=np.int32)
-                t_arr_y = _to_numpy_array(
-                    boundary_y.iloc[:, 0], dtype=np.int32)
-                t_arr_c = _to_numpy_array(
-                    boundary_c.iloc[:, 0], dtype=np.int32)
+                t_arr_Q = _to_numpy_array(boundary_Q.iloc[:, 0], dtype=np.int32)
+                t_arr_y = _to_numpy_array(boundary_y.iloc[:, 0], dtype=np.int32)
+                t_arr_c = _to_numpy_array(boundary_c.iloc[:, 0], dtype=np.int32)
 
                 # Get boundary positions
                 boundary_positions = {
-                    'Q': [float(col) for col in boundary_Q.columns[1:]],
-                    'y': [float(col) for col in boundary_y.columns[1:]],
-                    'c': [float(col) for col in boundary_c.columns[1:]]
+                    "Q": [float(col) for col in boundary_Q.columns[1:]],
+                    "y": [float(col) for col in boundary_y.columns[1:]],
+                    "c": [float(col) for col in boundary_c.columns[1:]],
                 }
 
                 # Get boundary data
                 boundary_data = {
-                    'Q': {'time': t_arr_Q, 'values': _to_numpy_array(boundary_Q.iloc[:, 1:].T)},
-                    'y': {'time': t_arr_y, 'values': _to_numpy_array(boundary_y.iloc[:, 1:].T)},
-                    'c': {'time': t_arr_c, 'values': _to_numpy_array(boundary_c.iloc[:, 1:].T)}
+                    "Q": {
+                        "time": t_arr_Q,
+                        "values": _to_numpy_array(boundary_Q.iloc[:, 1:].T),
+                    },
+                    "y": {
+                        "time": t_arr_y,
+                        "values": _to_numpy_array(boundary_y.iloc[:, 1:].T),
+                    },
+                    "c": {
+                        "time": t_arr_c,
+                        "values": _to_numpy_array(boundary_c.iloc[:, 1:].T),
+                    },
                 }
 
                 # Set boundary conditions
-                model.set_boundary_conditions(
-                    boundary_positions, boundary_data)
+                model.set_boundary_conditions(boundary_positions, boundary_data)
             except Exception as e:
                 print(f"Warning: Could not load boundary conditions: {e}")
 
             try:
                 # Load lateral inflows
-                lateral_Q = pd.read_csv(os.path.join(input_folder, 'lateral_Q.csv'),
-                                        sep=';', encoding='utf-8', header=[0, 1])
-                lateral_c = pd.read_csv(os.path.join(input_folder, 'lateral_c.csv'),
-                                        sep=';', encoding='utf-8', header=[0, 1])
+                lateral_Q = pd.read_csv(
+                    os.path.join(input_folder, "lateral_Q.csv"),
+                    sep=";",
+                    encoding="utf-8",
+                    header=[0, 1],
+                )
+                lateral_c = pd.read_csv(
+                    os.path.join(input_folder, "lateral_c.csv"),
+                    sep=";",
+                    encoding="utf-8",
+                    header=[0, 1],
+                )
 
                 # Process lateral inflows
-                t_arr_lQ = _to_numpy_array(
-                    lateral_Q.iloc[:, 0], dtype=np.int32)
-                t_arr_lc = _to_numpy_array(
-                    lateral_c.iloc[:, 0], dtype=np.int32)
+                t_arr_lQ = _to_numpy_array(lateral_Q.iloc[:, 0], dtype=np.int32)
+                t_arr_lc = _to_numpy_array(lateral_c.iloc[:, 0], dtype=np.int32)
 
                 # Get lateral segments - handle MultiIndex columns from CSV
                 lateral_Q_segments = []
@@ -1115,74 +1174,92 @@ class SIHQUAL:
                     if isinstance(col, tuple):
                         # MultiIndex column - first element is the actual column name
                         col_name = col[0]
-                        if isinstance(col_name, str) and col_name.startswith("('") and col_name.endswith("')"):
+                        if (
+                            isinstance(col_name, str)
+                            and col_name.startswith("('")
+                            and col_name.endswith("')")
+                        ):
                             # Parse string representation of tuple like "('500', '600')"
                             # Remove outer parentheses and quotes, then split by comma
                             inner = col_name.strip("()").replace("'", "")
                             parts = [p.strip() for p in inner.split(",")]
-                            lateral_Q_segments.append(
-                                (int(parts[0]), int(parts[1])))
+                            lateral_Q_segments.append((int(parts[0]), int(parts[1])))
                         else:
                             # Try to parse as comma-separated values
-                            parts = str(col_name).split(',')
+                            parts = str(col_name).split(",")
                             lateral_Q_segments.append(
-                                (int(parts[0].strip()), int(parts[1].strip())))
+                                (int(parts[0].strip()), int(parts[1].strip()))
+                            )
                     else:
                         # Single level column
-                        if isinstance(col, str) and col.startswith("('") and col.endswith("')"):
+                        if (
+                            isinstance(col, str)
+                            and col.startswith("('")
+                            and col.endswith("')")
+                        ):
                             inner = col.strip("()").replace("'", "")
                             parts = [p.strip() for p in inner.split(",")]
-                            lateral_Q_segments.append(
-                                (int(parts[0]), int(parts[1])))
+                            lateral_Q_segments.append((int(parts[0]), int(parts[1])))
                         else:
-                            parts = str(col).split(',')
+                            parts = str(col).split(",")
                             lateral_Q_segments.append(
-                                (int(parts[0].strip()), int(parts[1].strip())))
+                                (int(parts[0].strip()), int(parts[1].strip()))
+                            )
 
                 lateral_c_segments = []
                 for col in lateral_c.columns[1:]:
                     if isinstance(col, tuple):
                         # MultiIndex column - first element is the actual column name
                         col_name = col[0]
-                        if isinstance(col_name, str) and col_name.startswith("('") and col_name.endswith("')"):
+                        if (
+                            isinstance(col_name, str)
+                            and col_name.startswith("('")
+                            and col_name.endswith("')")
+                        ):
                             # Parse string representation of tuple like "('500', '600')"
                             # Remove outer parentheses and quotes, then split by comma
                             inner = col_name.strip("()").replace("'", "")
                             parts = [p.strip() for p in inner.split(",")]
-                            lateral_c_segments.append(
-                                (int(parts[0]), int(parts[1])))
+                            lateral_c_segments.append((int(parts[0]), int(parts[1])))
                         else:
                             # Try to parse as comma-separated values
-                            parts = str(col_name).split(',')
+                            parts = str(col_name).split(",")
                             lateral_c_segments.append(
-                                (int(parts[0].strip()), int(parts[1].strip())))
+                                (int(parts[0].strip()), int(parts[1].strip()))
+                            )
                     else:
                         # Single level column
-                        if isinstance(col, str) and col.startswith("('") and col.endswith("')"):
+                        if (
+                            isinstance(col, str)
+                            and col.startswith("('")
+                            and col.endswith("')")
+                        ):
                             inner = col.strip("()").replace("'", "")
                             parts = [p.strip() for p in inner.split(",")]
-                            lateral_c_segments.append(
-                                (int(parts[0]), int(parts[1])))
+                            lateral_c_segments.append((int(parts[0]), int(parts[1])))
                         else:
-                            parts = str(col).split(',')
+                            parts = str(col).split(",")
                             lateral_c_segments.append(
-                                (int(parts[0].strip()), int(parts[1].strip())))
+                                (int(parts[0].strip()), int(parts[1].strip()))
+                            )
 
                 # Get lateral data
                 lateral_Q_data = {
-                    'time': t_arr_lQ,
-                    'values': _to_numpy_array(lateral_Q.iloc[:, 1:].T)
+                    "time": t_arr_lQ,
+                    "values": _to_numpy_array(lateral_Q.iloc[:, 1:].T),
                 }
 
                 lateral_c_data = {
-                    'time': t_arr_lc,
-                    'values': _to_numpy_array(lateral_c.iloc[:, 1:].T)
+                    "time": t_arr_lc,
+                    "values": _to_numpy_array(lateral_c.iloc[:, 1:].T),
                 }
 
                 # Set lateral inflows
                 model.set_lateral_inflows(
-                    lateral_Q_segments, lateral_Q_data,
-                    lateral_c_segments, lateral_c_data
+                    lateral_Q_segments,
+                    lateral_Q_data,
+                    lateral_c_segments,
+                    lateral_c_data,
                 )
             except Exception as e:
                 print(f"Warning: Could not load lateral inflows: {e}")
@@ -1203,10 +1280,14 @@ def run_simulation():
     Returns:
         DataFrame with simulation results
     """
-    print("DEPRECATED: This function is deprecated. Please use the SIHQUAL class instead.")
+    print(
+        "DEPRECATED: This function is deprecated. Please use the SIHQUAL class instead."
+    )
     print("Example:")
     print("    model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)")
-    print("    model.set_uniform_geometry(bottom_width=10, side_slope=0, manning_coef=0.03, bed_slope=0.001)")
+    print(
+        "    model.set_uniform_geometry(bottom_width=10, side_slope=0, manning_coef=0.03, bed_slope=0.001)"
+    )
     print("    model.set_uniform_initial_conditions(depth=2, velocity=0.5)")
     print("    results = model.run()")
 

@@ -7,10 +7,24 @@ class BuildUpWashoff:
     Class for the BuildUp and Washoff model, based on SWMM (Storm Water Management Model).
     """
 
-    def __init__(self, Bmax, Nb, Kb,
-                 threshold_flow, Nw, Kw, BuMethod, WoMethod,
-                 timestep_h, initial_buildup, area, area_fraction,
-                 surface_flow, landuse_name, aggregate=False):
+    def __init__(
+        self,
+        Bmax,
+        Nb,
+        Kb,
+        threshold_flow,
+        Nw,
+        Kw,
+        BuMethod,
+        WoMethod,
+        timestep_h,
+        initial_buildup,
+        area,
+        area_fraction,
+        surface_flow,
+        landuse_name,
+        aggregate=False,
+    ):
         """Initialize a Buwo object.
 
         Args:
@@ -93,28 +107,31 @@ class BuildUpWashoff:
             time = 0
 
         return time
+
     # endregion Time from BuildUp Equations
 
     # region BuildUp Equations
     def BuildUpPow(self, time):
-        return math.min(self.Bmax, self.Kb * (time ** self.Nb))
+        return math.min(self.Bmax, self.Kb * (time**self.Nb))
 
     def BuildUpExp(self, time):
         return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
     def BuildUpSat(self, time):
         return self.Bmax * time / (self.Kb + time)
+
     # endregion BuildUp Equations
 
     # region Washoff Equations
     def WashoffExp(self, surface_flow, buildup_mass):
-        return self.Kw * (surface_flow ** self.Nw) * buildup_mass
+        return self.Kw * (surface_flow**self.Nw) * buildup_mass
 
     def WashoffRating(self, surface_flow, watershed_area):
         return self.Kw * (1000 * surface_flow * watershed_area) ** self.Nw
 
     def WashoffEMC(self, surface_flow, watershed_area):
         return self.Kw * surface_flow * watershed_area
+
     # endregion Washoff Equations
 
     def Process(self, verbose=False):
@@ -123,9 +140,11 @@ class BuildUpWashoff:
         """
         buildup_mass = self.InitialBuildUp / (self.Area * self.AreaFraction)
 
-        time_from_buildup = {1: self.TimeFromBuildUpPow,
-                             2: self.TimeFromBuildUpExp,
-                             3: self.TimeFromBuildUpSat}
+        time_from_buildup = {
+            1: self.TimeFromBuildUpPow,
+            2: self.TimeFromBuildUpExp,
+            3: self.TimeFromBuildUpSat,
+        }
 
         bu_time = time_from_buildup.get(self.BuMethod)(buildup_mass)
 
@@ -134,35 +153,38 @@ class BuildUpWashoff:
                 bu_time += self.timestep_d
                 self.Washoff.append(0)
 
-                buildup_curve = {1: self.BuildUpPow,
-                                 2: self.BuildUpExp,
-                                 3: self.BuildUpSat}
+                buildup_curve = {
+                    1: self.BuildUpPow,
+                    2: self.BuildUpExp,
+                    3: self.BuildUpSat,
+                }
 
                 buildup_specific = buildup_curve.get(self.BuMethod)(bu_time)
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
             else:
-                washoff_curve = {1: self.WashoffExp,
-                                 2: self.WashoffRating,
-                                 3: self.WashoffEMC}
+                washoff_curve = {
+                    1: self.WashoffExp,
+                    2: self.WashoffRating,
+                    3: self.WashoffEMC,
+                }
 
-                washoff_rate = washoff_curve.get(self.WoMethod)(self.SurfaceFlow[i],
-                                                                buildup_mass)
+                washoff_rate = washoff_curve.get(self.WoMethod)(
+                    self.SurfaceFlow[i], buildup_mass
+                )
 
                 self.Washoff.append(washoff_rate * self.timestep_d)
 
                 if verbose:
-                    print(f'Washoff: {
-                          self.Washoff[-1]}\nBuildup: {buildup_mass}')
+                    print(f"Washoff: {
+                          self.Washoff[-1]}\nBuildup: {buildup_mass}")
 
                 min_value = min(self.Washoff[-1], buildup_mass)
 
                 self.EffectiveWashoff.append(min_value)
                 buildup_mass -= self.EffectiveWashoff[-1]
 
-                buildup_specific = buildup_mass / \
-                    (self.Area * self.AreaFraction)
+                buildup_specific = buildup_mass / (self.Area * self.AreaFraction)
 
-                bu_time = time_from_buildup.get(
-                    self.BuMethod)(buildup_specific)
+                bu_time = time_from_buildup.get(self.BuMethod)(buildup_specific)
 
             self.BuildUp.append(buildup_mass)

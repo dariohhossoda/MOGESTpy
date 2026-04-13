@@ -24,7 +24,6 @@ Hydrological and water resources management modeling library in Python, supporti
     - [Installing MOGESTpy](#installing-mogestpy)
       - [Locally](#locally)
       - [Using pip](#using-pip)
-      - [Using Poetry](#using-poetry)
   - [How to Contribute to the Project?](#how-to-contribute-to-the-project)
   - [Citation](#citation)
 
@@ -87,22 +86,25 @@ MOGESTpy
 ### Installing MOGESTpy
 
 #### Locally
-Clone the repository and install the package using pip:
-
-```bash
-pip install . e
-```
 
 #### Using pip
+
+The package is available on PyPI, and you can install it using pip:
 
 ```bash
 pip install mogestpy
 ```
 
-#### Using Poetry
+Alternatively, it is possible to clone the repository and install the package using pip:
 
 ```bash
-poetry add mogestpy
+pip install .
+```
+
+Or in editable mode:
+
+```bash
+pip install -e .
 ```
 
 ---
@@ -128,8 +130,8 @@ If you use MOGESTpy in your research, please cite:
   author = {Dario Hachisu Hossoda},
   title = {MOGESTpy},
   year = {2026},
-  url = {https://github.com/dariohhossoda/MOGESTpy},
-  doi = {https://doi.org/10.5281/zenodo.19308873}
+  url = {https://doi.org/10.5281/zenodo.19308873},
+  doi = {10.5281/zenodo.19308873}
 }
 ```
 

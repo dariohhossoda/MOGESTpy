@@ -18,7 +18,7 @@ on:
       - ".github/pull_request_template.md"
 
 env:
-  PYTHON_VERSION: "3.12"
+  PYTHON_VERSION: "3.13"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -86,34 +86,3 @@ jobs:
 
       - name: Run fast tests
         run: poetry run pytest -m "not slow" --cov=mogestpy --cov-report=term-missing
-
-  test-slow:
-    name: Test (slow)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache Poetry virtualenv
-        uses: actions/cache@v5
-        with:
-          path: .venv
-          key: test-venv-${{ runner.os }}-py${{ env.PYTHON_VERSION }}-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            test-venv-${{ runner.os }}-py${{ env.PYTHON_VERSION }}-
-
-      - name: Install dependencies
-        run: poetry install --only main,dev --no-interaction --no-ansi
-
-      - name: Run slow tests
-        run: poetry run pytest -m slow

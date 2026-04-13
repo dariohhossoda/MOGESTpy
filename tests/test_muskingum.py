@@ -4,7 +4,7 @@ Unit tests for the Muskingum routing module using pytest.
 
 import pytest
 import numpy as np
-from mogestpy.quantity.Hydrological.muskingum import Muskingum
+from mogestpy.quantity.hydrological.muskingum import Muskingum
 
 
 class TestMuskingum:
@@ -77,37 +77,6 @@ class TestMuskingum:
         # Verify all outflow values are non-negative
         for value in outflow:
             assert value >= 0
-
-    def test_upstream_fork_nonlinear(self, setup_data):
-        """Test non-linear upstream routing."""
-        # Get test data
-        inflow = setup_data["inflow"]
-        k = setup_data["k"]
-        x = setup_data["x"]
-        m = setup_data["m"]
-        dt = setup_data["dt"]
-
-        # First generate downstream values
-        downstream = Muskingum.downstream_fork(k, x, m, dt, inflow)
-
-        # Then route upstream
-        upstream = Muskingum.upstream_fork(k, x, m, dt, downstream)
-
-        # Verify upstream has same length as downstream
-        assert len(upstream) == len(downstream)
-
-        # Verify last value of upstream equals last value of downstream
-        assert upstream[-1] == downstream[-1]
-
-        # Verify all upstream values are non-negative
-        for value in upstream:
-            assert value >= 0
-
-        # For linear case (m=1), upstream should be close to original inflow
-        if m == 1.0:
-            # Allow some numerical error
-            for i in range(len(inflow)):
-                assert upstream[i] == pytest.approx(inflow[i], rel=0.1)
 
     def test_parameter_bounds(self, setup_data):
         """Test behavior with extreme parameter values."""

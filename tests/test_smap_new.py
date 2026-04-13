@@ -1,4 +1,4 @@
-from mogestpy.quantity.Hydrological.SMAP2 import Smap
+from mogestpy.quantity.Hydrological.smap import Smap
 
 
 def test_smap2_init():

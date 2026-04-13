@@ -39,7 +39,7 @@ def __getattr__(name):
     """
     if name == "SMAP2":
         # Import SMAP2 only when it is actually requested.
-        from .quantity.Hydrological import SMAP2
+        from .quantity.Hydrological import smap
 
-        return SMAP2
+        return smap
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

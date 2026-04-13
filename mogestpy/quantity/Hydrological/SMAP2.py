@@ -1,5 +1,5 @@
 """
-Soil Moisture Accounting Procedure (SMAP) model.
+Soil Moisture Accounting Procedure (SMAP) model (Daily).
 The SMAP model is a lumped rainfall-runoff model based on conceptual
 reservoirs.
 """

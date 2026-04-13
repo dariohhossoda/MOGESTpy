@@ -3,11 +3,11 @@ Integration tests for hydrodynamic and hydrological modules using pytest.
 """
 
 import pytest
-from mogestpy.quantity.Hydrodynamic.saint_venant import (
+from mogestpy.quantity.hydrodynamic.saint_venant import (
     TrapezoidalCrossSection,
     SaintVenant,
 )
-from mogestpy.quantity.Hydrological.muskingum import Muskingum
+from mogestpy.quantity.hydrological.muskingum import Muskingum
 
 
 class TestHydrodynamicIntegration:

@@ -64,19 +64,16 @@ The repository is organized into three main components:
 
 ```
 MOGESTpy
-├─ Datasets
-│  └─ Results
 ├─ quality
-│  ├─ BuWo.py
-│  └─ ZeroD.py
+│  ├─ buwo.py
+│  └─ zerod.py
 └─ quantity
-   ├─ Hydrological
-   │  ├─ SMAP.py
-   │  ├─ SMAPm.py
-   │  ├─ Muskingum.py
-   │  └─ MassBalance.py
-   └─ Hydrodynamic
-      └─ SIHQUAL.py
+   ├─ hydrological
+   │  ├─ smap.py
+   │  ├─ muskingum.py
+   │  └─ mass_balance.py
+   └─ hydrodynamic
+      └─ sihqual.py
 ```
 
 ---

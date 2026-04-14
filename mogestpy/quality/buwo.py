@@ -177,8 +177,10 @@ class BuildUpWashoff:
                 self.Washoff.append(washoff_rate * self.timestep_d)
 
                 if verbose:
-                    print(f"Washoff: {
-                          self.Washoff[-1]}\nBuildup: {buildup_mass}")
+                    print(
+                        f"Washoff: {
+                          self.Washoff[-1]}\nBuildup: {buildup_mass}"
+                    )
 
                 min_value = min(self.Washoff[-1], buildup_mass)
 

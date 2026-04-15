@@ -56,11 +56,7 @@ For more details, please refer to the documentation within the repository.
 
 ## Repository Structure
 
-The repository is organized into three main components:
-
-* **Quality models** (`Quality`)
-* **Quantity models** (`Quantity`)
-* **Datasets and simulation examples** (`Datasets`)
+The package is organized as following:
 
 ```
 MOGESTpy

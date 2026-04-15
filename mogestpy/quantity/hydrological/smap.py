@@ -462,7 +462,7 @@ class SmapD:
             self.Rsup = 0
 
         for prec, etp in zip(prec_arr, etp_arr):
-            yield self.RunStep(prec, etp)
+            yield self.run_step(prec, etp)
 
     def run_to_list(
         self,
@@ -491,7 +491,7 @@ class SmapD:
             precipitation and evapotranspiration values.
         """
 
-        return list(self.Run(prec_arr, etp_arr, reset))
+        return list(self.run(prec_arr, etp_arr, reset))
 
     def run_to_dataframe(
         self,

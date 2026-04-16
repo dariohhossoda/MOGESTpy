@@ -5,6 +5,8 @@ This module implements the Muskingum method for hydrological flow routing,
 including both linear and non-linear routing methods in upstream and downstream directions.
 """
 
+from typing import Sequence
+
 
 class Muskingum:
     """
@@ -15,7 +17,9 @@ class Muskingum:
     """
 
     @staticmethod
-    def downstream_routing(upstream, k, x, dt):
+    def downstream_routing(
+        upstream: Sequence[float], k: float, x: float, dt: float
+    ) -> list[float]:
         """
         Perform downstream routing from upstream to downstream using the linear Muskingum method.
 
@@ -43,16 +47,21 @@ class Muskingum:
         # Loop through from the second to the last entries
         for i in range(1, n):
             downstream[i] = (
-                c0 * upstream[i]
-                + c1 * upstream[i - 1]
-                + c2 * downstream[i - 1]
+                c0 * upstream[i] + c1 * upstream[i - 1] + c2 * downstream[i - 1]
             )
         return downstream
 
     @staticmethod
     def _calculate_rk4_coefficients(
-        s_current, k, x, m, dt, inflow_current, inflow_next, is_downstream=True
-    ):
+        s_current: float,
+        k: float,
+        x: float,
+        m: float,
+        dt: float,
+        inflow_current: float,
+        inflow_next: float,
+        is_downstream: bool = True,
+    ) -> tuple[float, float, float, float]:
         """
         Calculate Runge-Kutta 4th order coefficients for Muskingum routing.
         Args:
@@ -78,7 +87,9 @@ class Muskingum:
         return k1, k2, k3, k4
 
     @staticmethod
-    def downstream_fork(k, x, m, dt, inflow):
+    def downstream_fork(
+        k: float, x: float, m: float, dt: float, inflow: Sequence[float]
+    ) -> list[float]:
         """
         Non-linear Muskingum model with fourth-order Runge-Kutta method for routing
         from upstream to downstream.
@@ -119,7 +130,9 @@ class Muskingum:
         return outflow
 
     @staticmethod
-    def upstream_fork(k, x, m, dt, outflow):
+    def upstream_fork(
+        k: float, x: float, m: float, dt: float, outflow: Sequence[float]
+    ) -> list[float]:
         """
         Non-linear Muskingum model with fourth-order Runge-Kutta method for routing
         from downstream to upstream.

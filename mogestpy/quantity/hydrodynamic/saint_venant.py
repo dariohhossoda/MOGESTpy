@@ -5,6 +5,7 @@ with trapezoidal cross-section.
 This module implements the Saint-Venant equations for one-dimensional
 hydrodynamic flow routing using a trapezoidal cross-section.
 """
+
 import math
 
 
@@ -46,10 +47,10 @@ class TrapezoidalCrossSection:
         Returns:
             str: Formatted string with cross-section parameters
         """
-        return f'Trapezoidal Cross Section:\n\
+        return f"Trapezoidal Cross Section:\n\
 b: {self.b:.3f}\n\
 y: {self.y:.3f}\n\
-m: {self.m:.3f}'
+m: {self.m:.3f}"
 
     def calculate_top_width(self) -> float:
         """
@@ -67,7 +68,7 @@ m: {self.m:.3f}'
         Returns:
             float: Wet area (m²)
         """
-        return self.b * self.y + self.m * self.y ** 2
+        return self.b * self.y + self.m * self.y**2
 
     def wet_perimeter(self) -> float:
         """
@@ -76,7 +77,7 @@ m: {self.m:.3f}'
         Returns:
             float: Wet perimeter (m)
         """
-        return self.b + 2 * self.y * math.sqrt(1 + self.m ** 2)
+        return self.b + 2 * self.y * math.sqrt(1 + self.m**2)
 
     def normal_depth(self, discharge, manning_n, slope) -> float:
         """
@@ -92,7 +93,7 @@ m: {self.m:.3f}'
         """
         y_norm = 0.1
         f = 1
-        exp = 2/3
+        exp = 2 / 3
         tolerance = 1e-13
         steps = 0
         max_steps = 100
@@ -101,12 +102,15 @@ m: {self.m:.3f}'
         perimeter = self.wet_perimeter()
 
         while math.fabs(f) > tolerance and steps < max_steps:
-            f = (area ** (1 + exp) / perimeter ** exp
-                 - discharge * manning_n / slope ** 0.5)
-            df = (5 * area ** exp *
-                  (self.b + 2 * self.m * y_norm) / perimeter ** exp
-                  - 4 * area ** (1 + exp) / perimeter ** (1 + exp)
-                  * (1 + self.m ** 2) ** 0.5 / 3)
+            f = area ** (1 + exp) / perimeter**exp - discharge * manning_n / slope**0.5
+            df = (
+                5 * area**exp * (self.b + 2 * self.m * y_norm) / perimeter**exp
+                - 4
+                * area ** (1 + exp)
+                / perimeter ** (1 + exp)
+                * (1 + self.m**2) ** 0.5
+                / 3
+            )
             y_norm -= f / df
             steps += 1
 
@@ -130,7 +134,7 @@ m: {self.m:.3f}'
         max_steps = 100
 
         while math.fabs(f) > tolerance and step < max_steps:
-            f = self.b * y + self.m * y ** 2
+            f = self.b * y + self.m * y**2
             df = self.b + 2 * self.m * y
             y -= (f - area) / df
             step += 1
@@ -155,16 +159,7 @@ class SaintVenant:
         g (float): Gravitational acceleration (m/s²)
     """
 
-    def __init__(
-        self,
-        cross_section,
-        discharge,
-        manning_n,
-        slope,
-        dt,
-        dx,
-        g=9.81
-    ):
+    def __init__(self, cross_section, discharge, manning_n, slope, dt, dx, g=9.81):
         """
         Initialize the Saint-Venant model.
 
@@ -194,8 +189,11 @@ class SaintVenant:
             float: Courant number (dimensionless)
         """
         area = self.cross_section.wet_area()
-        return (self.dt / self.dx *
-                (self.g * self.cross_section.y + self.discharge / area) ** 0.5)
+        return (
+            self.dt
+            / self.dx
+            * (self.g * self.cross_section.y + self.discharge / area) ** 0.5
+        )
 
     def courant_check(self) -> bool:
         """
@@ -214,8 +212,7 @@ class SaintVenant:
             float: Square of the Froude number (dimensionless)
         """
         area = self.cross_section.wet_area()
-        return (self.discharge ** 2 * self.cross_section.top_width /
-                (self.g * area ** 3))
+        return self.discharge**2 * self.cross_section.top_width / (self.g * area**3)
 
     def friction_slope(self) -> float:
         """
@@ -227,10 +224,12 @@ class SaintVenant:
         area = self.cross_section.wet_area()
         hydraulic_radius = self.cross_section.hydraulic_radius
 
-        return (self.discharge 
-                * math.fabs(self.discharge) *
-                self.manning_n ** 2 /
-                (area ** 2 * hydraulic_radius ** (4 / 3)))
+        return (
+            self.discharge
+            * math.fabs(self.discharge)
+            * self.manning_n**2
+            / (area**2 * hydraulic_radius ** (4 / 3))
+        )
 
     def update_values(self):
         """
@@ -240,7 +239,7 @@ class SaintVenant:
             NotImplementedError: Method not yet implemented
         """
         # for i in range(1, self.y ):
-        raise NotImplementedError('Not yet implemented!')
+        raise NotImplementedError("Not yet implemented!")
 
     def run_model(self):
         """
@@ -249,7 +248,7 @@ class SaintVenant:
         Raises:
             NotImplementedError: Method not yet implemented
         """
-        raise NotImplementedError('Not yet implemented!')
+        raise NotImplementedError("Not yet implemented!")
 
 
 def lateral_contribution():
@@ -259,7 +258,7 @@ def lateral_contribution():
     Raises:
         NotImplementedError: Function not yet implemented
     """
-    raise NotImplementedError('Not yet implemented!')
+    raise NotImplementedError("Not yet implemented!")
 
 
 def average(values_list, index):

@@ -1,6 +1,7 @@
 """
 Integration tests for the SIHQUAL module.
 """
+
 import os
 import tempfile
 
@@ -9,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
 
 
 class TestSIHQUALIntegration:
@@ -19,9 +20,9 @@ class TestSIHQUALIntegration:
         """Set up test fixtures."""
         # Create a minimal river channel scenario for faster tests
         self.dx = 1000.0  # m (increased spatial step)
-        self.dt = 60.0    # s (increased time step)
+        self.dt = 60.0  # s (increased time step)
         self.xf = 5000.0  # m (5 km - reduced length)
-        self.tf = 900.0   # s (15 min - greatly reduced simulation time)
+        self.tf = 900.0  # s (15 min - greatly reduced simulation time)
 
         # Create model instance
         self.model = SIHQUAL(
@@ -30,7 +31,7 @@ class TestSIHQUALIntegration:
             xf=self.xf,
             tf=self.tf,
             alpha=0.6,
-            dispersion_coef=10.0
+            dispersion_coef=10.0,
         )
 
         # Number of spatial points
@@ -69,7 +70,7 @@ class TestSIHQUALIntegration:
 
         # Set reaction parameters - BOD decay
         Kd = np.ones(self.dim) * 0.00002  # Decay coefficient (1/s)
-        Ks = np.zeros(self.dim)           # No source
+        Ks = np.zeros(self.dim)  # No source
 
         self.model.set_reaction_parameters(Kd, Ks)
 
@@ -81,12 +82,12 @@ class TestSIHQUALIntegration:
         """Test propagation of a flood wave through the channel."""
         # Set boundary conditions for a flood wave
         boundary_positions = {
-            'Q': [0.0],  # Upstream flow
-            'y': [self.xf]  # Downstream water level
+            "Q": [0.0],  # Upstream flow
+            "y": [self.xf],  # Downstream water level
         }
 
         # Simplified time array with fewer points
-        time_array = np.array([0, self.tf/2, self.tf])
+        time_array = np.array([0, self.tf / 2, self.tf])
 
         # Flow with a simple flood wave pattern
         base_flow = 60.0  # m³/s
@@ -99,8 +100,8 @@ class TestSIHQUALIntegration:
         y_values = np.ones((1, 3)) * 3.5  # m
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -119,13 +120,13 @@ class TestSIHQUALIntegration:
         """Test transport of a pollution pulse through the channel."""
         # Set boundary conditions for a pollution pulse
         boundary_positions = {
-            'Q': [0.0],  # Upstream flow
-            'y': [self.xf],  # Downstream water level
-            'c': [0.0]  # Upstream concentration
+            "Q": [0.0],  # Upstream flow
+            "y": [self.xf],  # Downstream water level
+            "c": [0.0],  # Upstream concentration
         }
 
         # Simplified time array with fewer points
-        time_array = np.array([0, self.tf/2, self.tf])
+        time_array = np.array([0, self.tf / 2, self.tf])
 
         # Constant flow
         q_values = np.ones((1, 3)) * 60.0  # m³/s
@@ -137,9 +138,9 @@ class TestSIHQUALIntegration:
         c_values = np.array([[0.0, 100.0, 0.0]])
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values},
-            'c': {'time': time_array, 'values': c_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
+            "c": {"time": time_array, "values": c_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -159,8 +160,8 @@ class TestSIHQUALIntegration:
             mid_time = results.index[len(results.index) // 2]
 
             # Check that concentration decreases downstream
-            upstream_conc = results.loc[mid_time, (section_indices[0], 'c')]
-            downstream_conc = results.loc[mid_time, (section_indices[-1], 'c')]
+            upstream_conc = results.loc[mid_time, (section_indices[0], "c")]
+            downstream_conc = results.loc[mid_time, (section_indices[-1], "c")]
 
             # Just check that the concentration values are non-negative
             assert upstream_conc >= 0
@@ -170,23 +171,24 @@ class TestSIHQUALIntegration:
         """Test saving and plotting simulation results."""
         # Create a simple DataFrame for testing with fewer sections
         sections = [0, 1, 2]  # Simplified section indices
-        variables = ['Q', 'y', 'c']
+        variables = ["Q", "y", "c"]
         cols = pd.MultiIndex.from_product(
-            [sections, variables],
-            names=['section', 'variables']
+            [sections, variables], names=["section", "variables"]
         )
-        t_index = pd.Index([0, 1], name='t')
+        t_index = pd.Index([0, 1], name="t")
 
         # Create sample data (smaller array)
-        data = np.array([
-            [10.0, 2.0, 0.0, 9.0, 1.9, 0.1, 8.0, 1.8, 0.2],  # Day 0
-            [11.0, 2.1, 0.1, 10.0, 2.0, 0.2, 9.0, 1.9, 0.3]  # Day 1
-        ])
+        data = np.array(
+            [
+                [10.0, 2.0, 0.0, 9.0, 1.9, 0.1, 8.0, 1.8, 0.2],  # Day 0
+                [11.0, 2.1, 0.1, 10.0, 2.0, 0.2, 9.0, 1.9, 0.3],  # Day 1
+            ]
+        )
 
         results = pd.DataFrame(data, columns=cols, index=t_index)
 
         # Save to a temporary file
-        with tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
             temp_filename = tmp.name
 
         try:
@@ -204,9 +206,7 @@ class TestSIHQUALIntegration:
             assert df_read.shape == results.shape
 
             # Create a simple plot to test visualization
-            with tempfile.NamedTemporaryFile(
-                suffix='.png', delete=False
-            ) as tmp_plot:
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_plot:
                 plot_filename = tmp_plot.name
 
             try:
@@ -217,13 +217,13 @@ class TestSIHQUALIntegration:
                 for section in sections:
                     ax.plot(
                         results.index,
-                        results[(section, 'Q')],
-                        label=f'Section {section}'
+                        results[(section, "Q")],
+                        label=f"Section {section}",
                     )
 
-                ax.set_title('Flow at Different Sections')
-                ax.set_xlabel('Time (days)')
-                ax.set_ylabel('Flow (m³/s)')
+                ax.set_title("Flow at Different Sections")
+                ax.set_xlabel("Time (days)")
+                ax.set_ylabel("Flow (m³/s)")
                 ax.grid(True)
                 ax.legend()
 
@@ -248,17 +248,17 @@ class TestSIHQUALIntegration:
         with varying flow and pollution event."""
         # Set boundary conditions
         boundary_positions = {
-            'Q': [0.0],  # Upstream flow
-            'y': [self.xf],  # Downstream water level
-            'c': [0.0]  # Upstream concentration
+            "Q": [0.0],  # Upstream flow
+            "y": [self.xf],  # Downstream water level
+            "c": [0.0],  # Upstream concentration
         }
 
         # Simplified time array with fewer points
-        time_array = np.array([0, self.tf/2, self.tf])
+        time_array = np.array([0, self.tf / 2, self.tf])
 
         # Flow with a simple pattern
         base_flow = 60.0  # m³/s
-        q_values = np.array([[base_flow, base_flow*1.2, base_flow]])
+        q_values = np.array([[base_flow, base_flow * 1.2, base_flow]])
 
         # Downstream water level
         y_values = np.array([[3.5, 3.6, 3.5]])
@@ -267,9 +267,9 @@ class TestSIHQUALIntegration:
         c_values = np.array([[0.0, 20.0, 0.0]])
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values},
-            'c': {'time': time_array, 'values': c_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
+            "c": {"time": time_array, "values": c_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -278,10 +278,7 @@ class TestSIHQUALIntegration:
         lateral_Q_segments = [(2000.0, 3000.0)]
         lateral_q_values = np.array([[0.005, 0.007, 0.005]])
 
-        lateral_Q_data = {
-            'time': time_array,
-            'values': lateral_q_values
-        }
+        lateral_Q_data = {"time": time_array, "values": lateral_q_values}
 
         self.model.set_lateral_inflows(lateral_Q_segments, lateral_Q_data)
 

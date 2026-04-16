@@ -1,13 +1,14 @@
 """
 Tests for the SIHQUAL Excel file loading functionality.
 """
+
 import os
 import numpy as np
 import pandas as pd
 import pytest
 import tempfile
 
-from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
 
 
 class TestSIHQUALExcel:
@@ -17,8 +18,8 @@ class TestSIHQUALExcel:
         """Set up test fixtures."""
         # Create a temporary Excel file for testing
         self.temp_dir = tempfile.TemporaryDirectory()
-        self.excel_path = os.path.join(self.temp_dir.name, 'test_sihqual.xlsx')
-        self.inputs_dir = os.path.join(self.temp_dir.name, 'SIHQUALInputs')
+        self.excel_path = os.path.join(self.temp_dir.name, "test_sihqual.xlsx")
+        self.inputs_dir = os.path.join(self.temp_dir.name, "SIHQUALInputs")
 
         # Create inputs directory
         os.makedirs(self.inputs_dir, exist_ok=True)
@@ -35,37 +36,37 @@ class TestSIHQUALExcel:
         """Create a test Excel file with required sheets."""
         # Parameters sheet
         param_data = {
-            'dx': [100.0],
-            'dt': [10.0],
-            'xf': [1000.0],
-            'tf': [3600.0],
-            'alpha': [0.6],
-            'D': [5.0],
-            'output_sections': [[0, 500, 1000]]
+            "dx": [100.0],
+            "dt": [10.0],
+            "xf": [1000.0],
+            "tf": [3600.0],
+            "alpha": [0.6],
+            "D": [5.0],
+            "output_sections": [[0, 500, 1000]],
         }
         param_df = pd.DataFrame(param_data)
 
         # Data sheet
         x = np.linspace(0, 1000, 11)
         data = {
-            'x': x,
-            'b1': np.ones_like(x) * 10.0,
-            'y1': np.ones_like(x) * 2.0,
-            'm': np.zeros_like(x),
-            'n': np.ones_like(x) * 0.03,
-            'So': np.ones_like(x) * 0.001,
-            'v1': np.ones_like(x) * 0.5,
-            'kd': np.ones_like(x) * 0.0001,
-            'ks': np.zeros_like(x),
-            'c1': np.zeros_like(x),
-            'cq': np.zeros_like(x)
+            "x": x,
+            "b1": np.ones_like(x) * 10.0,
+            "y1": np.ones_like(x) * 2.0,
+            "m": np.zeros_like(x),
+            "n": np.ones_like(x) * 0.03,
+            "So": np.ones_like(x) * 0.001,
+            "v1": np.ones_like(x) * 0.5,
+            "kd": np.ones_like(x) * 0.0001,
+            "ks": np.zeros_like(x),
+            "c1": np.zeros_like(x),
+            "cq": np.zeros_like(x),
         }
         data_df = pd.DataFrame(data)
 
         # Write to Excel file
         with pd.ExcelWriter(self.excel_path) as writer:
-            param_df.to_excel(writer, sheet_name='Parameters', index=False)
-            data_df.to_excel(writer, sheet_name='Data', index=False)
+            param_df.to_excel(writer, sheet_name="Parameters", index=False)
+            data_df.to_excel(writer, sheet_name="Data", index=False)
 
     def _create_test_boundary_files(self):
         """Create test boundary condition files."""
@@ -73,44 +74,34 @@ class TestSIHQUALExcel:
         time = np.array([0, 1800, 3600])
 
         # Flow boundary
-        boundary_Q = pd.DataFrame({
-            'time': time,
-            '0': [10.0, 15.0, 10.0]
-        })
-        boundary_Q.to_csv(os.path.join(self.inputs_dir, 'boundary_Q.csv'),
-                          sep=';', index=False)
+        boundary_Q = pd.DataFrame({"time": time, "0": [10.0, 15.0, 10.0]})
+        boundary_Q.to_csv(
+            os.path.join(self.inputs_dir, "boundary_Q.csv"), sep=";", index=False
+        )
 
         # Water level boundary
-        boundary_y = pd.DataFrame({
-            'time': time,
-            '1000': [2.0, 2.2, 2.0]
-        })
-        boundary_y.to_csv(os.path.join(self.inputs_dir, 'boundary_y.csv'),
-                          sep=';', index=False)
+        boundary_y = pd.DataFrame({"time": time, "1000": [2.0, 2.2, 2.0]})
+        boundary_y.to_csv(
+            os.path.join(self.inputs_dir, "boundary_y.csv"), sep=";", index=False
+        )
 
         # Concentration boundary
-        boundary_c = pd.DataFrame({
-            'time': time,
-            '0': [0.0, 5.0, 0.0]
-        })
-        boundary_c.to_csv(os.path.join(self.inputs_dir, 'boundary_c.csv'),
-                          sep=';', index=False)
+        boundary_c = pd.DataFrame({"time": time, "0": [0.0, 5.0, 0.0]})
+        boundary_c.to_csv(
+            os.path.join(self.inputs_dir, "boundary_c.csv"), sep=";", index=False
+        )
 
         # Lateral flow
-        lateral_Q = pd.DataFrame({
-            'time': time,
-            ('500', '600'): [0.1, 0.2, 0.1]
-        })
-        lateral_Q.to_csv(os.path.join(self.inputs_dir, 'lateral_Q.csv'),
-                         sep=';', index=False)
+        lateral_Q = pd.DataFrame({"time": time, ("500", "600"): [0.1, 0.2, 0.1]})
+        lateral_Q.to_csv(
+            os.path.join(self.inputs_dir, "lateral_Q.csv"), sep=";", index=False
+        )
 
         # Lateral concentration
-        lateral_c = pd.DataFrame({
-            'time': time,
-            ('500', '600'): [1.0, 2.0, 1.0]
-        })
-        lateral_c.to_csv(os.path.join(self.inputs_dir, 'lateral_c.csv'),
-                         sep=';', index=False)
+        lateral_c = pd.DataFrame({"time": time, ("500", "600"): [1.0, 2.0, 1.0]})
+        lateral_c.to_csv(
+            os.path.join(self.inputs_dir, "lateral_c.csv"), sep=";", index=False
+        )
 
     def test_from_excel_loading(self):
         """Test loading a model from an Excel file."""
@@ -165,47 +156,48 @@ class TestSIHQUALExcel:
 
         # Just verify the model was loaded correctly
         assert model is not None
-        assert hasattr(model, 'run')  # Verify it has the run method
+        assert hasattr(model, "run")  # Verify it has the run method
 
     def test_excel_missing_files_handling(self):
         """Test handling of missing input files."""
         # Create a separate temporary directory for this test
         import tempfile
+
         minimal_temp_dir = tempfile.TemporaryDirectory()
-        minimal_excel_path = os.path.join(minimal_temp_dir.name, 'minimal_test.xlsx')
+        minimal_excel_path = os.path.join(minimal_temp_dir.name, "minimal_test.xlsx")
 
         # Parameters sheet
         param_data = {
-            'dx': [100.0],
-            'dt': [10.0],
-            'xf': [1000.0],
-            'tf': [3600.0],
-            'alpha': [0.6],
-            'D': [5.0]
+            "dx": [100.0],
+            "dt": [10.0],
+            "xf": [1000.0],
+            "tf": [3600.0],
+            "alpha": [0.6],
+            "D": [5.0],
         }
         param_df = pd.DataFrame(param_data)
 
         # Data sheet
         x = np.linspace(0, 1000, 11)
         data = {
-            'x': x,
-            'b1': np.ones_like(x) * 10.0,
-            'y1': np.ones_like(x) * 2.0,
-            'm': np.zeros_like(x),
-            'n': np.ones_like(x) * 0.03,
-            'So': np.ones_like(x) * 0.001,
-            'v1': np.ones_like(x) * 0.5,
-            'kd': np.ones_like(x) * 0.0001,
-            'ks': np.zeros_like(x),
-            'c1': np.zeros_like(x),
-            'cq': np.zeros_like(x)
+            "x": x,
+            "b1": np.ones_like(x) * 10.0,
+            "y1": np.ones_like(x) * 2.0,
+            "m": np.zeros_like(x),
+            "n": np.ones_like(x) * 0.03,
+            "So": np.ones_like(x) * 0.001,
+            "v1": np.ones_like(x) * 0.5,
+            "kd": np.ones_like(x) * 0.0001,
+            "ks": np.zeros_like(x),
+            "c1": np.zeros_like(x),
+            "cq": np.zeros_like(x),
         }
         data_df = pd.DataFrame(data)
 
         # Write to Excel file
         with pd.ExcelWriter(minimal_excel_path) as writer:
-            param_df.to_excel(writer, sheet_name='Parameters', index=False)
-            data_df.to_excel(writer, sheet_name='Data', index=False)
+            param_df.to_excel(writer, sheet_name="Parameters", index=False)
+            data_df.to_excel(writer, sheet_name="Data", index=False)
 
         # Load model from Excel - should not raise exceptions even with missing files
         model = SIHQUAL.from_excel(minimal_excel_path)
@@ -240,22 +232,22 @@ class TestSIHQUALExcel:
     def test_excel_missing_sheet_handling(self):
         """Test handling of missing sheets in Excel file."""
         # Create an Excel file with only the Parameters sheet
-        partial_excel_path = os.path.join(self.temp_dir.name, 'partial_test.xlsx')
+        partial_excel_path = os.path.join(self.temp_dir.name, "partial_test.xlsx")
 
         # Parameters sheet only
         param_data = {
-            'dx': [100.0],
-            'dt': [10.0],
-            'xf': [1000.0],
-            'tf': [3600.0],
-            'alpha': [0.6],
-            'D': [5.0]
+            "dx": [100.0],
+            "dt": [10.0],
+            "xf": [1000.0],
+            "tf": [3600.0],
+            "alpha": [0.6],
+            "D": [5.0],
         }
         param_df = pd.DataFrame(param_data)
 
         # Write to Excel file
         with pd.ExcelWriter(partial_excel_path) as writer:
-            param_df.to_excel(writer, sheet_name='Parameters', index=False)
+            param_df.to_excel(writer, sheet_name="Parameters", index=False)
 
         # Loading should raise an exception due to missing Data sheet
         with pytest.raises(Exception):
@@ -264,18 +256,15 @@ class TestSIHQUALExcel:
     def test_excel_invalid_format_handling(self):
         """Test handling of invalid Excel file format."""
         # Create an Excel file with invalid format
-        invalid_excel_path = os.path.join(self.temp_dir.name, 'invalid_test.xlsx')
+        invalid_excel_path = os.path.join(self.temp_dir.name, "invalid_test.xlsx")
 
         # Invalid Parameters sheet
-        param_data = {
-            'invalid_param': [100.0],
-            'another_invalid': [10.0]
-        }
+        param_data = {"invalid_param": [100.0], "another_invalid": [10.0]}
         param_df = pd.DataFrame(param_data)
 
         # Write to Excel file
         with pd.ExcelWriter(invalid_excel_path) as writer:
-            param_df.to_excel(writer, sheet_name='Parameters', index=False)
+            param_df.to_excel(writer, sheet_name="Parameters", index=False)
 
         # Loading should raise an exception due to invalid format
         with pytest.raises(Exception):

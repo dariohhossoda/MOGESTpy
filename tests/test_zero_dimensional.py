@@ -8,12 +8,12 @@ def test_zero_dimensional_1():
     Cin = [60 for _ in range(vector_size)]
     V = [1000 for _ in range(vector_size)]
     As = [50 for _ in range(vector_size)]
-    v = [.5 for _ in range(vector_size)]
-    k = [.05 for _ in range(vector_size)]
+    v = [0.5 for _ in range(vector_size)]
+    k = [0.05 for _ in range(vector_size)]
 
     dt = 50
 
     reactor = zero_d.ZeroDimensional(V, Qin, Qout, Cin, As, k, v, dt)
     reactor.RunModel()
 
-    assert round(reactor.Output.ConcentrationOut[-1], 3) == 24.
+    assert round(reactor.Output.ConcentrationOut[-1], 3) == 24.0

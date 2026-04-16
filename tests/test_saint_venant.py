@@ -1,9 +1,14 @@
 """
 Unit tests for the Saint-Venant module using pytest.
 """
+
 import math
 import pytest
-from mogestpy.quantity.Hydrodynamic.saint_venant import TrapezoidalCrossSection, SaintVenant, average
+from mogestpy.quantity.hydrodynamic.saint_venant import (
+    TrapezoidalCrossSection,
+    SaintVenant,
+    average,
+)
 
 
 class TestTrapezoidalCrossSection:
@@ -86,14 +91,7 @@ class TestSaintVenant:
         slope = 0.001
         dt = 60.0  # seconds
         dx = 100.0  # meters
-        return SaintVenant(
-            cross_section,
-            discharge,
-            manning_n,
-            slope,
-            dt,
-            dx
-        )
+        return SaintVenant(cross_section, discharge, manning_n, slope, dt, dx)
 
     def test_courant(self, saint_venant_model):
         """Test calculation of Courant number."""
@@ -118,7 +116,7 @@ class TestSaintVenant:
             manning_n,
             slope,
             1.0,  # small dt
-            100.0  # large dx
+            100.0,  # large dx
         )
         assert stable_sv.courant_check() is True
 
@@ -129,7 +127,7 @@ class TestSaintVenant:
             manning_n,
             slope,
             100.0,  # large dt
-            1.0  # small dx
+            1.0,  # small dx
         )
         assert unstable_sv.courant_check() is False
 

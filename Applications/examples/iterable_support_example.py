@@ -8,18 +8,21 @@ ranges, and other iterables as input to SIHQUAL methods.
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import numpy as np
 
 # Try to import pandas, but don't fail if it's not available
 try:
     import pandas as pd
+
     HAS_PANDAS = True
 except ImportError:
     HAS_PANDAS = False
 
 from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+
 
 def example_with_lists():
     """Example using Python lists."""
@@ -38,7 +41,7 @@ def example_with_lists():
         bottom_width=bottom_widths,
         side_slope=side_slopes,
         manning_coef=manning_coefs,
-        bed_slope=bed_slopes
+        bed_slope=bed_slopes,
     )
 
     # Set initial conditions using lists
@@ -49,7 +52,7 @@ def example_with_lists():
     model.set_initial_conditions(
         initial_depth=depths,
         initial_velocity=velocities,
-        initial_concentration=concentrations
+        initial_concentration=concentrations,
     )
 
     # Set reaction parameters
@@ -69,6 +72,7 @@ def example_with_lists():
     print("✓ Model created successfully using lists")
     return model
 
+
 def example_with_tuples():
     """Example using Python tuples."""
     print("Example 2: Using Python tuples")
@@ -86,14 +90,14 @@ def example_with_tuples():
         bottom_width=bottom_widths,
         side_slope=side_slopes,
         manning_coef=manning_coefs,
-        bed_slope=bed_slopes
+        bed_slope=bed_slopes,
     )
 
     # Set initial conditions using tuples
     model.set_initial_conditions(
         initial_depth=(2.0, 2.0, 2.0, 2.0, 2.0),
         initial_velocity=(0.5, 0.5, 0.5, 0.5, 0.5),
-        initial_concentration=(0.0, 0.0, 0.0, 0.0, 0.0)
+        initial_concentration=(0.0, 0.0, 0.0, 0.0, 0.0),
     )
 
     model.set_uniform_reaction_parameters()
@@ -105,6 +109,7 @@ def example_with_tuples():
 
     print("✓ Model created successfully using tuples")
     return model
+
 
 def example_with_numpy_arrays():
     """Example using NumPy arrays."""
@@ -126,7 +131,7 @@ def example_with_numpy_arrays():
         bottom_width=bottom_widths,
         side_slope=side_slopes,
         manning_coef=manning_coefs,
-        bed_slope=bed_slopes
+        bed_slope=bed_slopes,
     )
 
     # Set initial conditions using numpy arrays
@@ -137,7 +142,7 @@ def example_with_numpy_arrays():
     model.set_initial_conditions(
         initial_depth=depths,
         initial_velocity=velocities,
-        initial_concentration=concentrations
+        initial_concentration=concentrations,
     )
 
     model.set_uniform_reaction_parameters()
@@ -153,6 +158,7 @@ def example_with_numpy_arrays():
     print("✓ Model created successfully using NumPy arrays")
     return model
 
+
 def example_with_ranges():
     """Example using Python ranges and other iterables."""
     print("Example 4: Using ranges and other iterables")
@@ -162,10 +168,7 @@ def example_with_ranges():
 
     # Set uniform geometry (scalars)
     model.set_uniform_geometry(
-        bottom_width=10.0,
-        side_slope=0.0,
-        manning_coef=0.03,
-        bed_slope=0.001
+        bottom_width=10.0, side_slope=0.0, manning_coef=0.03, bed_slope=0.001
     )
 
     model.set_uniform_initial_conditions(depth=2.0, velocity=0.5)
@@ -180,6 +183,7 @@ def example_with_ranges():
     print("✓ Model created successfully using ranges")
     return model
 
+
 def example_with_pandas():
     """Example using pandas Series (if available)."""
     if not HAS_PANDAS:
@@ -193,28 +197,28 @@ def example_with_pandas():
 
     # Create a DataFrame with channel properties
     x_positions = np.linspace(0, 1000, 11)
-    channel_data = pd.DataFrame({
-        'x': x_positions,
-        'bottom_width': 8.0 + 2.0 * np.random.random(11),  # Random variation
-        'side_slope': np.zeros(11),
-        'manning': 0.025 + 0.01 * np.random.random(11),
-        'bed_slope': np.ones(11) * 0.001
-    })
+    channel_data = pd.DataFrame(
+        {
+            "x": x_positions,
+            "bottom_width": 8.0 + 2.0 * np.random.random(11),  # Random variation
+            "side_slope": np.zeros(11),
+            "manning": 0.025 + 0.01 * np.random.random(11),
+            "bed_slope": np.ones(11) * 0.001,
+        }
+    )
 
     # Set geometry using pandas Series
     model.set_geometry(
-        bottom_width=channel_data['bottom_width'],
-        side_slope=channel_data['side_slope'],
-        manning_coef=channel_data['manning'],
-        bed_slope=channel_data['bed_slope']
+        bottom_width=channel_data["bottom_width"],
+        side_slope=channel_data["side_slope"],
+        manning_coef=channel_data["manning"],
+        bed_slope=channel_data["bed_slope"],
     )
 
     # Initial conditions using pandas Series
-    initial_data = pd.Series([2.0] * 11, name='depth')
+    initial_data = pd.Series([2.0] * 11, name="depth")
     model.set_initial_conditions(
-        initial_depth=initial_data,
-        initial_velocity=0.5,
-        initial_concentration=0.0
+        initial_depth=initial_data, initial_velocity=0.5, initial_concentration=0.0
     )
 
     model.set_uniform_reaction_parameters()
@@ -225,6 +229,7 @@ def example_with_pandas():
 
     print("✓ Model created successfully using pandas Series")
     return model
+
 
 def example_mixed_types():
     """Example mixing different iterable types."""
@@ -238,13 +243,13 @@ def example_mixed_types():
         bottom_width=10.0,  # Scalar
         side_slope=[0.0, 0.1, 0.0, 0.1, 0.0],  # List
         manning_coef=(0.03, 0.03, 0.03, 0.03, 0.03),  # Tuple
-        bed_slope=np.array([0.001, 0.001, 0.001, 0.001, 0.001])  # NumPy array
+        bed_slope=np.array([0.001, 0.001, 0.001, 0.001, 0.001]),  # NumPy array
     )
 
     model.set_initial_conditions(
         initial_depth=2.0,  # Scalar
         initial_velocity=[0.5, 0.6, 0.5, 0.6, 0.5],  # List
-        initial_concentration=np.zeros(5)  # NumPy array
+        initial_concentration=np.zeros(5),  # NumPy array
     )
 
     model.set_uniform_reaction_parameters()
@@ -252,13 +257,13 @@ def example_mixed_types():
 
     # Boundary conditions with different types
     model.set_simple_upstream_flow(
-        flow_values=[8.0, 12.0, 8.0],  # List
-        times=(0, 1800, 3600)  # Tuple
+        flow_values=[8.0, 12.0, 8.0], times=(0, 1800, 3600)  # List  # Tuple
     )
     model.set_simple_downstream_level(level_values=2.0)  # Scalar
 
     print("✓ Model created successfully mixing different iterable types")
     return model
+
 
 def main():
     """Run all examples."""
@@ -271,7 +276,7 @@ def main():
         example_with_numpy_arrays,
         example_with_ranges,
         example_with_pandas,
-        example_mixed_types
+        example_mixed_types,
     ]
 
     models = []
@@ -286,7 +291,9 @@ def main():
             print()
 
     print("=" * 40)
-    print(f"✅ Successfully created {len(models)} models using different iterable types!")
+    print(
+        f"✅ Successfully created {len(models)} models using different iterable types!"
+    )
     print("\nKey benefits:")
     print("• Use Python lists for simple, readable input")
     print("• Use tuples for immutable data")
@@ -295,6 +302,7 @@ def main():
     print("• Use ranges for regular spacing")
     print("• Mix different types as needed")
     print("• Full backward compatibility with existing code")
+
 
 if __name__ == "__main__":
     main()

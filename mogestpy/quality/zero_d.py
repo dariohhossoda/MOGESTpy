@@ -18,11 +18,7 @@ class ZeroDimensional:
             v (float): The reaction volume.
             timestep (float): The time step for simulation.
         """
-        self.Input = ZeroDimensional.Input(volume,
-                                           Qin,
-                                           Qout,
-                                           Cin,
-                                           As)
+        self.Input = ZeroDimensional.Input(volume, Qin, Qout, Cin, As)
         self.SimCount = len(self.Input.Volume)
         self.Output = ZeroDimensional.Output(self.SimCount)
         self.Params = ZeroDimensional.Params(k, v)
@@ -54,12 +50,7 @@ class ZeroDimensional:
         Contact area (As) - list
         """
 
-        def __init__(self,
-                     volume,
-                     inflow,
-                     outflow,
-                     concentration_in,
-                     contact_area):
+        def __init__(self, volume, inflow, outflow, concentration_in, contact_area):
 
             self.Volume = volume
             self.Inflow = inflow
@@ -88,15 +79,17 @@ class ZeroDimensional:
         _out.ConcentrationOut[0] = 0
 
         for i in range(1, self.SimCount):
-            _out.ConcentrationOut[i] = (_out.ConcentrationOut[i - 1]
-                                        + dt / _in.Volume[i]
-                                        * _in.Inflow[i]
-                                        * _in.ConcentrationIn[i]
-                                        ) / (1 + dt / _in.Volume[i]
-                                             * (_in.Outflow[i]
-                                                + _param.ReactionCoefficient[i]
-                                                * _in.Volume[i]
-                                                + _param.SettlingVelocity[i]
-                                                * _in.ContactArea[i]
-                                                + (_in.Volume[i]
-                                                   - _in.Volume[i - 1]) / dt))
+            _out.ConcentrationOut[i] = (
+                _out.ConcentrationOut[i - 1]
+                + dt / _in.Volume[i] * _in.Inflow[i] * _in.ConcentrationIn[i]
+            ) / (
+                1
+                + dt
+                / _in.Volume[i]
+                * (
+                    _in.Outflow[i]
+                    + _param.ReactionCoefficient[i] * _in.Volume[i]
+                    + _param.SettlingVelocity[i] * _in.ContactArea[i]
+                    + (_in.Volume[i] - _in.Volume[i - 1]) / dt
+                )
+            )

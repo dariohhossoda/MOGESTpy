@@ -1,6 +1,7 @@
 """
 Tests for the SIHQUAL module.
 """
+
 import os
 import tempfile
 
@@ -8,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mogestpy.quantity.Hydrodynamic.SIHQUAL import SIHQUAL
+from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
 
 
 class TestSIHQUAL:
@@ -29,7 +30,7 @@ class TestSIHQUAL:
             xf=self.xf,
             tf=self.tf,
             alpha=0.6,
-            dispersion_coef=5.0
+            dispersion_coef=5.0,
         )
 
         # Number of spatial points
@@ -113,16 +114,12 @@ class TestSIHQUAL:
 
         # Test hydraulic radius
         radius = self.model._hydraulic_radius(b, y, m)
-        assert radius[0] == pytest.approx(20.0/14.0)  # area/perimeter
+        assert radius[0] == pytest.approx(20.0 / 14.0)  # area/perimeter
 
     def test_boundary_conditions(self):
         """Test setting boundary conditions."""
         # Create simple boundary conditions
-        boundary_positions = {
-            'Q': [0.0],
-            'y': [1000.0],
-            'c': [0.0]
-        }
+        boundary_positions = {"Q": [0.0], "y": [1000.0], "c": [0.0]}
 
         time_array = np.array([0, 1800, 3600])  # 0, 30min, 60min
 
@@ -131,9 +128,9 @@ class TestSIHQUAL:
         c_values = np.array([[0.0, 5.0, 0.0]])  # mg/L
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values},
-            'c': {'time': time_array, 'values': c_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
+            "c": {"time": time_array, "values": c_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -158,15 +155,14 @@ class TestSIHQUAL:
 
         time_array = np.array([0, 1800, 3600])  # 0, 30min, 60min
 
-        q_values = np.array([
-            [0.1, 0.2, 0.1],  # m³/s per meter for segment 1
-            [0.2, 0.4, 0.2]  # m³/s per meter for segment 2
-        ])
+        q_values = np.array(
+            [
+                [0.1, 0.2, 0.1],  # m³/s per meter for segment 1
+                [0.2, 0.4, 0.2],  # m³/s per meter for segment 2
+            ]
+        )
 
-        lateral_Q_data = {
-            'time': time_array,
-            'values': q_values
-        }
+        lateral_Q_data = {"time": time_array, "values": q_values}
 
         self.model.set_lateral_inflows(lateral_Q_segments, lateral_Q_data)
 
@@ -185,10 +181,7 @@ class TestSIHQUAL:
         self.model.tf = 60.0  # 1 minute
 
         # Set simple boundary conditions
-        boundary_positions = {
-            'Q': [0.0],
-            'y': [1000.0]
-        }
+        boundary_positions = {"Q": [0.0], "y": [1000.0]}
 
         time_array = np.array([0, 30, 60])  # 0, 30s, 60s
 
@@ -196,8 +189,8 @@ class TestSIHQUAL:
         y_values = np.array([[2.0, 2.0, 2.0]])  # m
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -211,43 +204,32 @@ class TestSIHQUAL:
 
         # Check if results have the expected structure
         expected_columns = pd.MultiIndex.from_product(
-            [[0, 5, 10], ['Q', 'y', 'c']], names=['section', 'variables'])
+            [[0, 5, 10], ["Q", "y", "c"]], names=["section", "variables"]
+        )
 
         # Just check that the columns match the expected structure
         assert len(results.columns) == len(expected_columns)
-        assert all(a == b for a, b in zip(
-            results.columns.names, expected_columns.names))
+        assert all(
+            a == b for a, b in zip(results.columns.names, expected_columns.names)
+        )
 
     def test_scalar_inputs(self):
         """Test model with scalar inputs instead of arrays."""
         # Create a new model
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=3600.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=3600.0)
 
         # Set geometry with scalar values
         model.set_geometry(
-            bottom_width=10.0,
-            side_slope=0.0,
-            manning_coef=0.03,
-            bed_slope=0.001
+            bottom_width=10.0, side_slope=0.0, manning_coef=0.03, bed_slope=0.001
         )
 
         # Set initial conditions with scalar values
         model.set_initial_conditions(
-            initial_depth=2.0,
-            initial_velocity=0.5,
-            initial_concentration=0.0
+            initial_depth=2.0, initial_velocity=0.5, initial_concentration=0.0
         )
 
         # Set reaction parameters with scalar values
-        model.set_reaction_parameters(
-            decay_coef=0.0001,
-            source_coef=0.0
-        )
+        model.set_reaction_parameters(decay_coef=0.0001, source_coef=0.0)
 
         # Check if arrays were properly initialized
         assert np.all(model.b1 == 10.0)
@@ -263,12 +245,7 @@ class TestSIHQUAL:
     def test_partial_array_inputs(self):
         """Test model with partial array inputs that need interpolation."""
         # Create a new model
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=3600.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=3600.0)
 
         # Set geometry with partial arrays (only 3 points)
         x_partial = np.array([0.0, 500.0, 1000.0])
@@ -281,7 +258,7 @@ class TestSIHQUAL:
             bottom_width=b_partial,
             side_slope=m_partial,
             manning_coef=n_partial,
-            bed_slope=So_partial
+            bed_slope=So_partial,
         )
 
         # Check if arrays were properly interpolated
@@ -301,26 +278,19 @@ class TestSIHQUAL:
     def test_trapezoidal_channel(self):
         """Test model with a trapezoidal channel."""
         # Create a new model
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=3600.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=3600.0)
 
         # Set geometry for a trapezoidal channel
         model.set_geometry(
             bottom_width=10.0,
             side_slope=2.0,  # 2:1 side slope (horizontal:vertical)
             manning_coef=0.03,
-            bed_slope=0.001
+            bed_slope=0.001,
         )
 
         # Set initial conditions
         model.set_initial_conditions(
-            initial_depth=2.0,
-            initial_velocity=0.5,
-            initial_concentration=0.0
+            initial_depth=2.0, initial_velocity=0.5, initial_concentration=0.0
         )
 
         # Calculate expected values
@@ -338,12 +308,11 @@ class TestSIHQUAL:
         expected_wet_perimeter = b + 2 * y * np.sqrt(1 + m * m)
 
         # Test hydraulic calculations
-        top_width = model._top_width(
-            np.array([b]), np.array([y]), np.array([m]))[0]
-        wet_area = model._wet_area(
-            np.array([b]), np.array([y]), np.array([m]))[0]
+        top_width = model._top_width(np.array([b]), np.array([y]), np.array([m]))[0]
+        wet_area = model._wet_area(np.array([b]), np.array([y]), np.array([m]))[0]
         wet_perimeter = model._wet_perimeter(
-            np.array([b]), np.array([y]), np.array([m]))[0]
+            np.array([b]), np.array([y]), np.array([m])
+        )[0]
 
         assert top_width == pytest.approx(expected_top_width)
         assert wet_area == pytest.approx(expected_wet_area)
@@ -353,21 +322,24 @@ class TestSIHQUAL:
         """Test saving simulation results."""
         # Create a simple DataFrame for testing
         sections = [0, 5, 10]
-        variables = ['Q', 'y', 'c']
+        variables = ["Q", "y", "c"]
         cols = pd.MultiIndex.from_product(
-            [sections, variables], names=['section', 'variables'])
-        t_index = pd.Index([0, 1], name='t')
+            [sections, variables], names=["section", "variables"]
+        )
+        t_index = pd.Index([0, 1], name="t")
 
         # Create sample data
-        data = np.array([
-            [10.0, 2.0, 0.0, 9.0, 1.9, 0.1, 8.0, 1.8, 0.2],  # Day 0
-            [11.0, 2.1, 0.1, 10.0, 2.0, 0.2, 9.0, 1.9, 0.3]  # Day 1
-        ])
+        data = np.array(
+            [
+                [10.0, 2.0, 0.0, 9.0, 1.9, 0.1, 8.0, 1.8, 0.2],  # Day 0
+                [11.0, 2.1, 0.1, 10.0, 2.0, 0.2, 9.0, 1.9, 0.3],  # Day 1
+            ]
+        )
 
         df = pd.DataFrame(data, columns=cols, index=t_index)
 
         # Save to a temporary file
-        with tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
             temp_filename = tmp.name
 
         try:
@@ -385,8 +357,8 @@ class TestSIHQUAL:
             assert df_read.shape == df.shape
 
             # Check some values
-            assert df_read.loc[0, (0, 'Q')] == pytest.approx(10.0)
-            assert df_read.loc[1, (10, 'c')] == pytest.approx(0.3)
+            assert df_read.loc[0, (0, "Q")] == pytest.approx(10.0)
+            assert df_read.loc[1, (10, "c")] == pytest.approx(0.3)
         finally:
             # Clean up
             if os.path.exists(temp_filename):
@@ -395,39 +367,28 @@ class TestSIHQUAL:
     def test_auto_step_adjustment(self):
         """Test automatic time step adjustment."""
         # Create a model with auto_step enabled
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=100.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=100.0)
 
         # Enable auto_step
         model.auto_step = True
 
         # Set up geometry
         model.set_geometry(
-            bottom_width=10.0,
-            side_slope=0.0,
-            manning_coef=0.03,
-            bed_slope=0.001
+            bottom_width=10.0, side_slope=0.0, manning_coef=0.03, bed_slope=0.001
         )
 
         # Set initial conditions with high velocity to trigger adjustment
         model.set_initial_conditions(
             initial_depth=2.0,
             initial_velocity=10.0,  # Very high velocity to ensure instability
-            initial_concentration=0.0
+            initial_concentration=0.0,
         )
 
         # Set output sections
         model.set_output_sections([0.0, 1000.0])
 
         # Set boundary conditions
-        boundary_positions = {
-            'Q': [0.0],
-            'y': [1000.0]
-        }
+        boundary_positions = {"Q": [0.0], "y": [1000.0]}
 
         time_array = np.array([0, 50, 100])
 
@@ -435,8 +396,8 @@ class TestSIHQUAL:
         y_values = np.array([[2.0, 2.0, 2.0]])  # m
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
         }
 
         model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -456,19 +417,11 @@ class TestSIHQUAL:
     def test_non_uniform_grid(self):
         """Test model with non-uniform initial conditions."""
         # Create a model with a non-uniform initial state
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=3600.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=3600.0)
 
         # Set up geometry
         model.set_geometry(
-            bottom_width=10.0,
-            side_slope=0.0,
-            manning_coef=0.03,
-            bed_slope=0.001
+            bottom_width=10.0, side_slope=0.0, manning_coef=0.03, bed_slope=0.001
         )
 
         # Create non-uniform initial depth (sloping water surface)
@@ -489,20 +442,15 @@ class TestSIHQUAL:
         model.set_output_sections([0.0, 500.0, 1000.0])
 
         # Set boundary conditions to preserve the non-uniform state
-        boundary_positions = {
-            'y': [0.0, 1000.0]
-        }
+        boundary_positions = {"y": [0.0, 1000.0]}
 
         time_array = np.array([0, 30, 60])
 
-        y_values = np.array([
-            [3.0, 3.0, 3.0],  # Upstream depth
-            [1.0, 1.0, 1.0]  # Downstream depth
-        ])
+        y_values = np.array(
+            [[3.0, 3.0, 3.0], [1.0, 1.0, 1.0]]  # Upstream depth  # Downstream depth
+        )
 
-        boundary_data = {
-            'y': {'time': time_array, 'values': y_values}
-        }
+        boundary_data = {"y": {"time": time_array, "values": y_values}}
 
         model.set_boundary_conditions(boundary_positions, boundary_data)
 
@@ -512,13 +460,13 @@ class TestSIHQUAL:
 
         # Check if results reflect the non-uniform initial conditions
         # Upstream depth > downstream depth
-        assert results.loc[0, (0, 'y')] > results.loc[0, (10, 'y')]
+        assert results.loc[0, (0, "y")] > results.loc[0, (10, "y")]
         # Flow should vary along the channel
-        assert results.loc[0, (0, 'Q')] != results.loc[0, (10, 'Q')]
+        assert results.loc[0, (0, "Q")] != results.loc[0, (10, "Q")]
 
         # Check if concentration pulse is captured
         # Middle section should have concentration
-        assert results.loc[0, (5, 'c')] > 0
+        assert results.loc[0, (5, "c")] > 0
 
     def test_friction_slope_calculation(self):
         """Test friction slope calculation."""
@@ -572,16 +520,12 @@ class TestSIHQUAL:
     def test_partial_boundary_conditions(self):
         """Test setting only some boundary conditions."""
         # Set only flow boundary condition
-        boundary_positions = {
-            'Q': [0.0]
-        }
+        boundary_positions = {"Q": [0.0]}
 
         time_array = np.array([0, 1800, 3600])
         q_values = np.array([[10.0, 20.0, 10.0]])
 
-        boundary_data = {
-            'Q': {'time': time_array, 'values': q_values}
-        }
+        boundary_data = {"Q": {"time": time_array, "values": q_values}}
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
 
@@ -598,29 +542,30 @@ class TestSIHQUAL:
         """Test setting multiple boundary points for each variable."""
         # Set multiple boundary points
         boundary_positions = {
-            'Q': [0.0, 500.0],  # Flow at upstream and middle
-            'y': [1000.0],  # Water level at downstream
-            'c': [0.0, 1000.0]  # Concentration at upstream and downstream
+            "Q": [0.0, 500.0],  # Flow at upstream and middle
+            "y": [1000.0],  # Water level at downstream
+            "c": [0.0, 1000.0],  # Concentration at upstream and downstream
         }
 
         time_array = np.array([0, 1800, 3600])
 
-        q_values = np.array([
-            [10.0, 20.0, 10.0],  # Upstream flow
-            [5.0, 10.0, 5.0]  # Middle flow
-        ])
+        q_values = np.array(
+            [[10.0, 20.0, 10.0], [5.0, 10.0, 5.0]]  # Upstream flow  # Middle flow
+        )
 
         y_values = np.array([[2.0, 2.5, 2.0]])  # Downstream water level
 
-        c_values = np.array([
-            [0.0, 5.0, 0.0],  # Upstream concentration
-            [0.0, 2.0, 0.0]  # Downstream concentration
-        ])
+        c_values = np.array(
+            [
+                [0.0, 5.0, 0.0],  # Upstream concentration
+                [0.0, 2.0, 0.0],  # Downstream concentration
+            ]
+        )
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values},
-            'c': {'time': time_array, 'values': c_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
+            "c": {"time": time_array, "values": c_values},
         }
 
         self.model.set_boundary_conditions(boundary_positions, boundary_data)
@@ -637,19 +582,11 @@ class TestSIHQUAL:
     def test_zero_depth_handling(self):
         """Test handling of zero water depth."""
         # Create a model with zero initial depth in some sections
-        model = SIHQUAL(
-            dx=100.0,
-            dt=10.0,
-            xf=1000.0,
-            tf=3600.0
-        )
+        model = SIHQUAL(dx=100.0, dt=10.0, xf=1000.0, tf=3600.0)
 
         # Set up geometry
         model.set_geometry(
-            bottom_width=10.0,
-            side_slope=0.0,
-            manning_coef=0.03,
-            bed_slope=0.001
+            bottom_width=10.0, side_slope=0.0, manning_coef=0.03, bed_slope=0.001
         )
 
         # Create initial conditions with zero depth in some sections
@@ -663,18 +600,15 @@ class TestSIHQUAL:
         model.set_output_sections([0.0, 500.0, 1000.0])
 
         # Set boundary conditions to ensure flow
-        boundary_positions = {
-            'Q': [0.0],
-            'y': [1000.0]
-        }
+        boundary_positions = {"Q": [0.0], "y": [1000.0]}
 
         time_array = np.array([0, 1800, 3600])
         q_values = np.array([[10.0, 10.0, 10.0]])
         y_values = np.array([[2.0, 2.0, 2.0]])
 
         boundary_data = {
-            'Q': {'time': time_array, 'values': q_values},
-            'y': {'time': time_array, 'values': y_values}
+            "Q": {"time": time_array, "values": q_values},
+            "y": {"time": time_array, "values": y_values},
         }
 
         model.set_boundary_conditions(boundary_positions, boundary_data)

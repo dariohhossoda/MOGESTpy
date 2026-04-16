@@ -125,3 +125,127 @@ def test_smapd_run_step_multiple():
     assert abs(step_1 - 204.25) < 1e-6, f"Step 1: {step_1}"
     assert abs(step_2 - 215.6038845) < 1e-6, f"Step 2: {step_2}"
     assert abs(step_3 - 223.5623454) < 1e-6, f"Step 3: {step_3}"
+
+
+def test_smapd_run_to_dataframe_discharge_matches_run_to_list():
+    """
+    Test that run_to_dataframe['discharge'] matches run_to_list output.
+    """
+    smap_list = Smap(
+        Ad=513.37,
+        Tuin=0.5,
+        Ebin=11.05,
+        Str=1559.91,
+        Crec=0.25,
+        kkt=83.63,
+        k2t=6.49,
+        Ai=2.5,
+        Capc=40.0,
+    )
+    smap_df = Smap(
+        Ad=513.37,
+        Tuin=0.5,
+        Ebin=11.05,
+        Str=1559.91,
+        Crec=0.25,
+        kkt=83.63,
+        k2t=6.49,
+        Ai=2.5,
+        Capc=40.0,
+    )
+    prec = [0.0, 0.0, 0.0, 0.0, 17.2, 7.2, 0.0, 0.0, 0.0, 0.0, 7.0, 5.4, 60.8, 4.4, 0.0]
+    etp = [134 / 28 for _ in range(len(prec))]
+
+    # Get discharge from run_to_list
+    q_list = smap_list.run_to_list(prec, etp, reset=True)
+
+    # Get discharge from run_to_dataframe
+    df = smap_df.run_to_dataframe(prec, etp, reset=True)
+    q_df = df["discharge"].tolist()
+
+    # Compare
+    assert len(q_list) == len(q_df)
+    for i, (q1, q2) in enumerate(zip(q_list, q_df)):
+        assert abs(q1 - q2) < 1e-9, f"Step {i}: run_to_list={q1}, run_to_dataframe={q2}"
+
+
+def test_smapd_dataframe():
+    """
+    Test different implementation of SmapD class
+    """
+
+    smap = Smap(
+        Ad=513.37,
+        Tuin=0.5,
+        Ebin=11.05,
+        Str=1559.91,
+        Crec=0.25,
+        kkt=83.63,
+        k2t=6.49,
+        Ai=2.5,
+        Capc=40.0,
+    )
+    prec = [0.0, 0.0, 0.0, 0.0, 17.2, 7.2, 0.0, 0.0, 0.0, 0.0, 7.0, 5.4, 60.8, 4.4, 0.0]
+    etp = [134 / 28 for _ in range(len(prec))]
+    expected = [
+        11.05,
+        10.96,
+        10.88,
+        10.8,
+        10.88,
+        10.81,
+        10.71,
+        10.62,
+        10.53,
+        10.44,
+        10.37,
+        10.29,
+        12.63,
+        12.3,
+        12.01,
+    ]
+    results = smap.run_to_dataframe(prec, etp)['discharge'].tolist()
+    assert len(results) == len(expected)
+    for i, (result, exp) in enumerate(zip(results, expected)):
+        assert abs(result - exp) < 1e-2, f"Step {i}: got {result}, expected {exp}"
+
+
+def test_smapd_flow():
+    """
+    Test different implementation of SmapD class
+    """
+
+    smap = Smap(
+        Ad=513.37,
+        Tuin=0.5,
+        Ebin=11.05,
+        Str=1559.91,
+        Crec=0.25,
+        kkt=83.63,
+        k2t=6.49,
+        Ai=2.5,
+        Capc=40.0,
+    )
+    prec = [0.0, 0.0, 0.0, 0.0, 17.2, 7.2, 0.0, 0.0, 0.0, 0.0, 7.0, 5.4, 60.8, 4.4, 0.0]
+    etp = [134 / 28 for _ in range(len(prec))]
+    expected = [
+        11.05,
+        10.96,
+        10.88,
+        10.8,
+        10.88,
+        10.81,
+        10.71,
+        10.62,
+        10.53,
+        10.44,
+        10.37,
+        10.29,
+        12.63,
+        12.3,
+        12.01,
+    ]
+    results = smap.run_to_list(prec, etp)
+    assert len(results) == len(expected)
+    for i, (result, exp) in enumerate(zip(results, expected)):
+        assert abs(result - exp) < 1e-2, f"Step {i}: got {result}, expected {exp}"

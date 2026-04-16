@@ -109,3 +109,41 @@ def test_smapm_run_step_multiple():
     assert abs(step_1 - 204.25) < 1e-6, f"Step 1: {step_1}"
     assert abs(step_2 - 155.76113647133056) < 1e-6, f"Step 2: {step_2}"
     assert abs(step_3 - 114.43783605128543) < 1e-6, f"Step 3: {step_3}"
+
+
+def test_smapm_run_to_dataframe_discharge_matches_run_to_list():
+    """
+    Test that run_to_dataframe['discharge'] matches run_to_list output.
+    """
+    smap_list = SmapM(
+        Str=165.060822610565,
+        Ad=17800.0,
+        Crec=0.2,
+        Tuin=0.8,
+        Ebin=204.25,
+        Pes=4.0,
+        kkt=1.5,
+    )
+    smap_df = SmapM(
+        Str=165.060822610565,
+        Ad=17800.0,
+        Crec=0.2,
+        Tuin=0.8,
+        Ebin=204.25,
+        Pes=4.0,
+        kkt=1.5,
+    )
+    prec = [0.0, 1.0, 5.0, 0.0, 3.0, 2.0, 0.5]
+    etp = [2.4, 2.2, 2.0, 2.4, 2.1, 2.3, 2.2]
+
+    # Get discharge from run_to_list
+    q_list = smap_list.run_to_list(prec, etp, reset=True)
+
+    # Get discharge from run_to_dataframe
+    df = smap_df.run_to_dataframe(prec, etp, reset=True)
+    q_df = df["discharge"].tolist()
+
+    # Compare - use 1e-6 tolerance for floating-point differences
+    assert len(q_list) == len(q_df)
+    for i, (q1, q2) in enumerate(zip(q_list, q_df)):
+        assert abs(q1 - q2) < 1e-6, f"Step {i}: run_to_list={q1}, run_to_dataframe={q2}"

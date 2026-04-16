@@ -421,10 +421,16 @@ class SmapD:
         self.Rec = self.Rec_calc(self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str)
 
         self.Rsolo = self.Rsolo_calc(self.Rsolo, prec, self.Es, self.Er, self.Rec)
-        self.Ed = self.Ed_calc(self.Rsup, self.k2t)
-        self.Eb = self.Eb_calc(self.Rsub, self.kkt)
 
+        if self.Rsolo > self.Str:
+            overflow = self.Rsolo - self.Str
+            self.Es += overflow
+            self.Rsolo = self.Str
+
+        self.Ed = self.Ed_calc(self.Rsup + self.Es, self.k2t)
         self.Rsup = self.Rsup_calc(self.Rsup, self.Es, self.Ed)
+
+        self.Eb = self.Eb_calc(self.Rsub, self.kkt)
         self.Rsub = self.Rsub_calc(self.Rsub, self.Rec, self.Eb)
 
         self.i += 1
@@ -534,7 +540,13 @@ class SmapD:
             )
 
             self.Rsolo = self.Rsolo_calc(self.Rsolo, prec, self.Es, self.Er, self.Rec)
-            self.Ed = self.Ed_calc(self.Rsup, self.k2t)
+
+            if self.Rsolo > self.Str:
+                overflow = self.Rsolo - self.Str
+                self.Es += overflow
+                self.Rsolo = self.Str
+
+            self.Ed = self.Ed_calc(self.Rsup + self.Es, self.k2t)
             self.Eb = self.Eb_calc(self.Rsub, self.kkt)
 
             self.Rsup = self.Rsup_calc(self.Rsup, self.Es, self.Ed)

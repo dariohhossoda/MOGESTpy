@@ -204,7 +204,7 @@ def test_smapd_dataframe():
         12.3,
         12.01,
     ]
-    results = smap.run_to_dataframe(prec, etp)['discharge'].tolist()
+    results = smap.run_to_dataframe(prec, etp)["discharge"].tolist()
     assert len(results) == len(expected)
     for i, (result, exp) in enumerate(zip(results, expected)):
         assert abs(result - exp) < 1e-2, f"Step {i}: got {result}, expected {exp}"

@@ -44,4 +44,4 @@ napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-html_theme = "alabaster"
+html_theme = "vitepress"

@@ -1,0 +1,9 @@
+sphinx>=7.4,<8
+tomli>=2.0; python_version < "3.11"
+numpy
+pandas>=2.2,<3
+scipy
+spotpy>=1.6.2,<2
+scikit-learn>=1.5,<2
+tqdm>=4.67,<5
+openpyxl>=3.1,<4

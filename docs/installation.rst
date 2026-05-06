@@ -4,7 +4,7 @@ Installation
 Stable
 ~~~~~~
 
-Stable releases of MOGESTpy are available on PyPI and can be installed using pip:
+Stable releases of MOGESTpy are available on `PyPI`_ and can be installed using pip:
 
 .. code-block:: console
 
@@ -28,3 +28,4 @@ Editable installs are useful when changing the source code:
    pip install -e .
 
 .. _GitHub repository: https://github.com/dariohhossoda/MOGESTpy
+.. _PyPI: https://pypi.org/project/MOGESTpy/

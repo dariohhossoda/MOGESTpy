@@ -1,23 +1,55 @@
+.. image:: https://user-images.githubusercontent.com/58784697/210153011-0ccac06f-5ff8-4c80-a2ad-d03528e71e3e.svg
+   :target: https://github.com/MOGESTpy/MOGESTpy
+   :alt: MOGESTpy Logo
+   :align: center
+   :width: 200px
+
 MOGESTpy
 ========
 
-MOGESTpy is a Python package for water resources modeling, focusing on hydrological and water-quality processes. It provides a collection of models and tools for simulating flow and pollutant transport in river networks.
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.19308873.svg
+   :target: https://doi.org/10.5281/zenodo.19308873
+   :alt: DOI Badge
 
-The documentation follows the same structure as the package itself:
+.. image:: https://img.shields.io/badge/license-MIT-green
+   :target: https://github.com/dariohhossoda/MOGESTpy/blob/main/LICENSE.md
+   :alt: License Badge
 
-* ``quantity`` for flow-related models.
-* ``quality`` for pollutant and concentration models.
-* ``routing`` for the hydrological network workflow.
+.. image:: https://img.shields.io/pypi/v/MOGESTpy
+   :target: https://pypi.org/project/MOGESTpy/
+   :alt: PyPI Version Badge
+
+MOGESTpy is a hydrological and water resources management modeling library in Python, supporting quantity and quality simulations for decision-making.
 
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Contents
+   :maxdepth: 2
+   :caption: General
 
    installation
-   quantity
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Quantity Models
+
+   smap
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Quality Models
+
    quality
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Routing Workflow
+
    routing
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+
    api
 
 Indices and Tables

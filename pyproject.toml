@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "MOGESTpy"
-version = "2.0.0"
+version = "2.1.0"
 description = "Water resources management model based on hydrological and hydronimic models"
 authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
 license = "MIT"
@@ -44,6 +44,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.4.7"
+sphinxcontrib-bibtex = "^2.6.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

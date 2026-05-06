@@ -1,5 +1,6 @@
+mogestpy
 sphinx>=7.4,<8
-tomli>=2.0; python_version < "3.11"
+sphinxcontrib-bibtex
 numpy
 pandas>=2.2,<3
 scipy

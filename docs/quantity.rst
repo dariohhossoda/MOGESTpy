@@ -12,8 +12,13 @@ The hydrological subpackage provides the SMAP rainfall-runoff model, the
 Muskingum routing methods, the reservoir mass-balance helper and the network
 routing workflow that combines SMAP with Muskingum.
 
-Example
-~~~~~~~
+SMAP
+~~~~
+
+The Soil Moisture Accounting Procedure (SMAP) is a rainfall-runoff model that
+simulates the transformation of precipitation into runoff.
+
+
 
 .. code-block:: python
 
@@ -23,14 +28,14 @@ Example
 Hydrodynamic Models
 -------------------
 
-The hydrodynamic subpackage contains the Saint-Venant formulation and the
-SIHQUAL solver for coupled hydrodynamic and water-quality simulations.
+The implemented hydrodynamic model named SIHQUAL is a one-dimensional solver for the Saint-Venant equations.
 
-Example
-~~~~~~~
 
-.. code-block:: python
+.. math::
+   :label: eq:sihqual
 
-   from mogestpy.quantity.hydrodynamic.sihqual import SIHQUAL
+   \begin{cases}
+   \frac{\partial A}{\partial t} + \frac{\partial Q}{\partial x} = 0 \\
+   \frac{\partial Q}{\partial t} + \frac{\partial }{\partial x} \left( \frac{Q^2}{A} + g I_1 \right) = g (I_2 - I_1) - g S_f
+   \end{cases}
 
-   model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)

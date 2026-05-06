@@ -7,8 +7,9 @@ with MOGESTpy.
 Zero-Dimensional Model
 ----------------------
 
-The zero-dimensional model represents a well-mixed reservoir and is useful
-for simple concentration balance studies.
+The zero-dimensional model represents a continued stirred (CSTR) reservoir and is useful for simple concentration balance studies. :cite:`becker23`
+
+
 
 Example
 ~~~~~~~
@@ -40,3 +41,5 @@ Example
 .. code-block:: python
 
    from mogestpy.quality import buwo
+
+.. bibliography:: references.bib

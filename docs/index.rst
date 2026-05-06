@@ -1,8 +1,7 @@
 MOGESTpy
 ========
 
-MOGESTpy is a Python package for hydrological, hydrodynamic and water-quality
-modeling in water resources management studies.
+MOGESTpy is a Python package for water resources modeling, focusing on hydrological and water-quality processes. It provides a collection of models and tools for simulating flow and pollutant transport in river networks.
 
 The documentation follows the same structure as the package itself:
 
@@ -10,11 +9,9 @@ The documentation follows the same structure as the package itself:
 * ``quality`` for pollutant and concentration models.
 * ``routing`` for the hydrological network workflow.
 
-The documentation in this directory is written in reStructuredText and can be
-built with Sphinx.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents
 
    installation

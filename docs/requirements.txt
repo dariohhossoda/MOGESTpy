@@ -1,10 +1,4 @@
 mogestpy
-sphinx>=7.4,<8
+sphinx
+sphinx_rtd_theme
 sphinxcontrib-bibtex
-numpy
-pandas>=2.2,<3
-scipy
-spotpy>=1.6.2,<2
-scikit-learn>=1.5,<2
-tqdm>=4.67,<5
-openpyxl>=3.1,<4

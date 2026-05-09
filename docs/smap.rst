@@ -19,45 +19,45 @@ Parameters
     :widths: 18 14 22 46
 
     * - Parameter
-       - Unit
-       - Range
-       - Description
+      - Unit
+      - Range
+      - Description
     * - Str
-       - mm
-       - 100 to 2000
-       - Soil saturation.
+      - mm
+      - 100 to 2000
+      - Soil saturation.
     * - Crec
-       - %
-       - 0 to 20
-       - Recession coefficient.
+      - %
+      - 0 to 20
+      - Recession coefficient.
     * - Capc
-       - %
-       - 30 to 50
-       - Field capacity.
+      - %
+      - 30 to 50
+      - Field capacity.
     * - kkt
-       - d^-1
-       - 30 to 180
-       - Base flow recession coefficient.
+      - d^-1
+      - 30 to 180
+      - Base flow recession coefficient.
     * - k2t
-       - d^-1
-       - 0.2 to 10
-       - Surface runoff recession coefficient.
+      - d^-1
+      - 0.2 to 10
+      - Surface runoff recession coefficient.
     * - Ad
-       - km^2
-       - No explicit bound
-       - Drainage area.
+      - km^2
+      - No explicit bound
+      - Drainage area.
     * - Tuin
-       - Fraction
-       - 0 to 1
-       - Initial soil moisture content.
+      - Fraction
+      - 0 to 1
+      - Initial soil moisture content.
     * - Ebin
-       - mm
-       - No explicit bound
-       - Initial base flow.
+      - mm
+      - No explicit bound
+      - Initial base flow.
     * - Ai
-       - mm
-       - 2 to 5
-       - Initial abstraction.
+      - mm
+      - 2 to 5
+      - Initial abstraction.
 
 .. image:: _static/smapd.svg
    :alt: SMAP Daily Schematic
@@ -103,37 +103,37 @@ Parameters
     :widths: 18 14 22 46
 
     * - Parameter
-       - Unit
-       - Range
-       - Description
+      - Unit
+      - Range
+      - Description
     * - Str
-       - mm
-       - 400 to 5000
-       - Soil saturation.
+      - mm
+      - 400 to 5000
+      - Soil saturation.
     * - Pes
-       - Dimensionless
-       - 1 to 10
-       - Exponent for soil evaporation.
+      - Dimensionless
+      - 1 to 10
+      - Exponent for soil evaporation.
     * - Crec
-       - Dimensionless
-       - 0 to 1
-       - Recharge coefficient.
+      - Dimensionless
+      - 0 to 1
+      - Recharge coefficient.
     * - kkt
-       - months
-       - 1 to 6
-       - Base flow recession coefficient.
+      - months
+      - 1 to 6
+      - Base flow recession coefficient.
     * - Tuin
-       - Fraction
-       - 0 to 1
-       - Initial soil moisture content.
+      - Fraction
+      - 0 to 1
+      - Initial soil moisture content.
     * - Ebin
-       - m^3/s
-       - No explicit bound
-       - Initial base flow.
+      - m^3/s
+      - No explicit bound
+      - Initial base flow.
     * - Ad
-       - km^2
-       - No explicit bound
-       - Drainage area.
+      - km^2
+      - No explicit bound
+      - Drainage area.
 
 .. image:: _static/smapm.svg
    :alt: SMAP Monthly Schematic

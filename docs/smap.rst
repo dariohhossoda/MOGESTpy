@@ -18,62 +18,6 @@ The Daily version of SMAP consists of 3 conceptual reservoirs: surface, soil and
 
    Daily SMAP Schematic
 
-The SmapD parameters are described in the table below.
-
-.. list-table:: Daily SMAP parameters
-    :header-rows: 1
-    :widths: 18 46 22 14 14
-
-    * - Parameter
-      - Description
-      - Range
-      - Default
-      - Unit
-    * - Str
-      - Soil saturation.
-      - 100 to 2000
-      - 100
-      - mm
-    * - Crec
-      - Recession coefficient.
-      - 0 to 20
-      - 0
-      - %
-    * - Capc
-      - Field capacity.
-      - 30 to 50
-      - 40
-      - %
-    * - kkt
-      - Base flow recession coefficient.
-      - 30 to 180
-      - 30
-      - d^-1
-    * - k2t
-      - Surface runoff recession coefficient.
-      - 0.2 to 10
-      - 0.2
-      - d^-1
-    * - Ad
-      - Drainage area.
-      - No explicit bound
-      - 1.0
-      - km^2
-    * - Tuin
-      - Initial soil moisture content.
-      - 0 to 1
-      - 0.0
-      - Fraction
-    * - Ebin
-      - Initial base flow.
-      - No explicit bound
-      - 0.0
-      - mm
-    * - Ai
-      - Initial abstraction.
-      - 2 to 5
-      - 2.5
-      - mm
 
 Mathematical formulation
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -189,6 +133,63 @@ Where:
 - :math:`Eb` = baseflow (mm)
 - :math:`Ad` = drainage area (km²)
 - 86.4 is the unit conversion factor (mm·km²/s to m³/s)
+
+The SmapD parameters are described in the table below.
+
+.. list-table:: Daily SMAP parameters
+    :header-rows: 1
+    :widths: 18 46 22 14 14
+
+    * - Parameter
+      - Description
+      - Range
+      - Default
+      - Unit
+    * - Str
+      - Soil saturation.
+      - 100 - 2000
+      - 100
+      - :math:`\text{mm}`
+    * - Crec
+      - Recession coefficient.
+      - 0 - 20
+      - 0.0
+      - :math:`\%`
+    * - Capc
+      - Field capacity.
+      - 30 - 50
+      - 40
+      - :math:`\%`
+    * - kkt
+      - Base flow recession coefficient.
+      - 30 - 180
+      - 30
+      - :math:`{\text{d}^{-1}}`
+    * - k2t
+      - Surface runoff recession coefficient.
+      - 0.2 - 10
+      - 0.2
+      - :math:`{\text{d}^{-1}}`
+    * - Ad
+      - Drainage area.
+      - :math:`-`
+      - 1.0
+      - :math:`\text{km}{^2}`
+    * - Tuin
+      - Initial soil moisture content.
+      - 0 - 1
+      - 0.0
+      - :math:`-`
+    * - Ebin
+      - Initial base flow.
+      - :math:`-`
+      - 0.0
+      - :math:`\text{mm}`
+    * - Ai
+      - Initial abstraction.
+      - 2 - 5
+      - 2.5
+      - :math:`\text{mm}`
 
 Examples
 ^^^^^^^^

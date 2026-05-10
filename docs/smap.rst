@@ -75,11 +75,125 @@ The SmapD parameters are described in the table below.
       - 2.5
       - mm
 
+Mathematical formulation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Mathematical Reservoirs
+"""""""""""""""""""""""
+
+The daily SMAP model uses three conceptual reservoirs to simulate the hydrological cycle. The water balance equations for each reservoir are:
+
+.. math::
+
+    R_{solo}(i+1) &= R_{solo}(i) + P - Es - Er - Rec \\
+    R_{sup}(i+1) &= R_{sup}(i) + Es - Ed \\
+    R_{sub}(i+1) &= R_{sub}(i) + Rec - Eb
+
+Where:
+
+- :math:`R_{solo}` = soil reservoir (aerated zone) (mm)
+- :math:`R_{sup}` = surface reservoir (mm)
+- :math:`R_{sub}` = subsurface reservoir (saturated zone) (mm)
+- :math:`P` = precipitation (mm)
+- :math:`Es` = surface runoff (mm)
+- :math:`Ed` = direct runoff (mm)
+- :math:`Er` = actual evapotranspiration (mm)
+- :math:`Rec` = groundwater recharge (mm)
+- :math:`Eb` = baseflow (mm)
+
+Initialization
+""""""""""""""
+
+The initial conditions for the three reservoirs are set as follows:
+
+.. math::
+
+    R_{solo}(1) &= Tuin \cdot Str \\
+    R_{sup}(1) &= 0 \\
+    R_{sub}(1) &= \frac{Ebin}{(1-Kk) \cdot Ad} \cdot 86.4
+
+Where:
+
+- :math:`Tuin` = initial soil moisture content (-)
+- :math:`Str` = soil saturation capacity (mm)
+- :math:`Ebin` = initial baseflow discharge (m³/s)
+- :math:`Ad` = drainage area (km²)
+- :math:`Kk = 0.5^{(1/kkt)}` = baseflow recession factor
+
+Transfer Functions
+"""""""""""""""""""
+
+The model uses five transfer functions to compute the fluxes between reservoirs. The surface runoff separation follows the SCS (Soil Conservation Service) method.
+
+**1. Surface runoff** (Es):
+
+.. math::
+
+    Es = \begin{cases}
+        \frac{(P - Ai)^2}{P - Ai + Str - R_{solo}}, & \text{if } P > Ai \\
+        0, & \text{otherwise}
+    \end{cases}
+
+**2. Actual evapotranspiration** (Er):
+
+.. math::
+
+    Er = \begin{cases}
+        Ep, & \text{if } (P - Es) > Ep \\
+        (P - Es) + (Ep - (P - Es)) \cdot Tu, & \text{otherwise}
+    \end{cases}
+
+**3. Groundwater recharge** (Rec):
+
+.. math::
+
+    Rec = \begin{cases}
+        Crec \cdot Tu \cdot (R_{solo} - Capc \cdot Str), & \text{if } R_{solo} > (Capc \cdot Str) \\
+        0, & \text{otherwise}
+    \end{cases}
+
+**4. Direct runoff** (Ed):
+
+.. math::
+
+    Ed = R_{sup} \cdot (1 - K2)
+
+**5. Soil moisture** (Tu):
+
+.. math::
+
+    Tu = \frac{R_{solo}}{Str}
+
+Where:
+
+- :math:`P` = precipitation (mm)
+- :math:`Ai` = initial abstraction (mm)
+- :math:`Ep` = potential evapotranspiration (mm)
+- :math:`Crec` = recharge coefficient (%)
+- :math:`Capc` = field capacity (%)
+- :math:`K2 = 0.5^{(1/k2t)}` = surface runoff recession factor
+
+Discharge Calculation
+""""""""""""""""""""""
+
+Any overflow from the soil reservoir is converted to surface runoff. The total discharge at the basin outlet is calculated as:
+
+.. math::
+
+    Q = (Es + Eb) \cdot \frac{Ad}{86.4}
+
+Where:
+
+- :math:`Q` = discharge (m³/s)
+- :math:`Es` = soil evaporation/surface runoff (mm)
+- :math:`Eb` = baseflow (mm)
+- :math:`Ad` = drainage area (km²)
+- 86.4 is the unit conversion factor (mm·km²/s to m³/s)
 
 Examples
 ^^^^^^^^
-Simulating
-++++++++++
+Simulation example
+++++++++++++++++++
 
 To use the daily version of SMAP, you can create an instance of the SmapD class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the daily version of SMAP.
 
@@ -106,7 +220,7 @@ To use the daily version of SMAP, you can create an instance of the SmapD class 
 
 
 Calibration example
-^^^^^^^^^^^^^^^^^^^
++++++++++++++++++++
 
 The daily model can be calibrated against observed discharge data with the
 ``calibrate`` method.
@@ -194,8 +308,8 @@ The monthly SMAP parameters are described in the table below.
 Examples
 ^^^^^^^^
 
-Simulating
-++++++++++
+Simulation example
+++++++++++++++++++
 
 Similarly, to use the monthly version of SMAP, you can create an instance of the SmapM class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the monthly version of SMAP.
 
@@ -219,7 +333,7 @@ Similarly, to use the monthly version of SMAP, you can create an instance of the
    discharges = model.run_to_list(precipitations, evapotranspirations)
 
 Calibration example
-^^^^^^^^^^^^^^^^^^^
++++++++++++++++++++
 
 The monthly model uses the same ``calibrate`` method.
 

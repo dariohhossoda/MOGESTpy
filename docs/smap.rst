@@ -16,48 +16,48 @@ Parameters
 
 .. list-table:: Daily SMAP parameters
     :header-rows: 1
-    :widths: 18 14 22 46
+    :widths: 18 46 22 14
 
     * - Parameter
-      - Unit
-      - Range
       - Description
+      - Range
+      - Unit
     * - Str
-      - mm
-      - 100 to 2000
       - Soil saturation.
+      - 100 to 2000
+      - mm
     * - Crec
-      - %
-      - 0 to 20
       - Recession coefficient.
-    * - Capc
+      - 0 to 20
       - %
-      - 30 to 50
+    * - Capc
       - Field capacity.
+      - 30 to 50
+      - %
     * - kkt
-      - d^-1
-      - 30 to 180
       - Base flow recession coefficient.
-    * - k2t
+      - 30 to 180
       - d^-1
-      - 0.2 to 10
+    * - k2t
       - Surface runoff recession coefficient.
+      - 0.2 to 10
+      - d^-1
     * - Ad
-      - km^2
-      - No explicit bound
       - Drainage area.
-    * - Tuin
-      - Fraction
-      - 0 to 1
-      - Initial soil moisture content.
-    * - Ebin
-      - mm
       - No explicit bound
+      - km^2
+    * - Tuin
+      - Initial soil moisture content.
+      - 0 to 1
+      - Fraction
+    * - Ebin
       - Initial base flow.
-    * - Ai
+      - No explicit bound
       - mm
-      - 2 to 5
+    * - Ai
       - Initial abstraction.
+      - 2 to 5
+      - mm
 
 .. image:: _static/smapd.svg
    :alt: SMAP Daily Schematic
@@ -100,40 +100,40 @@ Parameters
 
 .. list-table:: Monthly SMAP parameters
     :header-rows: 1
-    :widths: 18 14 22 46
+    :widths: 18 46 22 14
 
     * - Parameter
-      - Unit
-      - Range
       - Description
+      - Range
+      - Unit
     * - Str
-      - mm
-      - 400 to 5000
       - Soil saturation.
+      - 400 to 5000
+      - mm
     * - Pes
-      - Dimensionless
-      - 1 to 10
       - Exponent for soil evaporation.
-    * - Crec
+      - 1 to 10
       - Dimensionless
-      - 0 to 1
+    * - Crec
       - Recharge coefficient.
-    * - kkt
-      - months
-      - 1 to 6
-      - Base flow recession coefficient.
-    * - Tuin
-      - Fraction
       - 0 to 1
+      - Dimensionless
+    * - kkt
+      - Base flow recession coefficient.
+      - 1 to 6
+      - months
+    * - Tuin
       - Initial soil moisture content.
+      - 0 to 1
+      - Fraction
     * - Ebin
-      - m^3/s
-      - No explicit bound
       - Initial base flow.
-    * - Ad
-      - km^2
       - No explicit bound
+      - m^3/s
+    * - Ad
       - Drainage area.
+      - No explicit bound
+      - km^2
 
 .. image:: _static/smapm.svg
    :alt: SMAP Monthly Schematic

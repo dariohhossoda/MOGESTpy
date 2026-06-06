@@ -67,7 +67,7 @@ Where:
 Transfer Functions
 """""""""""""""""""
 
-The model uses five transfer functions to compute the fluxes between reservoirs. The surface runoff separation follows the SCS (Soil Conservation Service) method.
+The model uses six transfer functions to compute the fluxes between reservoirs. The surface runoff separation follows the SCS (Soil Conservation Service) method.
 
 **1. Surface runoff** (Es):
 
@@ -92,7 +92,7 @@ The model uses five transfer functions to compute the fluxes between reservoirs.
 .. math::
 
     Rec = \begin{cases}
-        Crec \cdot Tu \cdot (R_{solo} - Capc \cdot Str), & \text{if } R_{solo} > (Capc \cdot Str) \\
+        \frac{Crec}{100} \cdot Tu \cdot \left(R_{solo} - \frac{Capc}{100} \cdot Str\right), & \text{if } R_{solo} > \frac{Capc}{100} \cdot Str \\
         0, & \text{otherwise}
     \end{cases}
 
@@ -102,7 +102,13 @@ The model uses five transfer functions to compute the fluxes between reservoirs.
 
     Ed = R_{sup} \cdot (1 - K2)
 
-**5. Soil moisture** (Tu):
+**5. Baseflow** (Eb):
+
+.. math::
+
+    Eb = R_{sub} \cdot (1 - Kk)
+
+**6. Soil moisture** (Tu):
 
 .. math::
 
@@ -116,6 +122,7 @@ Where:
 - :math:`Crec` = recharge coefficient (%)
 - :math:`Capc` = field capacity (%)
 - :math:`K2 = 0.5^{(1/k2t)}` = surface runoff recession factor
+- :math:`Kk = 0.5^{(1/kkt)}` = baseflow recession factor
 
 Discharge Calculation
 """"""""""""""""""""""
@@ -124,12 +131,12 @@ Any overflow from the soil reservoir is converted to surface runoff. The total d
 
 .. math::
 
-    Q = (Es + Eb) \cdot \frac{Ad}{86.4}
+    Q = (Ed + Eb) \cdot \frac{Ad}{86.4}
 
 Where:
 
 - :math:`Q` = discharge (m³/s)
-- :math:`Es` = soil evaporation/surface runoff (mm)
+- :math:`Ed` = direct runoff (mm)
 - :math:`Eb` = baseflow (mm)
 - :math:`Ad` = drainage area (km²)
 - 86.4 is the unit conversion factor (mm·km²/s to m³/s)
@@ -184,7 +191,7 @@ The SmapD parameters are described in the table below.
       - Initial base flow.
       - :math:`-`
       - 0.0
-      - :math:`\text{mm}`
+      - :math:`\text{m}^3\text{/s}`
     * - Ai
       - Initial abstraction.
       - 2 - 5
@@ -243,7 +250,7 @@ The daily model can be calibrated against observed discharge data with the
    print(result.x)
    print(result.fun)
 
-By default the calibration uses the Kling-Gupta Efficiency (KGE) as the objective function, but other metrics can be used by specifying the ``metric`` argument in the ``calibrate`` method.
+By default the calibration uses the Kling-Gupta Efficiency (KGE) as the objective function, but other metrics can be used by specifying the ``obj_func`` argument in the ``calibrate`` method.
 
 Monthly timestep
 ----------------

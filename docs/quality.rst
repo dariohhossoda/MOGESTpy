@@ -29,6 +29,9 @@ Example
        timestep=50,
    )
 
+   reactor.RunModel()
+   concentration = reactor.Output.ConcentrationOut
+
 Build-Up/Washoff Model
 ----------------------
 

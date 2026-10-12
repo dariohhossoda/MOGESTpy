@@ -54,12 +54,20 @@ We use GitHub to host the code, track issues and feature requests, as well as ac
 
 All code changes happen through pull requests. Pull requests are the best way to propose changes to the codebase (we use [GitHub Flow](https://guides.github.com/introduction/flow/index.html)):
 
-1. Clone the repository and create your branch from `main` (for patches) or `development` (for new features in new releases);
-2. If you added code that should be tested, add tests;
-3. If you changed something in components, update the documentation;
-4. Ensure the test suite passes;
-5. Ensure your code follows the project's style;
-6. Create your pull request!
+1. Open an issue describing the change, using one of the [issue templates](https://github.com/dariohhossoda/MOGESTpy/issues/new/choose);
+2. Clone the repository and create one branch for that issue from an up-to-date `development`, named `<issue number>-<short-description>` (e.g., `53-add-muskingum-cunge`);
+3. If you added code that should be tested, add tests;
+4. If you changed something in components, update the documentation;
+5. Ensure the test suite passes;
+6. Ensure your code follows the project's style;
+7. Create your pull request to `development`, filling in the pull request template and referencing the issue (e.g., `Related to #53`).
+
+### Branches
+
+- `main` holds released code only. It is never changed directly: no commits, pushes or topic branches target it.
+- `development` is the integration branch. Every change, features and fixes alike, starts from it and returns to it through a pull request. No commits are made directly to it either.
+- Each issue has its own branch and pull request. Do not mix two issues in the same branch.
+- A release is a pull request from `development` to `main`. It lists every issue it delivers with a closing keyword (e.g., `Closes #53`), so the issues close when it is merged. Keywords only close issues on merges into `main`, and `Solves` is not a closing keyword.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

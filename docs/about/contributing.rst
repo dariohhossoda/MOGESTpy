@@ -30,8 +30,6 @@ Development environment
 Building the documentation
 --------------------------
 
-The documentation needs Python 3.11 or later:
-
 .. code-block:: console
 
    poetry install --with docs

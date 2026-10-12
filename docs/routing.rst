@@ -133,16 +133,19 @@ Optional Arguments
 
    ``MuskingumCunge.router()`` routes each reach with the Muskingum-Cunge
    method, reading ``length``, ``q_ref``, ``manning``, ``width`` and ``slope``
-   from the parameter table:
+   from the parameter table. The reach of a row is the one that carries the
+   upstream flow across that subcatchment, so its characteristics refer to the
+   area draining into it; headwater rows can use ``length = 0``:
 
    .. code-block:: python
 
       from mogestpy.quantity.hydrological.muskingum import MuskingumCunge
 
-      params["length"] = [12_000.0, 0.0]  # m; 0 = pass-through
-      params["q_ref"] = params["area"] ** 0.7 / 3  # m3/s
+      upstream_area = pd.Series([0.0, 513.37])  # km2 draining into each reach
+      params["length"] = [0.0, 12_000.0]  # m; 0 = no reach (pass-through)
+      params["q_ref"] = upstream_area**0.7 / 3  # m3/s
       params["manning"] = 0.035
-      params["width"] = 1.5 * params["area"] ** 0.5  # m
+      params["width"] = 1.5 * upstream_area**0.5  # m
       params["slope"] = 1e-3  # m/m
 
       discharge = run_network(

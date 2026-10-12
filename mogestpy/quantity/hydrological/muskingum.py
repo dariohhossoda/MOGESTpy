@@ -381,8 +381,11 @@ class MuskingumCunge:
 
         The returned function reads the reach characteristics from the
         subcatchment row of the parameter table: ``length`` (m), ``q_ref``
-        (m³/s), ``manning``, ``width`` (m) and ``slope`` (m/m). A reach with
-        zero length passes the flow through.
+        (m³/s), ``manning``, ``width`` (m) and ``slope`` (m/m). ``run_network``
+        passes the row of the subcatchment that receives the upstream flow, so
+        the reach is the one crossing that subcatchment and ``q_ref`` and
+        ``width`` refer to the area draining into it. A reach with zero length
+        passes the flow through.
 
         Args:
             dt (float): Model time step (s). Default is 86400 (1 day).

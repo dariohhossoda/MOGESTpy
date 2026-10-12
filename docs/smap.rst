@@ -252,6 +252,22 @@ The daily model can be calibrated against observed discharge data with the
 
 By default the calibration uses the Kling-Gupta Efficiency (KGE) as the objective function, but other metrics can be used by specifying the ``obj_func`` argument in the ``calibrate`` method.
 
+The ``fast_calibrate`` method takes the same arguments and searches integer
+parameter values scaled by 10000, so the calibrated parameters keep 4 decimal
+places. It also sets the calibrated values on the model, which can be run
+right after calibration:
+
+.. code-block:: python
+
+   result = model.fast_calibrate(
+       prec_arr=precipitations,
+       etp_arr=evapotranspirations,
+       eval_arr=observed_discharge,
+       variables=["Str", "Crec", "Capc", "kkt", "k2t", "Ai"],
+   )
+
+   discharges = model.run_to_list(precipitations, evapotranspirations)
+
 Monthly timestep
 ----------------
 
@@ -343,7 +359,7 @@ Similarly, to use the monthly version of SMAP, you can create an instance of the
 Calibration example
 +++++++++++++++++++
 
-The monthly model uses the same ``calibrate`` method.
+The monthly model uses the same ``calibrate`` and ``fast_calibrate`` methods.
 
 .. code-block:: python
 

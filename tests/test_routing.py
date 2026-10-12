@@ -35,17 +35,11 @@ def _params() -> pd.DataFrame:
 def _forcing(ids: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
     index = pd.date_range("2026-01-01", periods=4, freq="D")
     precipitation = pd.DataFrame(
-        {
-            sid: [0.0, 5.0, 0.0, 12.0]
-            for sid in ids
-        },
+        {sid: [0.0, 5.0, 0.0, 12.0] for sid in ids},
         index=index,
     )
     evapotranspiration = pd.DataFrame(
-        {
-            sid: [4.5, 4.5, 4.5, 4.5]
-            for sid in ids
-        },
+        {sid: [4.5, 4.5, 4.5, 4.5] for sid in ids},
         index=index,
     )
     return precipitation, evapotranspiration
@@ -105,3 +99,111 @@ def test_run_network_rejects_network_cycles():
 
     with pytest.raises(ValueError, match="cycle"):
         run_network(params, precipitation, evapotranspiration)
+
+
+def test_run_network_passes_upstream_flow_through_when_k_is_zero():
+    params = _params()
+    params["k"] = 0.0
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    result = run_network(params, precipitation, evapotranspiration)
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    assert result["outlet"].tolist() == pytest.approx(
+        (outlet_alone["outlet"] + result["headwater"]).tolist()
+    )
+
+
+def test_run_network_routes_external_inflows_like_upstream_basins():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    full = run_network(params, precipitation, evapotranspiration)
+    partial = run_network(
+        params.iloc[[1]].copy(),
+        precipitation,
+        evapotranspiration,
+        external_inflows=full[["headwater"]].rename(columns={"headwater": "outlet"}),
+    )
+
+    assert partial["outlet"].tolist() == pytest.approx(full["outlet"].tolist())
+
+
+def test_run_network_rejects_external_inflows_for_unknown_basin():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame({"elsewhere": 1.0}, index=precipitation.index)
+
+    with pytest.raises(ValueError, match="external_inflows columns"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_rejects_external_inflows_with_missing_steps():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame({"outlet": 1.0}, index=precipitation.index[:-1])
+
+    with pytest.raises(ValueError, match="cover all simulation time steps"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_rejects_null_external_inflows():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame(
+        {"outlet": [1.0, np.nan, 1.0, 1.0]}, index=precipitation.index
+    )
+
+    with pytest.raises(ValueError, match="non-finite values"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_uses_custom_router():
+    params = _params()
+    params["factor"] = [1.0, 0.5]
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    def scaling_router(q_upstream, row):
+        return q_upstream * row["factor"]
+
+    result = run_network(
+        params, precipitation, evapotranspiration, router=scaling_router
+    )
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    expected = outlet_alone["outlet"] + 0.5 * result["headwater"]
+    assert result["outlet"].tolist() == pytest.approx(expected.tolist())
+
+
+def test_run_network_rejects_router_output_with_wrong_length():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    with pytest.raises(ValueError, match="router returned"):
+        run_network(
+            params,
+            precipitation,
+            evapotranspiration,
+            router=lambda q_upstream, row: q_upstream[:-1],
+        )
+
+
+def test_run_network_returns_natural_flow_when_requested():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    total, natural = run_network(
+        params, precipitation, evapotranspiration, return_natural_flow=True
+    )
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    assert total.equals(run_network(params, precipitation, evapotranspiration))
+    assert natural.columns.tolist() == ["headwater", "outlet"]
+    assert natural["headwater"].tolist() == pytest.approx(total["headwater"].tolist())
+    assert natural["outlet"].tolist() == pytest.approx(outlet_alone["outlet"].tolist())

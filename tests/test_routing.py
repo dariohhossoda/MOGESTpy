@@ -162,3 +162,35 @@ def test_run_network_rejects_null_external_inflows():
 
     with pytest.raises(ValueError, match="non-finite values"):
         run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_uses_custom_router():
+    params = _params()
+    params["factor"] = [1.0, 0.5]
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    def scaling_router(q_upstream, row):
+        return q_upstream * row["factor"]
+
+    result = run_network(
+        params, precipitation, evapotranspiration, router=scaling_router
+    )
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    expected = outlet_alone["outlet"] + 0.5 * result["headwater"]
+    assert result["outlet"].tolist() == pytest.approx(expected.tolist())
+
+
+def test_run_network_rejects_router_output_with_wrong_length():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    with pytest.raises(ValueError, match="router returned"):
+        run_network(
+            params,
+            precipitation,
+            evapotranspiration,
+            router=lambda q_upstream, row: q_upstream[:-1],
+        )

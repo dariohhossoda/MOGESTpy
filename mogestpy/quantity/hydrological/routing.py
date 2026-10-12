@@ -35,7 +35,7 @@ simulated subcatchment in m3/s.
 from __future__ import annotations
 
 from collections import deque
-from typing import Hashable
+from typing import Callable, Hashable
 
 import numpy as np
 import pandas as pd
@@ -75,6 +75,8 @@ NUMERIC_PARAM_COLUMNS = (
 
 POSITIVE_PARAM_COLUMNS = ("area", "str", "kkt", "k2t")
 
+Router = Callable[[np.ndarray, pd.Series], np.ndarray]
+
 
 def run_network(
     params: pd.DataFrame,
@@ -82,6 +84,7 @@ def run_network(
     evapotranspiration: pd.DataFrame,
     verbose: bool = False,
     external_inflows: pd.DataFrame | None = None,
+    router: Router | None = None,
 ) -> pd.DataFrame:
     """Run SMAP with Muskingum routing over a hydrological network.
 
@@ -107,6 +110,14 @@ def run_network(
         upstream flow of its subcatchment and routed with that subcatchment's
         ``k`` and ``x``. This allows running part of a network, e.g. when
         calibrating groups of subcatchments from upstream to downstream.
+    router : callable, optional
+        Replaces Muskingum as the reach routing method. It is called as
+        ``router(q_upstream, row)``, where ``q_upstream`` is the summed upstream
+        discharge in m3/s and ``row`` is the subcatchment row of ``params``
+        (extra columns are kept, so method-specific reach parameters can be
+        stored there). It must return the routed discharge with the same
+        length. The ``k`` and ``x`` columns are still validated but are only
+        used by the default Muskingum routing.
 
     Returns
     -------
@@ -133,7 +144,9 @@ def run_network(
         common_index,
         verbose,
     )
-    network_flow = _route_network(params, natural_flow, external_flow, verbose)
+    network_flow = _route_network(
+        params, natural_flow, external_flow, router, verbose
+    )
 
     return pd.DataFrame(network_flow, index=common_index)
 
@@ -224,6 +237,7 @@ def _route_network(
     params: pd.DataFrame,
     natural_flow: dict[Hashable, np.ndarray],
     external_flow: dict[Hashable, np.ndarray],
+    router: Router | None,
     verbose: bool,
 ) -> dict[Hashable, np.ndarray]:
     """Route local and upstream flows according to the basin network.
@@ -237,6 +251,8 @@ def _route_network(
     external_flow : dict
         Mapping from subcatchment ID to discharge arrays entering it from
         basins outside the network.
+    router : callable or None
+        Custom reach routing; None uses Muskingum with ``k`` and ``x``.
     verbose : bool
         If True, prints progress messages.
 
@@ -269,9 +285,55 @@ def _route_network(
         if sid in external_flow:
             q_upstream += external_flow[sid]
 
-        routed_flow[sid] = _compute_total_flow(q_local, q_upstream, k, x)
+        if router is None:
+            routed_flow[sid] = _compute_total_flow(q_local, q_upstream, k, x)
+        else:
+            routed_flow[sid] = q_local + _apply_router(router, q_upstream, row, sid)
 
     return routed_flow
+
+
+def _apply_router(
+    router: Router,
+    q_upstream: np.ndarray,
+    row: pd.Series,
+    sid: Hashable,
+) -> np.ndarray:
+    """Route the upstream flow of one subcatchment with a custom method.
+
+    Parameters
+    ----------
+    router : callable
+        Routing function called as ``router(q_upstream, row)``.
+    q_upstream : np.ndarray
+        Summed upstream discharge in m3/s.
+    row : pd.Series
+        Parameter row of the subcatchment.
+    sid : Hashable
+        Subcatchment ID, used in error messages.
+
+    Returns
+    -------
+    np.ndarray
+        Routed discharge in m3/s.
+
+    Raises
+    ------
+    ValueError
+        If the router output has a different length or non-finite values.
+    """
+    routed = np.asarray(router(q_upstream.copy(), row), dtype=float)
+
+    if routed.shape != q_upstream.shape:
+        raise ValueError(
+            f"router returned {routed.shape} for basin {sid}; "
+            f"expected {q_upstream.shape}."
+        )
+
+    if not np.isfinite(routed).all():
+        raise ValueError(f"router returned non-finite values for basin {sid}.")
+
+    return routed
 
 
 def _validate_inputs(

@@ -7,8 +7,8 @@
 MOGESTpy
 ========
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.19308873.svg
-   :target: https://doi.org/10.5281/zenodo.19308873
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.12215704.svg
+   :target: https://doi.org/10.5281/zenodo.12215704
    :alt: DOI Badge
 
 .. image:: https://img.shields.io/badge/license-MIT-green

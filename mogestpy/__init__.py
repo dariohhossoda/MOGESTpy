@@ -1,10 +1,11 @@
 """
 mogestpy - A water resources modeling library for Python
-========
+========================================================
 
 A water resources modeling library for Python.
 
 The package is divided into two main submodules:
+
 - `quantity`: Contains classes and functions related to water quantity modeling, such as the SMAP model.
 - `quality`: Contains classes and functions related to water quality modeling.
 

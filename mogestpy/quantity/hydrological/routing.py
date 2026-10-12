@@ -85,7 +85,8 @@ def run_network(
     verbose: bool = False,
     external_inflows: pd.DataFrame | None = None,
     router: Router | None = None,
-) -> pd.DataFrame:
+    return_natural_flow: bool = False,
+) -> pd.DataFrame | tuple[pd.DataFrame, pd.DataFrame]:
     """Run SMAP with Muskingum routing over a hydrological network.
 
     Parameters
@@ -118,12 +119,16 @@ def run_network(
         stored there). It must return the routed discharge with the same
         length. The ``k`` and ``x`` columns are still validated but are only
         used by the default Muskingum routing.
+    return_natural_flow : bool, optional
+        If True, also returns the local SMAP discharge of each subcatchment,
+        before adding upstream flow. Default is False.
 
     Returns
     -------
-    pd.DataFrame
+    pd.DataFrame or tuple of pd.DataFrame
         Simulated discharge in m3/s. The index is the common index shared by
         precipitation and evapotranspiration; columns are subcatchment IDs.
+        With ``return_natural_flow=True``, returns ``(total, natural)``.
 
     Raises
     ------
@@ -148,7 +153,12 @@ def run_network(
         params, natural_flow, external_flow, router, verbose
     )
 
-    return pd.DataFrame(network_flow, index=common_index)
+    total = pd.DataFrame(network_flow, index=common_index)
+
+    if return_natural_flow:
+        return total, pd.DataFrame(natural_flow, index=common_index)
+
+    return total
 
 
 def _build_models(params: pd.DataFrame) -> dict[Hashable, Smap]:

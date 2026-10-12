@@ -194,3 +194,20 @@ def test_run_network_rejects_router_output_with_wrong_length():
             evapotranspiration,
             router=lambda q_upstream, row: q_upstream[:-1],
         )
+
+
+def test_run_network_returns_natural_flow_when_requested():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    total, natural = run_network(
+        params, precipitation, evapotranspiration, return_natural_flow=True
+    )
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    assert total.equals(run_network(params, precipitation, evapotranspiration))
+    assert natural.columns.tolist() == ["headwater", "outlet"]
+    assert natural["headwater"].tolist() == pytest.approx(total["headwater"].tolist())
+    assert natural["outlet"].tolist() == pytest.approx(outlet_alone["outlet"].tolist())

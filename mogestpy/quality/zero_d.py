@@ -37,17 +37,20 @@ class ZeroDimensional:
 
     class Input:
         """
-        Inputs for the 0D model
-        ---------------
-        Volume (V) - list
+        Inputs for the 0D model.
 
-        Inflow (Qin) - list
-
-        Outflow (Qout) - list
-
-        Concentration at the inflow (Cin) - list
-
-        Contact area (As) - list
+        Parameters
+        ----------
+        volume : list
+            Volume (V).
+        inflow : list
+            Inflow (Qin).
+        outflow : list
+            Outflow (Qout).
+        concentration_in : list
+            Concentration at the inflow (Cin).
+        contact_area : list
+            Contact area (As).
         """
 
         def __init__(self, volume, inflow, outflow, concentration_in, contact_area):

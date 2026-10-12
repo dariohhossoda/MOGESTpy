@@ -390,10 +390,9 @@ class SIHQUAL:
         Args:
             boundary_positions: Dictionary with positions for each boundary type
                 {'Q': [positions], 'y': [positions], 'c': [positions]}
-            boundary_data: Dictionary with time series data for each boundary type
-                {'Q': {'time': array, 'values': array},
-                 'y': {'time': array, 'values': array},
-                 'c': {'time': array, 'values': array}}
+            boundary_data: Dictionary with time series data for each boundary
+                type, ``{'Q': {'time': array, 'values': array}, 'y': {...},
+                'c': {...}}``, with the same keys as ``boundary_positions``
 
         Returns:
             self: For method chaining

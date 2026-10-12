@@ -32,6 +32,7 @@ MOGESTpy is a hydrological and water resources management modeling library in Py
    :maxdepth: 2
    :caption: Quantity Models
 
+   quantity
    smap
 
 .. toctree::

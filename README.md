@@ -4,7 +4,7 @@
 
 Hydrological and water resources management modeling library in Python, supporting quantity and quality simulations for decision-making.
 
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/) [![PyPI](https://img.shields.io/pypi/v/MOGESTpy)](https://pypi.org/project/MOGESTpy/) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19308873.svg)](https://doi.org/10.5281/zenodo.19308873)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/) [![PyPI](https://img.shields.io/pypi/v/MOGESTpy)](https://pypi.org/project/MOGESTpy/) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12215704.svg)](https://doi.org/10.5281/zenodo.12215704)
 
 <img src="https://user-images.githubusercontent.com/58784697/210153011-0ccac06f-5ff8-4c80-a2ad-d03528e71e3e.svg" width="200"/>
 
@@ -123,8 +123,8 @@ If you use MOGESTpy in your research, please cite:
   author = {Dario Hachisu Hossoda},
   title = {MOGESTpy},
   year = {2026},
-  url = {https://doi.org/10.5281/zenodo.19308873},
-  doi = {10.5281/zenodo.19308873}
+  url = {https://doi.org/10.5281/zenodo.12215704},
+  doi = {10.5281/zenodo.12215704}
 }
 ```
 

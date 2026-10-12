@@ -81,6 +81,7 @@ def run_network(
     precipitation: pd.DataFrame,
     evapotranspiration: pd.DataFrame,
     verbose: bool = False,
+    external_inflows: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Run SMAP with Muskingum routing over a hydrological network.
 
@@ -98,6 +99,14 @@ def run_network(
         Columns must match all values in ``params['id']``.
     verbose : bool, optional
         If True, prints progress messages. Default is False.
+    external_inflows : pd.DataFrame, optional
+        Discharge in m3/s entering subcatchments from basins that are not in
+        ``params``, such as the total flow of upstream subcatchments simulated
+        beforehand. Columns are IDs of the receiving subcatchments and the index
+        must cover the simulation time steps. Each column is added to the
+        upstream flow of its subcatchment and routed with that subcatchment's
+        ``k`` and ``x``. This allows running part of a network, e.g. when
+        calibrating groups of subcatchments from upstream to downstream.
 
     Returns
     -------
@@ -113,6 +122,7 @@ def run_network(
         network.
     """
     common_index = _validate_inputs(params, precipitation, evapotranspiration)
+    external_flow = _validate_external_inflows(params, external_inflows, common_index)
 
     models = _build_models(params)
     natural_flow = _compute_natural_flow(
@@ -123,7 +133,7 @@ def run_network(
         common_index,
         verbose,
     )
-    network_flow = _route_network(params, natural_flow, verbose)
+    network_flow = _route_network(params, natural_flow, external_flow, verbose)
 
     return pd.DataFrame(network_flow, index=common_index)
 
@@ -213,6 +223,7 @@ def _compute_natural_flow(
 def _route_network(
     params: pd.DataFrame,
     natural_flow: dict[Hashable, np.ndarray],
+    external_flow: dict[Hashable, np.ndarray],
     verbose: bool,
 ) -> dict[Hashable, np.ndarray]:
     """Route local and upstream flows according to the basin network.
@@ -223,6 +234,9 @@ def _route_network(
         Validated parameter DataFrame.
     natural_flow : dict
         Mapping from subcatchment ID to local discharge arrays.
+    external_flow : dict
+        Mapping from subcatchment ID to discharge arrays entering it from
+        basins outside the network.
     verbose : bool
         If True, prints progress messages.
 
@@ -251,6 +265,9 @@ def _route_network(
 
         for uid in upstream_ids:
             q_upstream += routed_flow[uid]
+
+        if sid in external_flow:
+            q_upstream += external_flow[sid]
 
         routed_flow[sid] = _compute_total_flow(q_local, q_upstream, k, x)
 
@@ -315,6 +332,72 @@ def _validate_inputs(
             )
 
     return common_index
+
+
+def _validate_external_inflows(
+    params: pd.DataFrame,
+    external_inflows: pd.DataFrame | None,
+    common_index: pd.Index,
+) -> dict[Hashable, np.ndarray]:
+    """Validate external inflows and align them with the simulation steps.
+
+    Parameters
+    ----------
+    params : pd.DataFrame
+        Validated parameter DataFrame.
+    external_inflows : pd.DataFrame or None
+        Discharge in m3/s entering subcatchments from outside the network.
+    common_index : pd.Index
+        Simulation time steps.
+
+    Returns
+    -------
+    dict
+        Mapping from receiving subcatchment ID to discharge arrays in m3/s.
+
+    Raises
+    ------
+    ValueError
+        If a column is not a subcatchment ID, a time step is missing or the
+        values are null, non-numeric or not finite.
+    """
+    if external_inflows is None:
+        return {}
+
+    ids = set(params["id"])
+    unknown_ids = [sid for sid in external_inflows.columns if sid not in ids]
+    if unknown_ids:
+        raise ValueError(
+            "external_inflows columns must be IDs present in params['id']: "
+            f"{unknown_ids}."
+        )
+
+    duplicated_columns = external_inflows.columns[
+        external_inflows.columns.duplicated()
+    ].tolist()
+    if duplicated_columns:
+        raise ValueError(
+            f"external_inflows contains duplicated columns: {duplicated_columns}."
+        )
+
+    missing_steps = common_index.difference(external_inflows.index)
+    if not missing_steps.empty:
+        raise ValueError(
+            "external_inflows must cover all simulation time steps; "
+            f"{len(missing_steps)} are missing."
+        )
+
+    values = external_inflows.loc[common_index].apply(pd.to_numeric, errors="coerce")
+    invalid_columns = values.columns[
+        ~np.isfinite(values.to_numpy(dtype=float)).all(axis=0)
+    ].tolist()
+    if invalid_columns:
+        raise ValueError(
+            "external_inflows contains null, non-numeric or non-finite values "
+            f"for columns: {invalid_columns}."
+        )
+
+    return {sid: values[sid].to_numpy(dtype=float) for sid in values.columns}
 
 
 def _validate_params(params: pd.DataFrame) -> None:

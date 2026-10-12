@@ -120,3 +120,45 @@ def test_run_network_passes_upstream_flow_through_when_k_is_zero():
     assert result["outlet"].tolist() == pytest.approx(
         (outlet_alone["outlet"] + result["headwater"]).tolist()
     )
+
+
+def test_run_network_routes_external_inflows_like_upstream_basins():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    full = run_network(params, precipitation, evapotranspiration)
+    partial = run_network(
+        params.iloc[[1]].copy(),
+        precipitation,
+        evapotranspiration,
+        external_inflows=full[["headwater"]].rename(columns={"headwater": "outlet"}),
+    )
+
+    assert partial["outlet"].tolist() == pytest.approx(full["outlet"].tolist())
+
+
+def test_run_network_rejects_external_inflows_for_unknown_basin():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame({"elsewhere": 1.0}, index=precipitation.index)
+
+    with pytest.raises(ValueError, match="external_inflows columns"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_rejects_external_inflows_with_missing_steps():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame({"outlet": 1.0}, index=precipitation.index[:-1])
+
+    with pytest.raises(ValueError, match="cover all simulation time steps"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)
+
+
+def test_run_network_rejects_null_external_inflows():
+    params = _params()
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+    inflows = pd.DataFrame({"outlet": [1.0, np.nan, 1.0, 1.0]}, index=precipitation.index)
+
+    with pytest.raises(ValueError, match="non-finite values"):
+        run_network(params, precipitation, evapotranspiration, external_inflows=inflows)

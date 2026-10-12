@@ -207,3 +207,28 @@ def test_run_network_returns_natural_flow_when_requested():
     assert natural.columns.tolist() == ["headwater", "outlet"]
     assert natural["headwater"].tolist() == pytest.approx(total["headwater"].tolist())
     assert natural["outlet"].tolist() == pytest.approx(outlet_alone["outlet"].tolist())
+
+
+def test_run_network_routes_reach_with_muskingum_cunge_router():
+    from mogestpy.quantity.hydrological.muskingum import MuskingumCunge
+
+    params = _params()
+    upstream_area = pd.Series([0.0, 513.37])
+    params["length"] = [0.0, 12_000.0]
+    params["q_ref"] = upstream_area**0.7 / 3
+    params["manning"] = 0.035
+    params["width"] = 1.5 * upstream_area**0.5
+    params["slope"] = 1e-3
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    routed = run_network(
+        params, precipitation, evapotranspiration, router=MuskingumCunge.router()
+    )
+    passed_through = run_network(
+        params.assign(k=0.0), precipitation, evapotranspiration
+    )
+
+    assert routed["headwater"].tolist() == pytest.approx(
+        passed_through["headwater"].tolist()
+    )
+    assert not np.allclose(routed["outlet"], passed_through["outlet"])

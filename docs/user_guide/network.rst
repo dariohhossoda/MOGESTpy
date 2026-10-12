@@ -1,16 +1,17 @@
-Hydrological Network Routing
-============================
+Basin networks
+==============
 
-The module :mod:`mogestpy.quantity.hydrological.routing` combines local
-rainfall-runoff estimates from SMAP with upstream routing through the
-Muskingum method. It is imported lazily, so users can load it only when a
-network simulation is required.
+The :mod:`mogestpy.quantity.hydrological.routing` module simulates a basin
+divided into subcatchments. SMAP produces the local discharge of each
+subcatchment, and the upstream flow is routed through the reach of the
+receiving subcatchment with the Muskingum method (or another routing method,
+see ``router`` below).
 
 .. code-block:: python
 
    from mogestpy.quantity.hydrological.routing import run_network
 
-Input Data
+Input data
 ----------
 
 The function ``run_network`` expects three ``pandas.DataFrame`` objects:
@@ -28,8 +29,8 @@ The function ``run_network`` expects three ``pandas.DataFrame`` objects:
    Time series with one column per subcatchment ID. Values are potential
    evapotranspiration depths in millimetres per time step.
 
-Parameter Table Format
-----------------------
+Parameter table
+---------------
 
 ``id``
    Unique subcatchment identifier. The value must also exist as a column in
@@ -100,7 +101,7 @@ Example
 
    discharge = run_network(params, precipitation, evapotranspiration)
 
-Optional Arguments
+Optional arguments
 ------------------
 
 ``external_inflows``
@@ -131,11 +132,35 @@ Optional Arguments
    in the parameter table. The function must return the routed discharge with
    the same length.
 
+   ``MuskingumCunge.router()`` routes each reach with the Muskingum-Cunge
+   method, reading ``length``, ``q_ref``, ``manning``, ``width`` and ``slope``
+   from the parameter table. The reach of a row is the one that carries the
+   upstream flow across that subcatchment, so its characteristics refer to the
+   area draining into it; headwater rows can use ``length = 0``:
+
+   .. code-block:: python
+
+      from mogestpy.quantity.hydrological.muskingum import MuskingumCunge
+
+      upstream_area = pd.Series([0.0, 513.37])  # km2 draining into each reach
+      params["length"] = [0.0, 12_000.0]  # m; 0 = no reach (pass-through)
+      params["q_ref"] = upstream_area**0.7 / 3  # m3/s
+      params["manning"] = 0.035
+      params["width"] = 1.5 * upstream_area**0.5  # m
+      params["slope"] = 1e-3  # m/m
+
+      discharge = run_network(
+          params,
+          precipitation,
+          evapotranspiration,
+          router=MuskingumCunge.router(),
+      )
+
 ``return_natural_flow``
    If ``True``, the function returns ``(total, natural)``, where ``natural`` is
    the local SMAP discharge of each subcatchment before adding upstream flow.
 
-Output Data
+Output data
 -----------
 
 The result is a ``pandas.DataFrame`` indexed by the common time steps shared by
@@ -161,8 +186,7 @@ External inflows must refer to existing IDs, cover all time steps and contain
 only finite values. A custom router must return finite values with the same
 length as its input.
 
-Related Modules
----------------
+.. seealso::
 
-* :mod:`mogestpy.quantity.hydrological.smap`
-* :mod:`mogestpy.quantity.hydrological.muskingum`
+   * :ref:`sphx_glr_auto_examples_plot_04_network_routing.py`
+   * :doc:`smap` and :doc:`muskingum`

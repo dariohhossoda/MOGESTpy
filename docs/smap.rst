@@ -200,8 +200,9 @@ The SmapD parameters are described in the table below.
 
 Examples
 ^^^^^^^^
+
 Simulation example
-++++++++++++++++++
+""""""""""""""""""
 
 To use the daily version of SMAP, you can create an instance of the SmapD class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the daily version of SMAP.
 
@@ -228,7 +229,7 @@ To use the daily version of SMAP, you can create an instance of the SmapD class 
 
 
 Calibration example
-+++++++++++++++++++
+"""""""""""""""""""
 
 The daily model can be calibrated against observed discharge data with the
 ``calibrate`` method.
@@ -317,7 +318,7 @@ Examples
 ^^^^^^^^
 
 Simulation example
-++++++++++++++++++
+""""""""""""""""""
 
 Similarly, to use the monthly version of SMAP, you can create an instance of the SmapM class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the monthly version of SMAP.
 
@@ -341,7 +342,7 @@ Similarly, to use the monthly version of SMAP, you can create an instance of the
    discharges = model.run_to_list(precipitations, evapotranspirations)
 
 Calibration example
-+++++++++++++++++++
+"""""""""""""""""""
 
 The monthly model uses the same ``calibrate`` method.
 

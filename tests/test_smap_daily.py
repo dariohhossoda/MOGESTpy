@@ -1,3 +1,5 @@
+import warnings
+
 from mogestpy.quantity.hydrological.smap import SmapD as Smap
 
 
@@ -249,3 +251,19 @@ def test_smapd_flow():
     assert len(results) == len(expected)
     for i, (result, exp) in enumerate(zip(results, expected)):
         assert abs(result - exp) < 1e-2, f"Step {i}: got {result}, expected {exp}"
+
+
+def test_smapd_calibrate_does_not_use_deprecated_methods():
+    """
+    Test SmapD calibration without deprecation warnings
+    """
+    prec = [0.0, 12.5, 30.1, 0.0, 18.7] * 4
+    etp = [4.5] * len(prec)
+    observed = Smap(Str=1200.0).run_to_list(prec, etp)
+
+    smap = Smap()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        result = smap.calibrate(prec, etp, observed, variables=["Str"])
+
+    assert result.fun < -0.9

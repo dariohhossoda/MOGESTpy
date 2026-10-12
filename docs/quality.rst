@@ -46,3 +46,4 @@ Example
    from mogestpy.quality import buwo
 
 .. bibliography:: references.bib
+   :filter: docname in docnames

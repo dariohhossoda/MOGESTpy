@@ -635,6 +635,91 @@ class SmapD:
 
         return result
 
+    def fast_calibrate(
+        self,
+        prec_arr: Iterable[float],
+        etp_arr: Iterable[float],
+        eval_arr: Iterable[float],
+        variables: list[str],
+        obj_func: Optional[Callable[[Iterable[float], Iterable[float]], float]] = None,
+        disp: bool = False,
+    ) -> OptimizeResult:
+        """
+        Fast calibration of the SMAP model using integer-based Differential Evolution.
+
+        This method optimizes the specified model parameters using integer values
+        (multiplied by 10000) to achieve faster calibration with 4 decimal places
+        of precision. The objective function will be minimized, so metrics like
+        KGE and NSE should be multiplied by -1.
+
+        Parameters
+        ----------
+        prec_arr : iterable
+            An iterable of precipitation values.
+        etp_arr : iterable
+            An iterable of evapotranspiration values.
+        eval_arr : iterable
+            An iterable of observed values.
+        variables : list of str
+            A list of variable names to be optimized.
+        obj_func : callable, optional
+            A callable function that takes observed and simulated values as
+            input and returns a float to be minimized. If None, the KGE
+            objective function will be used. The function signature should be
+            `obj_func(observed, simulated)`.
+        disp : bool, optional
+            Display optimization progress. Default is False.
+
+        Returns
+        -------
+        scipy.optimize.OptimizeResult
+            The result of the optimization process, as returned by
+            `scipy.optimize.differential_evolution`. The optimized parameters
+            are automatically scaled back to their original range and set on
+            the model.
+        """
+
+        invalid_vars = [var for var in variables if var not in self.__dict__]
+        if invalid_vars:
+            raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
+
+        # Multiply bounds by 10000 to work with integers
+        bounds = [
+            (round(lb * 10000), round(ub * 10000))
+            for lb, ub in [self.bounds()[var] for var in variables]
+        ]
+
+        if obj_func is None:
+
+            def default_obj_func(obs: Iterable[float], sim: Iterable[float]) -> float:
+                return -kge(obs, sim)
+
+            obj_func = default_obj_func
+
+        def objective(params: np.ndarray) -> float:
+            # Divide by 10000 to get the actual parameter values
+            actual_params = [p / 10000 for p in params]
+            self.__dict__.update(
+                {var: val for var, val in zip(variables, actual_params)}
+            )
+
+            return obj_func(eval_arr, list(self.run(prec_arr, etp_arr)))
+
+        # Use integrality=True for all variables
+        integrality = [True] * len(variables)
+
+        result = differential_evolution(
+            func=objective, bounds=bounds, integrality=integrality, disp=disp
+        )
+
+        # Scale the result back to original range
+        result.x = result.x / 10000
+
+        # Update model parameters with final calibrated values
+        self.__dict__.update({var: val for var, val in zip(variables, result.x)})
+
+        return result
+
     def pso_calibrate(
         self,
         prec_arr: Iterable[float],

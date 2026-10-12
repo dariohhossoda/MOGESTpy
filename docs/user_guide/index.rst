@@ -13,7 +13,7 @@ For runnable scripts with data and plots, see the :doc:`/auto_examples/index`.
    * - :doc:`smap`
      - SMAP rainfall-runoff, daily (``SmapD``) and monthly (``SmapM``)
    * - :doc:`muskingum`
-     - Muskingum flood routing, linear and non-linear
+     - Muskingum flood routing: linear, non-linear and Muskingum-Cunge
    * - :doc:`network`
      - Basin networks: SMAP per subcatchment with routing between them
    * - :doc:`hydrodynamic`

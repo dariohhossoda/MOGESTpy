@@ -4,7 +4,8 @@ Unit tests for the Muskingum routing module using pytest.
 
 import pytest
 import numpy as np
-from mogestpy.quantity.hydrological.muskingum import Muskingum
+import pandas as pd
+from mogestpy.quantity.hydrological.muskingum import Muskingum, MuskingumCunge
 
 
 class TestMuskingum:
@@ -120,3 +121,104 @@ class TestMuskingum:
             outflow = method()
             # Sum of outflow should be close to sum of inflow (within 5%)
             assert sum(outflow) == pytest.approx(sum(inflow), rel=0.05)
+
+
+class TestMuskingumCunge:
+    """Test cases for the MuskingumCunge class."""
+
+    @pytest.fixture
+    def reach(self):
+        """Reach of 60 km draining 2500 km² (MGB regionalization)."""
+        area = 2500.0
+        return {
+            "length": 60_000.0,
+            "q_ref": area**0.7 / 3,
+            "manning": 0.035,
+            "width": 1.5 * area**0.5,
+            "slope": 2e-4,
+        }
+
+    @pytest.fixture
+    def flood(self):
+        """Daily flood hydrograph (m³/s)."""
+        return [50, 50, 120, 400, 650, 500, 320, 210, 140, 100, 80, 65, 55, 50]
+
+    def test_parameters_keep_coefficients_non_negative(self, reach):
+        """Coefficients are non-negative, sum to one and X stays in range."""
+        params = MuskingumCunge.parameters(dt=3600.0, **reach)
+
+        coefficients = [params["c0"], params["c1"], params["c2"]]
+        assert min(coefficients) >= 0
+        assert sum(coefficients) == pytest.approx(1.0)
+        assert 0.0 <= params["x"] <= 0.5
+        assert params["dt"] <= 3600.0
+        assert params["n_subreaches"] * params["dx"] == pytest.approx(reach["length"])
+
+    def test_steady_inflow_is_unchanged(self, reach):
+        """A constant inflow leaves the reach unchanged."""
+        outflow = MuskingumCunge.downstream_routing([80.0] * 10, **reach)
+
+        assert outflow == pytest.approx([80.0] * 10)
+
+    def test_flood_is_attenuated_and_conserved(self, reach, flood):
+        """The flood peak is attenuated while the volume is conserved."""
+        outflow = MuskingumCunge.downstream_routing(flood, **reach)
+
+        assert len(outflow) == len(flood)
+        assert outflow.max() < max(flood)
+        assert outflow.sum() == pytest.approx(sum(flood), rel=0.01)
+
+    def test_short_reach_is_routed_on_a_daily_step(self, flood):
+        """A reach shorter than a day of travel is still routed."""
+        outflow = MuskingumCunge.downstream_routing(
+            flood, length=3000.0, q_ref=80.0, manning=0.035, width=40.0, slope=5e-4
+        )
+
+        assert not np.allclose(outflow, flood)
+        assert outflow == pytest.approx(flood, rel=0.05)
+
+    def test_single_step_matches_linear_muskingum(self, flood):
+        """With one sub-reach and no sub-steps it equals linear Muskingum."""
+        area = 80.0
+        reach = {
+            "length": 3000.0,
+            "q_ref": area**0.7 / 3,
+            "manning": 0.035,
+            "width": 1.5 * area**0.5,
+            "slope": 5e-4,
+        }
+        params = MuskingumCunge.parameters(dt=3600.0, **reach)
+        assert params["n_subreaches"] == 1
+        assert params["dt"] == 3600.0
+
+        outflow = MuskingumCunge.downstream_routing(
+            flood, dt=3600.0, sub_dt=3600.0, **reach
+        )
+        expected = Muskingum.downstream_routing(
+            flood, params["k"], params["x"], params["dt"]
+        )
+
+        assert outflow == pytest.approx(expected)
+
+    def test_rejects_non_positive_reach_characteristics(self, reach):
+        """Reach characteristics must be positive."""
+        reach["slope"] = 0.0
+
+        with pytest.raises(ValueError, match="slope"):
+            MuskingumCunge.parameters(dt=3600.0, **reach)
+
+    def test_router_reads_reach_from_row(self, reach, flood):
+        """The router reads the reach from a parameter row."""
+        route = MuskingumCunge.router()
+        row = pd.Series(reach)
+
+        assert route(np.asarray(flood, dtype=float), row) == pytest.approx(
+            MuskingumCunge.downstream_routing(flood, **reach)
+        )
+
+    def test_router_passes_flow_through_zero_length_reach(self, reach, flood):
+        """A reach with zero length passes the flow through."""
+        route = MuskingumCunge.router()
+        row = pd.Series({**reach, "length": 0.0})
+
+        assert route(np.asarray(flood, dtype=float), row) == pytest.approx(flood)

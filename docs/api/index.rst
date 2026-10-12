@@ -12,7 +12,7 @@ Classes and functions generated from the source code, grouped by module.
    * - :doc:`smap`
      - ``SmapD`` and ``SmapM`` rainfall-runoff models
    * - :doc:`muskingum`
-     - ``Muskingum`` flood routing
+     - ``Muskingum`` and ``MuskingumCunge`` flood routing
    * - :doc:`routing`
      - ``run_network`` for basin networks
    * - :doc:`mass_balance`

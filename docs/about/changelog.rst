@@ -12,6 +12,8 @@ DOI on Zenodo.
   Muskingum routing between them, with pass-through reaches (``k = 0``),
   external inflows, custom routing functions and the local (natural) flow as
   output (#50, #52).
+* ``MuskingumCunge``: Muskingum-Cunge routing with parameters from the reach
+  characteristics, also usable as the ``router`` of ``run_network`` (#53).
 * ``SmapD.fast_calibrate``, as in ``SmapM`` (#51).
 * ``SmapD.calibrate`` no longer emits deprecation warnings (#58).
 * Documentation: Sphinx site on Read the Docs, built from the source, with a

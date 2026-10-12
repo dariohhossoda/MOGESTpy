@@ -1,3 +1,5 @@
+import pytest
+
 from mogestpy.quantity.hydrological.smap import SmapD as Smap
 
 
@@ -249,3 +251,32 @@ def test_smapd_flow():
     assert len(results) == len(expected)
     for i, (result, exp) in enumerate(zip(results, expected)):
         assert abs(result - exp) < 1e-2, f"Step {i}: got {result}, expected {exp}"
+
+
+def test_smapd_fast_calibrate_recovers_parameter():
+    """
+    Test SmapD fast calibration against discharge simulated with known parameters
+    """
+    prec = [0.0, 0.0, 12.5, 30.1, 4.2, 0.0, 0.0, 18.7, 2.3, 0.0] * 12
+    etp = [4.5] * len(prec)
+
+    reference = Smap(Ad=513.37, Str=1200.0, Ebin=11.05)
+    observed = reference.run_to_list(prec, etp)
+
+    smap = Smap(Ad=513.37, Str=500.0, Ebin=11.05)
+    result = smap.fast_calibrate(prec, etp, observed, variables=["Str"])
+
+    assert result.x[0] == pytest.approx(1200.0, abs=10.0)
+    assert result.x[0] == round(result.x[0], 4)
+    assert smap.Str == result.x[0]
+    assert result.fun < -0.99
+
+
+def test_smapd_fast_calibrate_rejects_unknown_variable():
+    """
+    Test SmapD fast calibration with a variable that is not a model parameter
+    """
+    smap = Smap()
+
+    with pytest.raises(ValueError, match="unknown"):
+        smap.fast_calibrate([1.0], [1.0], [1.0], variables=["unknown"])

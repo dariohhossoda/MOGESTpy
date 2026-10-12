@@ -629,7 +629,7 @@ class SmapD:
         def objective(params: np.ndarray) -> float:
             self.__dict__.update({var: val for var, val in zip(variables, params)})
 
-            return obj_func(eval_arr, list(self.Run(prec_arr, etp_arr)))
+            return obj_func(eval_arr, list(self.run(prec_arr, etp_arr)))
 
         result = differential_evolution(func=objective, bounds=bounds, disp=disp)
 

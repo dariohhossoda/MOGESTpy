@@ -1,7 +1,7 @@
 Installation
 ============
 
-MOGESTpy requires Python 3.9 or later.
+MOGESTpy requires Python 3.11 or later.
 
 From PyPI
 ---------

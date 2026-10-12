@@ -8,6 +8,8 @@ DOI on Zenodo.
 2.1.0 (unreleased)
 ------------------
 
+* **Requires Python 3.11 or later and NumPy 2.4.4 or later** (2.0.0 supported
+  Python 3.9). Users on older Python versions keep getting 2.0.0 from pip.
 * Basin networks: ``run_network`` simulates SMAP per subcatchment with
   Muskingum routing between them, with pass-through reaches (``k = 0``),
   external inflows, custom routing functions and the local (natural) flow as

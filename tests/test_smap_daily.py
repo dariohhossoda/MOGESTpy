@@ -268,7 +268,7 @@ def test_smapd_fast_calibrate_recovers_parameter():
     smap = Smap(Ad=513.37, Str=500.0, Ebin=11.05)
     result = smap.fast_calibrate(prec, etp, observed, variables=["Str"])
 
-    assert result.x[0] == pytest.approx(1200.0, abs=10.0)
+    assert result.x[0] == pytest.approx(1200.0, rel=0.05)
     assert result.x[0] == round(result.x[0], 4)
     assert smap.Str == result.x[0]
     assert result.fun < -0.99

@@ -149,9 +149,7 @@ def run_network(
         common_index,
         verbose,
     )
-    network_flow = _route_network(
-        params, natural_flow, external_flow, router, verbose
-    )
+    network_flow = _route_network(params, natural_flow, external_flow, router, verbose)
 
     total = pd.DataFrame(network_flow, index=common_index)
 

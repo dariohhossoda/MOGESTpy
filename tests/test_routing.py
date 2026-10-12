@@ -35,17 +35,11 @@ def _params() -> pd.DataFrame:
 def _forcing(ids: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
     index = pd.date_range("2026-01-01", periods=4, freq="D")
     precipitation = pd.DataFrame(
-        {
-            sid: [0.0, 5.0, 0.0, 12.0]
-            for sid in ids
-        },
+        {sid: [0.0, 5.0, 0.0, 12.0] for sid in ids},
         index=index,
     )
     evapotranspiration = pd.DataFrame(
-        {
-            sid: [4.5, 4.5, 4.5, 4.5]
-            for sid in ids
-        },
+        {sid: [4.5, 4.5, 4.5, 4.5] for sid in ids},
         index=index,
     )
     return precipitation, evapotranspiration
@@ -158,7 +152,9 @@ def test_run_network_rejects_external_inflows_with_missing_steps():
 def test_run_network_rejects_null_external_inflows():
     params = _params()
     precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
-    inflows = pd.DataFrame({"outlet": [1.0, np.nan, 1.0, 1.0]}, index=precipitation.index)
+    inflows = pd.DataFrame(
+        {"outlet": [1.0, np.nan, 1.0, 1.0]}, index=precipitation.index
+    )
 
     with pytest.raises(ValueError, match="non-finite values"):
         run_network(params, precipitation, evapotranspiration, external_inflows=inflows)

@@ -24,7 +24,7 @@ include = [
 python = "^3.11"
 spotpy = "^1.6.2"
 scikit-learn = "^1.5.2"
-pandas = "^2.2.3"
+pandas = ">=2.2.3,<4.0.0"
 tqdm = "^4.67.3"
 numpy = "^2.4.4"
 
@@ -44,7 +44,7 @@ openpyxl = "^3.1.5"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-sphinx = {version = "^8.2", python = ">=3.11"}
+sphinx = {version = ">=8.2,<10.0", python = ">=3.11"}
 sphinxcontrib-bibtex = {version = "^2.6.5", python = ">=3.11"}
 pydata-sphinx-theme = {version = "^0.23.0", python = ">=3.11"}
 sphinx-gallery = {version = "^0.22.1", python = ">=3.11"}

@@ -1,4 +1,6 @@
-mogestpy
-sphinx
-sphinx_rtd_theme
-sphinxcontrib-bibtex
+sphinx>=8.2
+sphinxcontrib-bibtex>=2.6.5
+pydata-sphinx-theme>=0.23
+sphinx-gallery>=0.22
+sphinx-design>=0.7
+matplotlib>=3.8

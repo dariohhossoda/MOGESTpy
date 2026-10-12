@@ -37,3 +37,7 @@ docs/_build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Sphinx-Gallery output
+docs/auto_examples/
+docs/sg_execution_times.rst

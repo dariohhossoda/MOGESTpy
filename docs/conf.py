@@ -17,9 +17,6 @@ copyright = "2026, Dario Hachisu Hossoda"
 release = mogestpy.__version__
 version = release
 
-autodoc_mock_imports = ["numpy"]
-
-
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
@@ -28,7 +25,7 @@ extensions = [
 ]
 
 autodoc_typehints = "description"
-napoleon_google_docstring = False
+napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 

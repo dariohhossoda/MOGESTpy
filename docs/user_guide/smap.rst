@@ -10,9 +10,9 @@ The MOGESTpy implementation of SMAP includes two versions: a daily timestep vers
 Daily timestep
 --------------
 
-The Daily version of SMAP consists of 3 conceptual reservoirs: surface, soil and subsurface. This version can be accessed through the :mod:`mogestpy.quantity.hydrological.smap.SmapD` class.
+The Daily version of SMAP consists of 3 conceptual reservoirs: surface, soil and subsurface. This version can be accessed through the :class:`~mogestpy.quantity.hydrological.smap.SmapD` class.
 
-.. figure:: _static/smapd.svg
+.. figure:: /_static/smapd.svg
    :alt: SMAP Daily Schematic
    :align: center
 
@@ -198,83 +198,80 @@ The SmapD parameters are described in the table below.
       - 2.5
       - :math:`\text{mm}`
 
-Examples
-^^^^^^^^
+Usage
+^^^^^
 
-Simulation example
-""""""""""""""""""
+Simulation
+""""""""""
 
-To use the daily version of SMAP, you can create an instance of the SmapD class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the daily version of SMAP.
+Create a :class:`~mogestpy.quantity.hydrological.smap.SmapD` model with the
+drainage area ``Ad`` (km²) and the parameters, then run it with daily
+precipitation and potential evapotranspiration (mm/day). The series must have
+the same length and no missing values.
 
 .. code-block:: python
 
    from mogestpy.quantity.hydrological.smap import SmapD
 
    model = SmapD(
-    Str=100,
-    Crec=19.6125,
-    Capc=30,
-    kkt=47.53,
-    k2t=1.430,
-    Ai=2,
-    Tuin=.05,
-    Ebin=0.1,
-    Ad=70.2
-    )
-
-   precipitations = [10, 20, 15, 5, 0]  # Example precipitation data
-   evapotranspirations = [2, 3, 1, 0.5, 0]  # Example evapotranspiration data
-
-   discharges = model.run_to_list(precipitations, evapotranspirations)
-
-
-Calibration example
-"""""""""""""""""""
-
-The daily model can be calibrated against observed discharge data with the
-``calibrate`` method.
-
-.. code-block:: python
-
-   from mogestpy.quantity.hydrological.smap import SmapD
-
-   model = SmapD() # Initialize with default parameters
-
-   result = model.calibrate(
-       prec_arr=precipitations, # as list/np.array/pd.Series
-       etp_arr=evapotranspirations, # as list/np.array/pd.Series
-       eval_arr=observed_discharge, # as list/np.array/pd.Series
-       variables=["Str", "Crec", "Capc", "kkt", "k2t", "Ai"],
-       disp=True,
+       Ad=70.2,
+       Str=100.0,
+       Crec=19.6,
+       Capc=30.0,
+       kkt=47.5,
+       k2t=1.43,
+       Ai=2.0,
+       Tuin=0.05,  # initial soil moisture (fraction)
+       Ebin=0.1,  # initial base flow (m³/s)
    )
 
-   print(result.x)
-   print(result.fun)
+   precipitation = [10.0, 20.0, 15.0, 5.0, 0.0, 0.0, 32.0, 4.0]
+   evapotranspiration = [3.5] * len(precipitation)
 
-By default the calibration uses the Kling-Gupta Efficiency (KGE) as the objective function, but other metrics can be used by specifying the ``obj_func`` argument in the ``calibrate`` method.
+   discharge = model.run_to_list(precipitation, evapotranspiration)  # m³/s
+   states = model.run_to_dataframe(precipitation, evapotranspiration)
 
-The ``fast_calibrate`` method takes the same arguments and searches integer
-parameter values scaled by 10000, so the calibrated parameters keep 4 decimal
-places. It also sets the calibrated values on the model, which can be run
-right after calibration:
+``run_to_dataframe`` returns the discharge together with the fluxes and the
+storage of each reservoir (``Rsolo``, ``Rsup``, ``Rsub``) for every step.
+
+Calibration
+"""""""""""
+
+``calibrate`` and ``fast_calibrate`` fit the listed parameters to observed
+discharge with Differential Evolution, within the bounds of ``bounds()``.
+The objective function is minimized; by default it is ``-KGE``.
+``fast_calibrate`` searches values with 4 decimal places, which converges
+faster, and sets the calibrated values on the model:
 
 .. code-block:: python
 
    result = model.fast_calibrate(
-       prec_arr=precipitations,
-       etp_arr=evapotranspirations,
-       eval_arr=observed_discharge,
-       variables=["Str", "Crec", "Capc", "kkt", "k2t", "Ai"],
+       prec_arr=precipitation,
+       etp_arr=evapotranspiration,
+       eval_arr=observed_discharge,  # observed series, same length (m³/s)
+       variables=["Str", "Crec", "kkt", "k2t"],
    )
 
-   discharges = model.run_to_list(precipitations, evapotranspirations)
+   print(result.x)  # calibrated values, in the order of ``variables``
+   print(-result.fun)  # KGE
+
+   simulated = model.run_to_list(precipitation, evapotranspiration)
+
+Any function ``f(observed, simulated)`` to be minimized can be passed as
+``obj_func``, e.g. ``lambda obs, sim: -nse(obs, sim)``.
+
+.. seealso::
+
+   :ref:`sphx_glr_auto_examples_plot_01_smap_daily.py` and
+   :ref:`sphx_glr_auto_examples_plot_02_smap_calibration.py`, with real forcing
+   data, plots and a validation period.
 
 Monthly timestep
 ----------------
 
-The Monthly version of SMAP consists of 2 conceptual reservoirs: soil and subsurface and can be access through the :mod:`mogestpy.quantity.hydrological.smap.SmapM` class. This version is designed for applications where monthly data is more appropriate or available, and it simplifies the model structure while still capturing the essential hydrological processes.
+The Monthly version of SMAP consists of 2 conceptual reservoirs: soil and subsurface and can be accessed through the :class:`~mogestpy.quantity.hydrological.smap.SmapM` class. This version is designed for applications where monthly data is more appropriate or available, and it simplifies the model structure while still capturing the essential hydrological processes.
 
-.. figure:: _static/smapm.svg
+.. figure:: /_static/smapm.svg
    :alt: SMAP Monthly Schematic
    :name: smapm
    :align: center
@@ -330,53 +327,22 @@ The monthly SMAP parameters are described in the table below.
 
 
 
-Examples
-^^^^^^^^
+Usage
+^^^^^
 
-Simulation example
-""""""""""""""""""
-
-Similarly, to use the monthly version of SMAP, you can create an instance of the SmapM class and provide the necessary parameters. Here is an example of how to set up and run a simulation using the monthly version of SMAP.
+:class:`~mogestpy.quantity.hydrological.smap.SmapM` has the same interface as
+the daily model, with monthly totals (mm/month) as input:
 
 .. code-block:: python
 
    from mogestpy.quantity.hydrological.smap import SmapM
 
-   model = SmapM(
-    Str=1000,
-    Pes=1,
-    Crec=0.5,
-    kkt=1.5,
-    Tuin=0.5,
-    Ebin=0.1,
-    Ad=1,
-    )
+   model = SmapM(Ad=70.2, Str=1000.0, Pes=1.0, Crec=0.5, kkt=1.5, Tuin=0.5, Ebin=0.1)
 
-   precipitations = [100, 200, 150, 50, 0]  # Example precipitation data
-   evapotranspirations = [20, 30, 10, 5, 0]  # Example evapotranspiration data
+   precipitation = [210.0, 180.0, 150.0, 70.0, 40.0, 30.0]
+   evapotranspiration = [120.0, 110.0, 100.0, 80.0, 60.0, 55.0]
 
-   discharges = model.run_to_list(precipitations, evapotranspirations)
+   discharge = model.run_to_list(precipitation, evapotranspiration)  # m³/s
 
-Calibration example
-"""""""""""""""""""
-
-The monthly model uses the same ``calibrate`` and ``fast_calibrate`` methods.
-
-.. code-block:: python
-
-   from mogestpy.quantity.hydrological.smap import SmapM
-
-   model = SmapM()
-
-   result = model.calibrate(
-       prec_arr=precipitations, # as list/np.array/pd.Series
-       etp_arr=evapotranspirations, # as list/np.array/pd.Series
-       eval_arr=observed_discharge, # as list/np.array/pd.Series
-       variables=["Str", "Pes", "Crec", "kkt"],
-       disp=True,
-   )
-
-   print(result.x)
-   print(result.fun)
-
-
+``calibrate`` and ``fast_calibrate`` work as in the daily model, e.g. with
+``variables=["Str", "Pes", "Crec", "kkt"]``.

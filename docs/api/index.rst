@@ -1,67 +1,33 @@
-API Reference
+API reference
 =============
 
-This page exposes the package entry points and the main public modules.
+Classes and functions generated from the source code, grouped by module.
 
-Top-Level Package
------------------
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
 
-.. automodule:: mogestpy
-   :members:
-   :undoc-members:
+   * - Module
+     - Contents
+   * - :doc:`smap`
+     - ``SmapD`` and ``SmapM`` rainfall-runoff models
+   * - :doc:`muskingum`
+     - ``Muskingum`` flood routing
+   * - :doc:`routing`
+     - ``run_network`` for basin networks
+   * - :doc:`mass_balance`
+     - ``MassBalance`` of reservoirs
+   * - :doc:`hydrodynamic`
+     - ``SIHQUAL``, ``SaintVenant`` and ``TrapezoidalCrossSection``
+   * - :doc:`quality`
+     - ``ZeroDimensional`` and ``BuildUpWashoff``
 
-Quantity Package
-----------------
+.. toctree::
+   :hidden:
 
-.. automodule:: mogestpy.quantity
-   :members:
-   :undoc-members:
-
-Hydrological Models
--------------------
-
-.. automodule:: mogestpy.quantity.hydrological
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quantity.hydrological.mass_balance
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quantity.hydrological.muskingum
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quantity.hydrological.routing
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quantity.hydrological.smap
-   :members:
-   :undoc-members:
-
-Hydrodynamic Models
--------------------
-
-.. automodule:: mogestpy.quantity.hydrodynamic.saint_venant
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quantity.hydrodynamic.sihqual
-   :members:
-   :undoc-members:
-
-Quality Package
----------------
-
-.. automodule:: mogestpy.quality
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quality.zero_d
-   :members:
-   :undoc-members:
-
-.. automodule:: mogestpy.quality.buwo
-   :members:
-   :undoc-members:
+   smap
+   muskingum
+   routing
+   mass_balance
+   hydrodynamic
+   quality

@@ -105,3 +105,18 @@ def test_run_network_rejects_network_cycles():
 
     with pytest.raises(ValueError, match="cycle"):
         run_network(params, precipitation, evapotranspiration)
+
+
+def test_run_network_passes_upstream_flow_through_when_k_is_zero():
+    params = _params()
+    params["k"] = 0.0
+    precipitation, evapotranspiration = _forcing(["headwater", "outlet"])
+
+    result = run_network(params, precipitation, evapotranspiration)
+    outlet_alone = run_network(
+        params.iloc[[1]].copy(), precipitation, evapotranspiration
+    )
+
+    assert result["outlet"].tolist() == pytest.approx(
+        (outlet_alone["outlet"] + result["headwater"]).tolist()
+    )

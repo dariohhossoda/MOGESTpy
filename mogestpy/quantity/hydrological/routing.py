@@ -17,9 +17,10 @@ following columns:
 - ``str``, ``crec``, ``capc``, ``kkt``, ``k2t``, ``ai``, ``tuin`` and ``ebin``:
   SMAP parameters. ``tuin`` is expected as a percentage from 0 to 100 and is
   converted to the fraction expected by ``SmapD``.
-- ``k`` and ``x``: Muskingum routing parameters. ``k`` must be non-negative,
-  and it must be positive when the subcatchment receives upstream flow. ``x``
-  must be between 0 and 0.5.
+- ``k`` and ``x``: Muskingum routing parameters. ``k`` must be non-negative;
+  ``k = 0`` passes the upstream flow through unchanged, which suits reaches
+  whose travel time is negligible compared with the time step. ``x`` must be
+  between 0 and 0.5.
 - ``downstream_id``: identifier of the next downstream subcatchment, or a null
   value for outlet subcatchments.
 
@@ -250,12 +251,6 @@ def _route_network(
 
         for uid in upstream_ids:
             q_upstream += routed_flow[uid]
-
-        if upstream_ids and k <= 0:
-            raise ValueError(
-                "params['k'] must be positive for basins that receive "
-                f"upstream flow. Invalid basin: {sid}."
-            )
 
         routed_flow[sid] = _compute_total_flow(q_local, q_upstream, k, x)
 
@@ -489,7 +484,8 @@ def _compute_total_flow(
     q_upstream : np.ndarray
         Sum of routed upstream discharges in m3/s.
     k : float
-        Muskingum storage coefficient in time-step units.
+        Muskingum storage coefficient in time-step units. ``k = 0`` passes the
+        upstream flow through without routing.
     x : float
         Muskingum weighting factor, expected between 0 and 0.5.
 
@@ -510,6 +506,9 @@ def _compute_total_flow(
 
     if not np.any(q_upstream):
         return q_local.copy()
+
+    if k == 0:
+        return q_local + q_upstream
 
     routed = np.asarray(
         Muskingum.downstream_routing(q_upstream, k, x, dt=1),

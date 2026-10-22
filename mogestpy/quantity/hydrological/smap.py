@@ -348,12 +348,68 @@ class SmapD:
     # region: Transfer Functions
 
     def Es_calc(self, P: float, Ai: float, Str: float, Rsolo: float) -> float:
+        r"""
+        Calculate surface runoff with the SCS method.
+
+        Parameters
+        ----------
+        P : float
+            Precipitation (mm).
+        Ai : float
+            Initial abstraction (mm).
+        Str : float
+            Soil saturation capacity (mm).
+        Rsolo : float
+            Soil reservoir level (mm).
+
+        Returns
+        -------
+        float
+            Surface runoff (mm).
+
+        Notes
+        -----
+        .. math::
+
+            Es = \begin{cases}
+                \frac{(P - Ai)^2}{P - Ai + Str - R_{solo}}, & \text{if } P > Ai \\
+                0, & \text{otherwise}
+            \end{cases}
+        """
         inf = P - Ai
         if inf > 0:
             return inf**2 / (inf + Str - Rsolo)
         return 0
 
     def Er_calc(self, P: float, Ep: float, Es: float, Tu: float) -> float:
+        r"""
+        Calculate actual evapotranspiration.
+
+        Parameters
+        ----------
+        P : float
+            Precipitation (mm).
+        Ep : float
+            Potential evapotranspiration (mm).
+        Es : float
+            Surface runoff (mm).
+        Tu : float
+            Soil moisture content (fraction, 0-1).
+
+        Returns
+        -------
+        float
+            Actual evapotranspiration (mm).
+
+        Notes
+        -----
+        .. math::
+
+            Er = \begin{cases}
+                Ep, & \text{if } (P - Es) > Ep \\
+                (P - Es) + (Ep - (P - Es)) \cdot Tu, & \text{otherwise}
+            \end{cases}
+        """
         k = P - Es
         if k > Ep:
             return Ep
@@ -362,24 +418,142 @@ class SmapD:
     def Rec_calc(
         self, Crec: float, Tu: float, Rsolo: float, Capc: float, Str: float
     ) -> float:
+        r"""
+        Calculate groundwater recharge.
+
+        Parameters
+        ----------
+        Crec : float
+            Recharge coefficient (%).
+        Tu : float
+            Soil moisture content (fraction, 0-1).
+        Rsolo : float
+            Soil reservoir level (mm).
+        Capc : float
+            Field capacity (%).
+        Str : float
+            Soil saturation capacity (mm).
+
+        Returns
+        -------
+        float
+            Recharge to the subsurface reservoir (mm).
+
+        Notes
+        -----
+        .. math::
+
+            Rec = \begin{cases}
+                \frac{Crec}{100} \cdot Tu \cdot
+                \left(R_{solo} - \frac{Capc}{100} \cdot Str\right),
+                & \text{if } R_{solo} > \frac{Capc}{100} \cdot Str \\
+                0, & \text{otherwise}
+            \end{cases}
+        """
         if Rsolo > Capc / 100 * Str:
             return Crec / 100 * Tu * (Rsolo - Capc / 100 * Str)
         return 0
 
     def Ed_calc(self, Rsup: float, k2t: float) -> float:
+        r"""
+        Calculate direct runoff from the surface reservoir.
+
+        Parameters
+        ----------
+        Rsup : float
+            Surface reservoir level (mm).
+        k2t : float
+            Surface runoff recession constant (days).
+
+        Returns
+        -------
+        float
+            Direct runoff (mm).
+
+        Notes
+        -----
+        .. math::
+
+            Ed = R_{sup} \cdot (1 - K2), \quad K2 = 0.5^{1/k2t}
+        """
         k2 = 0.5 ** (1 / k2t)
         return Rsup * (1 - k2)
 
     def Eb_calc(self, Rsub: float, kkt: float) -> float:
+        r"""
+        Calculate base flow from the subsurface reservoir.
+
+        Parameters
+        ----------
+        Rsub : float
+            Subsurface reservoir level (mm).
+        kkt : float
+            Base flow recession constant (days).
+
+        Returns
+        -------
+        float
+            Base flow (mm).
+
+        Notes
+        -----
+        .. math::
+
+            Eb = R_{sub} \cdot (1 - Kk), \quad Kk = 0.5^{1/kkt}
+        """
         kt = 0.5 ** (1 / kkt)
         return Rsub * (1 - kt)
 
     def Tu_calc(self, RSolo: float, Str: float) -> float:
+        r"""
+        Calculate soil moisture content.
+
+        Parameters
+        ----------
+        RSolo : float
+            Soil reservoir level (mm).
+        Str : float
+            Soil saturation capacity (mm).
+
+        Returns
+        -------
+        float
+            Soil moisture content (fraction).
+
+        Notes
+        -----
+        .. math::
+
+            Tu = \frac{R_{solo}}{Str}
+        """
         return RSolo / Str
 
     # endregion Transfer Functions
 
     def discharge_calc(self, Ed: float, Eb: float, Ad: float) -> float:
+        r"""
+        Calculate discharge at the basin outlet.
+
+        Parameters
+        ----------
+        Ed : float
+            Direct runoff (mm).
+        Eb : float
+            Base flow (mm).
+        Ad : float
+            Drainage area (km²).
+
+        Returns
+        -------
+        float
+            Discharge (m³/s).
+
+        Notes
+        -----
+        .. math::
+
+            Q = (Ed + Eb) \cdot \frac{Ad}{86.4}
+        """
         return (Ed + Eb) * Ad / 86.4
 
     def run_step(self, prec: float, etp: float, reset: bool = False) -> float:

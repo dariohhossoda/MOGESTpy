@@ -164,14 +164,16 @@ class BuildUpWashoff:
                 buildup_specific: float = buildup_curve.get(self.BuMethod)(bu_time)
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
             else:
-                washoff_curve: dict[int, Callable[[float, float], float]] = {
-                    1: self.WashoffExp,
-                    2: self.WashoffRating,
-                    3: self.WashoffEMC,
+                landuse_area: float = self.Area * self.AreaFraction
+
+                washoff_curve: dict[int, Callable[[float], float]] = {
+                    1: lambda q: self.WashoffExp(q, buildup_mass),
+                    2: lambda q: self.WashoffRating(q, landuse_area),
+                    3: lambda q: self.WashoffEMC(q, landuse_area),
                 }
 
                 washoff_rate: float = washoff_curve.get(self.WoMethod)(
-                    self.SurfaceFlow[i], buildup_mass
+                    self.SurfaceFlow[i]
                 )
 
                 self.Washoff.append(washoff_rate * self.timestep_d)

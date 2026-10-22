@@ -1126,7 +1126,7 @@ class SmapM:
         Ad : float, optional
             Drainage area (km²). Default is 1.
         """
-        # Inicialização das variáveis do modelo
+        # Initialize model variables
         self.i = 0
 
         self.Str = Str
@@ -1225,7 +1225,7 @@ class SmapM:
                     return False
         return True
 
-    # region: Funções de reservatórios
+    # region: Reservoirs Functions
     def Rsolo_calc(self, Rsolo, P, Es, Er, Rec) -> float:
         """
         Calculate updated soil reservoir value.

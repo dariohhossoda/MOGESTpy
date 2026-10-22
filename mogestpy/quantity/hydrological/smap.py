@@ -1010,6 +1010,12 @@ class SmapD:
 
     # Deprecated method names with warnings
     def RunStep(self, *args: Any, **kwargs: Any) -> float:
+        """
+        Run one time step of the model.
+
+        .. deprecated:: 0.1.0
+           Use :meth:`run_step` instead.
+        """
         warnings.warn(
             "RunStep is deprecated and will be removed in a future version. "
             "Use run_step instead.",
@@ -1019,6 +1025,12 @@ class SmapD:
         return self.run_step(*args, **kwargs)
 
     def Run(self, *args: Any, **kwargs: Any) -> Iterator[float]:
+        """
+        Run the model over a precipitation and evapotranspiration series.
+
+        .. deprecated:: 0.1.0
+           Use :meth:`run` instead.
+        """
         warnings.warn(
             "Run is deprecated and will be removed in a future version. "
             "Use run instead.",
@@ -1028,6 +1040,12 @@ class SmapD:
         return self.run(*args, **kwargs)
 
     def RunToList(self, *args: Any, **kwargs: Any) -> list[float]:
+        """
+        Run the model and return the discharges as a list.
+
+        .. deprecated:: 0.1.0
+           Use :meth:`run_to_list` instead.
+        """
         warnings.warn(
             "RunToList is deprecated and will be removed in a future version. "
             "Use run_to_list instead.",
@@ -1037,6 +1055,12 @@ class SmapD:
         return self.run_to_list(*args, **kwargs)
 
     def Calibrate(self, *args: Any, **kwargs: Any) -> OptimizeResult:
+        """
+        Calibrate the model parameters.
+
+        .. deprecated:: 0.1.0
+           Use :meth:`calibrate` instead.
+        """
         warnings.warn(
             "Calibrate is deprecated and will be removed in a future version. "
             "Use calibrate instead.",

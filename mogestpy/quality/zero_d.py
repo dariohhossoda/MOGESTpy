@@ -8,15 +8,24 @@ class ZeroDimensional:
         """
         Initializes the ZeroD class.
 
-        Args:
-            volume (float): The volume of the system.
-            Qin (float): The inflow rate.
-            Qout (float): The outflow rate.
-            Cin (float): The concentration of the inflow.
-            As (float): The surface area of the system.
-            k (float): The reaction rate constant.
-            v (float): The reaction volume.
-            timestep (float): The time step for simulation.
+        Parameters
+        ----------
+        volume : float
+            The volume of the system.
+        Qin : float
+            The inflow rate.
+        Qout : float
+            The outflow rate.
+        Cin : float
+            The concentration of the inflow.
+        As : float
+            The surface area of the system.
+        k : float
+            The reaction rate constant.
+        v : float
+            The reaction volume.
+        timestep : float
+            The time step for simulation.
         """
         self.Input = ZeroDimensional.Input(volume, Qin, Qout, Cin, As)
         self.SimCount = len(self.Input.Volume)
@@ -28,8 +37,10 @@ class ZeroDimensional:
         """
         Represents the output of a calculation.
 
-        Attributes:
-            ConcentrationOut (list): A list of concentration values.
+        Attributes
+        ----------
+        ConcentrationOut : list
+            A list of concentration values.
         """
 
         def __init__(self, size):

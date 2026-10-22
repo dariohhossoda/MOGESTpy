@@ -15,6 +15,8 @@ DOI on Zenodo.
 * Docstrings for the SmapD transfer functions, build-up and washoff equations,
   ``ZeroDimensional.RunModel``, the constructors and the deprecated SmapD
   method names, which were empty in the API reference (#81).
+* Remaining Portuguese text in the source code translated to English, and
+  typos fixed in the package description and keywords on PyPI (#82).
 
 2.1.0 (2026-10-12)
 ------------------

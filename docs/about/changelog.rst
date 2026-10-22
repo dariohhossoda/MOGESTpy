@@ -9,6 +9,7 @@ DOI on Zenodo.
 ------------------
 
 * Changelog: release date of 2.1.0 (#78).
+* Contributing guide: docstrings follow the NumPy style (#79).
 
 2.1.0 (2026-10-12)
 ------------------

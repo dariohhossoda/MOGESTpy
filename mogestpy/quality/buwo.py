@@ -140,7 +140,7 @@ class BuildUpWashoff:
         """
         Run the BuildUp and Washoff model, calculating pollutant.
         """
-        buildup_mass: float = self.InitialBuildUp / (self.Area * self.AreaFraction)
+        buildup_mass: float = self.InitialBuildUp
 
         time_from_buildup: dict[int, Callable[[float], float]] = {
             1: self.TimeFromBuildUpPow,
@@ -148,7 +148,9 @@ class BuildUpWashoff:
             3: self.TimeFromBuildUpSat,
         }
 
-        bu_time: float = time_from_buildup.get(self.BuMethod)(buildup_mass)
+        bu_time: float = time_from_buildup.get(self.BuMethod)(
+            buildup_mass / (self.Area * self.AreaFraction)
+        )
 
         for i in range(len(self.SurfaceFlow)):
             if self.SurfaceFlow[i] < self.ThresholdFlow:

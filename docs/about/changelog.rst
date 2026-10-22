@@ -5,6 +5,11 @@ Releases are listed on `GitHub <https://github.com/dariohhossoda/MOGESTpy/releas
 and published on `PyPI <https://pypi.org/project/mogestpy/>`_, each with a
 DOI on Zenodo.
 
+2.1.1 (unreleased)
+------------------
+
+* Changelog: release date of 2.1.0 (#78).
+
 2.1.0 (2026-10-12)
 ------------------
 

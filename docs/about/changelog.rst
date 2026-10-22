@@ -5,7 +5,7 @@ Releases are listed on `GitHub <https://github.com/dariohhossoda/MOGESTpy/releas
 and published on `PyPI <https://pypi.org/project/mogestpy/>`_, each with a
 DOI on Zenodo.
 
-2.1.0 (unreleased)
+2.1.0 (2026-10-12)
 ------------------
 
 * **Requires Python 3.11 or later and NumPy 2.4.4 or later** (2.0.0 supported

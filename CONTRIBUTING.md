@@ -79,23 +79,68 @@ We use GitHub issues to track bugs. Report a bug by [opening a new issue](https:
 
 ## Use Consistent Coding Style
 
-We use the Python Enhancement Proposals (PEP 8) style guide.
+We use the Python Enhancement Proposals (PEP 8) style guide, and the code is formatted with [Black](https://black.readthedocs.io/) (`poetry run black .`).
+
+**Docstrings**
+
+Every public module, class, method and function has a docstring in the [NumPy style](https://numpydoc.readthedocs.io/en/latest/format.html):
+
+- A one-line summary, followed by a blank line and an optional longer description;
+- Sections with underlined headings, in this order when they apply: `Parameters`, `Returns` (or `Yields`), `Raises`, `Warns`, `See Also`, `Notes`, `References`, `Examples`;
+- Each parameter as `name : type`, with the description indented below it, including units and default values;
+- Equations in `Notes`, written in LaTeX (`.. math::`).
 
 ```python
-def do_something(parameter): # Comment
+def linear_reservoir_outflow(storage, k, dt=1.0):
     """
-    Function summary. Eg: This function is awesome
+    Compute the outflow of a linear reservoir.
 
-    param parameter: input parameter
-    type parameter: str
-    param return: function output
-    type return: str
+    Parameters
+    ----------
+    storage : float
+        Water stored in the reservoir (m³).
+    k : float
+        Recession constant (days).
+    dt : float, optional
+        Time step (days). Default is 1.0.
+
+    Returns
+    -------
+    float
+        Outflow over the time step (m³).
+
+    Raises
+    ------
+    ValueError
+        If ``k`` is not positive.
+
+    Notes
+    -----
+    .. math:: Q = S \left(1 - e^{-\Delta t / k}\right)
+
+    Examples
+    --------
+    >>> linear_reservoir_outflow(100.0, k=10.0)
+    9.516...
     """
+    if k <= 0:
+        raise ValueError("k must be positive")
 
-    variable_name = parameter + '_foo'
-
-    return variable_name
+    return storage * (1 - math.exp(-dt / k))
 ```
+
+Deprecated names keep a short docstring that points to their replacement:
+
+```python
+def RunStep(self, *args, **kwargs):
+    """
+    Run one time step of the model.
+
+    .. deprecated:: 0.1.0
+       Use :meth:`run_step` instead.
+    """
+```
+
 **Import Order**
 
 As a rule of thumb, imports are divided as follows:

@@ -55,7 +55,8 @@ one land use. While the surface flow stays below ``threshold_flow``, pollutant
 mass builds up on the surface, limited to ``Bmax`` per unit area; above it,
 the flow washes the mass off.
 
-* Build-up (``BuMethod``): ``2`` exponential,
+* Build-up (``BuMethod``): ``1`` power,
+  :math:`B = \min(B_{max}, K_b t^{N_b})`; ``2`` exponential,
   :math:`B = B_{max}(1 - e^{-K_b t})`; ``3`` saturation,
   :math:`B = B_{max} t / (K_b + t)`.
 * Washoff (``WoMethod``): ``1`` exponential, :math:`W = K_w q^{N_w} B`;

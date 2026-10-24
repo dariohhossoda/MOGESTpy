@@ -5,7 +5,7 @@ Releases are listed on `GitHub <https://github.com/dariohhossoda/MOGESTpy/releas
 and published on `PyPI <https://pypi.org/project/mogestpy/>`_, each with a
 DOI on Zenodo.
 
-2.1.1 (unreleased)
+2.1.1 (2026-10-24)
 ------------------
 
 * ``BuildUpWashoff``: the power build-up equation (``BuMethod=1``) works; it

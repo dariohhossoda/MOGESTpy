@@ -114,7 +114,7 @@ class BuildUpWashoff:
 
     # region BuildUp Equations
     def BuildUpPow(self, time: float) -> float:
-        return math.min(self.Bmax, self.Kb * (time**self.Nb))
+        return min(self.Bmax, self.Kb * (time**self.Nb))
 
     def BuildUpExp(self, time: float) -> float:
         return self.Bmax * (1 - math.e ** (-self.Kb * time))

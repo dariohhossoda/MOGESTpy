@@ -8,6 +8,16 @@ DOI on Zenodo.
 2.1.1 (unreleased)
 ------------------
 
+* ``BuildUpWashoff``: the power build-up equation (``BuMethod=1``) works; it
+  raised ``AttributeError`` (#88).
+* ``BuildUpWashoff``: the rating curve and event mean concentration washoff
+  (``WoMethod=2`` and ``3``) use the land use area instead of the build-up
+  mass, which changes their results (#90).
+* ``BuildUpWashoff``: ``initial_buildup`` is used as the mass on the surface,
+  so a wet first time step washes off the initial mass (#92).
+* Development and documentation dependencies updated for security alerts
+  (Pillow 13.0.0, certifi 2026.10.23); the published package is not
+  affected (#94).
 * Changelog: release date of 2.1.0 (#78).
 
 2.1.0 (2026-10-12)

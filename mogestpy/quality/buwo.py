@@ -29,22 +29,38 @@ class BuildUpWashoff:
     ):
         """Initialize a Buwo object.
 
-        Args:
-            Bmax (float): Maximum buildup capacity.
-            Nb (float): Parameter for buildup function.
-            Kb (float): Parameter for buildup function.
-            threshold_flow (float): Threshold flow for washoff.
-            Nw (float): Parameter for washoff function.
-            Kw (float): Parameter for washoff function.
-            BuMethod (int): Buildup function method.
-            WoMethod (int): Washoff function method.
-            timestep_h (float): Time step in hours.
-            initial_buildup (float): Initial buildup value.
-            area (float): Area of the landuse.
-            area_fraction (float): Fraction of the area covered by the landuse.
-            surface_flow (float): Surface flow value.
-            landuse_name (str): Name of the landuse.
-            aggregate (bool, optional): If True, aggregate the results. Defaults to False.
+        Parameters
+        ----------
+        Bmax : float
+            Maximum buildup capacity.
+        Nb : float
+            Parameter for buildup function.
+        Kb : float
+            Parameter for buildup function.
+        threshold_flow : float
+            Threshold flow for washoff.
+        Nw : float
+            Parameter for washoff function.
+        Kw : float
+            Parameter for washoff function.
+        BuMethod : int
+            Buildup function method.
+        WoMethod : int
+            Washoff function method.
+        timestep_h : float
+            Time step in hours.
+        initial_buildup : float
+            Initial buildup value.
+        area : float
+            Area of the landuse.
+        area_fraction : float
+            Fraction of the area covered by the landuse.
+        surface_flow : numpy.ndarray
+            Surface flow values.
+        landuse_name : str
+            Name of the landuse.
+        aggregate : bool, optional
+            If True, aggregate the results. Defaults to False.
         """
         self.LanduseName: str = landuse_name
 

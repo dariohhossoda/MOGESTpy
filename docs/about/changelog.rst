@@ -10,6 +10,8 @@ DOI on Zenodo.
 
 * Changelog: release date of 2.1.0 (#78).
 * Contributing guide: docstrings follow the NumPy style (#79).
+* Docstrings of the Muskingum, Saint-Venant, SIHQUAL, mass balance and water
+  quality modules converted to the NumPy style (#80).
 
 2.1.0 (2026-10-12)
 ------------------

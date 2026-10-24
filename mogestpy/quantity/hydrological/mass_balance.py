@@ -7,14 +7,33 @@ class MassBalance:
     """
     Class representing the mass balance of a system.
 
-    Attributes:
-        Qin (list): List of inflow rates.
-        Qout (list): List of outflow rates.
-        Delta_t (float): Time interval.
-        Vin (float): Initial volume.
+    Attributes
+    ----------
+    Qin : list
+        List of inflow rates.
+    Qout : list
+        List of outflow rates.
+    Delta_t : float
+        Time interval.
+    Vin : float
+        Initial volume.
     """
 
     def __init__(self, Qin, Qout, Delta_t, Vin):
+        """
+        Initialize the mass balance.
+
+        Parameters
+        ----------
+        Qin : list of float
+            Inflow rate at each time step.
+        Qout : list of float
+            Outflow rate at each time step.
+        Delta_t : float
+            Time interval between steps, in the time unit of the rates.
+        Vin : float
+            Initial volume.
+        """
         self.Qin = Qin
         self.Qout = Qout
         self.Delta_t = Delta_t
@@ -24,8 +43,10 @@ class MassBalance:
         """
         Calculates the volume outflow over time.
 
-        Returns:
-            list: List of volume values at each time step.
+        Returns
+        -------
+        list
+            List of volume values at each time step.
         """
         vol = [self.Vin]
         for i in range(len(self.Qin) - 1):

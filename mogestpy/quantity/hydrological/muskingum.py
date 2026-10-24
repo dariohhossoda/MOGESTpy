@@ -28,14 +28,21 @@ class Muskingum:
         """
         Perform downstream routing from upstream to downstream using the linear Muskingum method.
 
-        Args:
-            upstream (list): List of upstream flow values
-            k (float): Muskingum storage coefficient (time)
-            x (float): Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
-            dt (float): Time step
+        Parameters
+        ----------
+        upstream : list
+            List of upstream flow values
+        k : float
+            Muskingum storage coefficient (time)
+        x : float
+            Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
+        dt : float
+            Time step
 
-        Returns:
-            list: List of downstream flow values
+        Returns
+        -------
+        list
+            List of downstream flow values
         """
         # Calculate coefficients
         denominator = (2 * k * (1 - x)) + dt
@@ -69,17 +76,30 @@ class Muskingum:
     ) -> tuple[float, float, float, float]:
         """
         Calculate Runge-Kutta 4th order coefficients for Muskingum routing.
-        Args:
-            s_current (float): Current storage
-            k (float): Muskingum storage coefficient
-            x (float): Muskingum weighting factor
-            m (float): Muskingum exponent for non-linearity
-            dt (float): Time step
-            inflow_current (float): Current inflow/outflow value
-            inflow_next (float): Next inflow/outflow value
-            is_downstream (bool): True for downstream routing, False for upstream
-        Returns:
-            tuple: The four Runge-Kutta coefficients (k1, k2, k3, k4)
+
+        Parameters
+        ----------
+        s_current : float
+            Current storage
+        k : float
+            Muskingum storage coefficient
+        x : float
+            Muskingum weighting factor
+        m : float
+            Muskingum exponent for non-linearity
+        dt : float
+            Time step
+        inflow_current : float
+            Current inflow/outflow value
+        inflow_next : float
+            Next inflow/outflow value
+        is_downstream : bool
+            True for downstream routing, False for upstream
+
+        Returns
+        -------
+        tuple
+            The four Runge-Kutta coefficients (k1, k2, k3, k4)
         """
         factor = -1 / (1 - x) if is_downstream else 1 / x
         avg_inflow = 0.5 * (inflow_current + inflow_next)
@@ -102,15 +122,23 @@ class Muskingum:
         This method implements the non-linear Muskingum model using a fourth-order
         Runge-Kutta numerical integration scheme to route flow from upstream to downstream.
 
-        Args:
-            k (float): Muskingum storage coefficient (time)
-            x (float): Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
-            m (float): Muskingum exponent for non-linearity
-            dt (float): Time step
-            inflow (list): List of inflow values (upstream hydrograph)
+        Parameters
+        ----------
+        k : float
+            Muskingum storage coefficient (time)
+        x : float
+            Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
+        m : float
+            Muskingum exponent for non-linearity
+        dt : float
+            Time step
+        inflow : list
+            List of inflow values (upstream hydrograph)
 
-        Returns:
-            list: List of outflow values (downstream hydrograph)
+        Returns
+        -------
+        list
+            List of outflow values (downstream hydrograph)
         """
         n = len(inflow)
         outflow = [0] * n
@@ -145,15 +173,23 @@ class Muskingum:
         This method implements the non-linear Muskingum model using a fourth-order
         Runge-Kutta numerical integration scheme to route flow from downstream to upstream.
 
-        Args:
-            k (float): Muskingum storage coefficient (time)
-            x (float): Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
-            m (float): Muskingum exponent for non-linearity
-            dt (float): Time step
-            outflow (list): List of outflow values (downstream hydrograph)
+        Parameters
+        ----------
+        k : float
+            Muskingum storage coefficient (time)
+        x : float
+            Muskingum weighting factor (dimensionless, 0 ≤ x ≤ 0.5)
+        m : float
+            Muskingum exponent for non-linearity
+        dt : float
+            Time step
+        outflow : list
+            List of outflow values (downstream hydrograph)
 
-        Returns:
-            list: List of inflow values (upstream hydrograph)
+        Returns
+        -------
+        list
+            List of inflow values (upstream hydrograph)
         """
         n = len(outflow)
         inflow = [0] * n
@@ -197,14 +233,21 @@ class MuskingumCunge:
         """
         Kinematic wave celerity for a wide rectangular channel (Manning).
 
-        Args:
-            q_ref (float): Reference discharge (m³/s)
-            manning (float): Manning's roughness coefficient (s/m^(1/3))
-            width (float): Channel width (m)
-            slope (float): Channel slope (m/m)
+        Parameters
+        ----------
+        q_ref : float
+            Reference discharge (m³/s)
+        manning : float
+            Manning's roughness coefficient (s/m^(1/3))
+        width : float
+            Channel width (m)
+        slope : float
+            Channel slope (m/m)
 
-        Returns:
-            float: Celerity c0 = (5/3) Q0^0.4 S^0.3 / (n^0.6 B^0.4) (m/s)
+        Returns
+        -------
+        float
+            Celerity c0 = (5/3) Q0^0.4 S^0.3 / (n^0.6 B^0.4) (m/s)
         """
         return 5.0 / 3.0 * q_ref**0.4 * slope**0.3 / (manning**0.6 * width**0.4)
 
@@ -222,25 +265,38 @@ class MuskingumCunge:
         """
         Sub-reach discretization and Muskingum-Cunge coefficients of a reach.
 
-        Args:
-            length (float): Reach length (m)
-            q_ref (float): Reference discharge (m³/s)
-            manning (float): Manning's roughness coefficient (s/m^(1/3))
-            width (float): Channel width (m)
-            slope (float): Channel slope (m/m)
-            dt (float): Desired routing time step (s). It is reduced when
-                needed to keep the coefficients non-negative.
-            x_min (float): Lower bound of X. Default is 0.2.
-            x_max (float): Upper bound of X. Default is 0.5.
+        Parameters
+        ----------
+        length : float
+            Reach length (m)
+        q_ref : float
+            Reference discharge (m³/s)
+        manning : float
+            Manning's roughness coefficient (s/m^(1/3))
+        width : float
+            Channel width (m)
+        slope : float
+            Channel slope (m/m)
+        dt : float
+            Desired routing time step (s). It is reduced when
+            needed to keep the coefficients non-negative.
+        x_min : float, optional
+            Lower bound of X. Default is 0.2.
+        x_max : float, optional
+            Upper bound of X. Default is 0.5.
 
-        Returns:
-            dict: ``celerity`` (m/s), ``n_subreaches``, ``dx`` (m), ``k`` (s),
+        Returns
+        -------
+        dict
+            ``celerity`` (m/s), ``n_subreaches``, ``dx`` (m), ``k`` (s),
             ``x``, ``dt`` (effective time step, s) and the routing
             coefficients ``c0``, ``c1`` and ``c2`` of
             ``O[t+1] = c0 I[t+1] + c1 I[t] + c2 O[t]``.
 
-        Raises:
-            ValueError: If a reach characteristic is not positive.
+        Raises
+        ------
+        ValueError
+            If a reach characteristic is not positive.
         """
         for name, value in (
             ("length", length),
@@ -290,13 +346,19 @@ class MuskingumCunge:
         """
         Linear Muskingum routing coefficients.
 
-        Args:
-            k (float): Storage coefficient (s)
-            x (float): Weighting factor
-            dt (float): Time step (s)
+        Parameters
+        ----------
+        k : float
+            Storage coefficient (s)
+        x : float
+            Weighting factor
+        dt : float
+            Time step (s)
 
-        Returns:
-            tuple: (c0, c1, c2) of ``O[t+1] = c0 I[t+1] + c1 I[t] + c2 O[t]``
+        Returns
+        -------
+        tuple
+            (c0, c1, c2) of ``O[t+1] = c0 I[t+1] + c1 I[t] + c2 O[t]``
         """
         denominator = 2.0 * k * (1.0 - x) + dt
         c0 = (dt - 2.0 * k * x) / denominator
@@ -325,23 +387,36 @@ class MuskingumCunge:
         outflow of each time step is the mean of its sub-steps. The reach
         starts in steady state with the first inflow value.
 
-        Args:
-            upstream (list): Upstream (inflow) discharge per model time step (m³/s)
-            length (float): Reach length (m)
-            q_ref (float): Reference discharge (m³/s), e.g. regionalized as
-                ``A^0.7 / 3`` with the drainage area A in km² (MGB)
-            manning (float): Manning's roughness coefficient (s/m^(1/3))
-            width (float): Channel width (m)
-            slope (float): Channel slope (m/m)
-            dt (float): Model time step (s). Default is 86400 (1 day).
-            sub_dt (float): Desired internal time step (s). Default is 3600
-                (1 h). It is reduced when needed to keep the coefficients
-                non-negative and to divide ``dt`` into equal sub-steps.
-            x_min (float): Lower bound of X. Default is 0.2.
-            x_max (float): Upper bound of X. Default is 0.5.
+        Parameters
+        ----------
+        upstream : list
+            Upstream (inflow) discharge per model time step (m³/s)
+        length : float
+            Reach length (m)
+        q_ref : float
+            Reference discharge (m³/s), e.g. regionalized as
+            ``A^0.7 / 3`` with the drainage area A in km² (MGB)
+        manning : float
+            Manning's roughness coefficient (s/m^(1/3))
+        width : float
+            Channel width (m)
+        slope : float
+            Channel slope (m/m)
+        dt : float, optional
+            Model time step (s). Default is 86400 (1 day).
+        sub_dt : float, optional
+            Desired internal time step (s). Default is 3600
+            (1 h). It is reduced when needed to keep the coefficients
+            non-negative and to divide ``dt`` into equal sub-steps.
+        x_min : float, optional
+            Lower bound of X. Default is 0.2.
+        x_max : float, optional
+            Upper bound of X. Default is 0.5.
 
-        Returns:
-            numpy.ndarray: Downstream (outflow) discharge per model time step (m³/s)
+        Returns
+        -------
+        numpy.ndarray
+            Downstream (outflow) discharge per model time step (m³/s)
         """
         from scipy.signal import lfilter, lfilter_zi
 
@@ -387,14 +462,21 @@ class MuskingumCunge:
         ``width`` refer to the area draining into it. A reach with zero length
         passes the flow through.
 
-        Args:
-            dt (float): Model time step (s). Default is 86400 (1 day).
-            sub_dt (float): Desired internal time step (s). Default is 3600.
-            x_min (float): Lower bound of X. Default is 0.2.
-            x_max (float): Upper bound of X. Default is 0.5.
+        Parameters
+        ----------
+        dt : float, optional
+            Model time step (s). Default is 86400 (1 day).
+        sub_dt : float, optional
+            Desired internal time step (s). Default is 3600.
+        x_min : float, optional
+            Lower bound of X. Default is 0.2.
+        x_max : float, optional
+            Upper bound of X. Default is 0.5.
 
-        Returns:
-            callable: ``router(q_upstream, row)`` returning the routed discharge
+        Returns
+        -------
+        callable
+            ``router(q_upstream, row)`` returning the routed discharge
         """
 
         def route(q_upstream: np.ndarray, row) -> np.ndarray:

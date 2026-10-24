@@ -16,22 +16,32 @@ class TrapezoidalCrossSection:
     This class represents a trapezoidal cross-section with methods to calculate
     geometric properties such as wet area, wet perimeter, and hydraulic radius.
 
-    Attributes:
-        b (float): Bottom width of the channel (m)
-        y (float): Water depth (m)
-        m (float): Side slope (horizontal/vertical)
-        top_width (float): Width at the water surface (m)
-        hydraulic_radius (float): Hydraulic radius (m)
+    Attributes
+    ----------
+    b : float
+        Bottom width of the channel (m)
+    y : float
+        Water depth (m)
+    m : float
+        Side slope (horizontal/vertical)
+    top_width : float
+        Width at the water surface (m)
+    hydraulic_radius : float
+        Hydraulic radius (m)
     """
 
     def __init__(self, b: float, y: float, m: float):
         """
         Initialize a trapezoidal cross-section.
 
-        Args:
-            b (float): Bottom width of the channel (m)
-            y (float): Water depth (m)
-            m (float): Side slope (horizontal/vertical)
+        Parameters
+        ----------
+        b : float
+            Bottom width of the channel (m)
+        y : float
+            Water depth (m)
+        m : float
+            Side slope (horizontal/vertical)
         """
         self.b = b
         self.y = y
@@ -44,8 +54,10 @@ class TrapezoidalCrossSection:
         """
         String representation of the trapezoidal cross-section.
 
-        Returns:
-            str: Formatted string with cross-section parameters
+        Returns
+        -------
+        str
+            Formatted string with cross-section parameters
         """
         return f"Trapezoidal Cross Section:\n\
 b: {self.b:.3f}\n\
@@ -56,8 +68,10 @@ m: {self.m:.3f}"
         """
         Calculate the width at the water surface.
 
-        Returns:
-            float: Top width of the water surface (m)
+        Returns
+        -------
+        float
+            Top width of the water surface (m)
         """
         return self.b + 2 * self.m * self.y
 
@@ -65,8 +79,10 @@ m: {self.m:.3f}"
         """
         Calculate the wet area of the cross-section.
 
-        Returns:
-            float: Wet area (m²)
+        Returns
+        -------
+        float
+            Wet area (m²)
         """
         return self.b * self.y + self.m * self.y**2
 
@@ -74,8 +90,10 @@ m: {self.m:.3f}"
         """
         Calculate the wet perimeter of the cross-section.
 
-        Returns:
-            float: Wet perimeter (m)
+        Returns
+        -------
+        float
+            Wet perimeter (m)
         """
         return self.b + 2 * self.y * math.sqrt(1 + self.m**2)
 
@@ -83,13 +101,19 @@ m: {self.m:.3f}"
         """
         Calculate the normal depth using the Newton-Raphson method.
 
-        Args:
-            discharge (float): Flow discharge (m³/s)
-            manning_n (float): Manning's roughness coefficient
-            slope (float): Channel bed slope (m/m)
+        Parameters
+        ----------
+        discharge : float
+            Flow discharge (m³/s)
+        manning_n : float
+            Manning's roughness coefficient
+        slope : float
+            Channel bed slope (m/m)
 
-        Returns:
-            float: Normal depth (m)
+        Returns
+        -------
+        float
+            Normal depth (m)
         """
         y_norm = 0.1
         f = 1
@@ -121,11 +145,15 @@ m: {self.m:.3f}"
         Calculate the water depth for a given wet area
         using Newton-Raphson method.
 
-        Args:
-            area (float): Wet area (m²)
+        Parameters
+        ----------
+        area : float
+            Wet area (m²)
 
-        Returns:
-            float: Water depth (m)
+        Returns
+        -------
+        float
+            Water depth (m)
         """
         y = 1
         step = 0
@@ -149,28 +177,44 @@ class SaintVenant:
     This class implements the Saint-Venant equations for one-dimensional
     hydrodynamic flow routing with a trapezoidal cross-section.
 
-    Attributes:
-        cross_section (TrapezoidalCrossSection): Channel cross-section
-        discharge (float): Flow discharge (m³/s)
-        manning_n (float): Manning's roughness coefficient
-        slope (float): Channel bed slope (m/m)
-        dt (float): Time step (s)
-        dx (float): Space step (m)
-        g (float): Gravitational acceleration (m/s²)
+    Attributes
+    ----------
+    cross_section : TrapezoidalCrossSection
+        Channel cross-section
+    discharge : float
+        Flow discharge (m³/s)
+    manning_n : float
+        Manning's roughness coefficient
+    slope : float
+        Channel bed slope (m/m)
+    dt : float
+        Time step (s)
+    dx : float
+        Space step (m)
+    g : float
+        Gravitational acceleration (m/s²)
     """
 
     def __init__(self, cross_section, discharge, manning_n, slope, dt, dx, g=9.81):
         """
         Initialize the Saint-Venant model.
 
-        Args:
-            cross_section (TrapezoidalCrossSection): Channel cross-section
-            discharge (float): Flow discharge (m³/s)
-            manning_n (float): Manning's roughness coefficient
-            slope (float): Channel bed slope (m/m)
-            dt (float): Time step (s)
-            dx (float): Space step (m)
-            g (float, optional): Gravitational acceleration (m/s²).
+        Parameters
+        ----------
+        cross_section : TrapezoidalCrossSection
+            Channel cross-section
+        discharge : float
+            Flow discharge (m³/s)
+        manning_n : float
+            Manning's roughness coefficient
+        slope : float
+            Channel bed slope (m/m)
+        dt : float
+            Time step (s)
+        dx : float
+            Space step (m)
+        g : float, optional
+            Gravitational acceleration (m/s²).
             Defaults to 9.81.
         """
         self.cross_section = cross_section
@@ -185,8 +229,10 @@ class SaintVenant:
         """
         Calculate the Courant number.
 
-        Returns:
-            float: Courant number (dimensionless)
+        Returns
+        -------
+        float
+            Courant number (dimensionless)
         """
         area = self.cross_section.wet_area()
         return (
@@ -199,8 +245,10 @@ class SaintVenant:
         """
         Check if the Courant condition for numerical stability is satisfied.
 
-        Returns:
-            bool: True if Courant number <= 1, False otherwise
+        Returns
+        -------
+        bool
+            True if Courant number <= 1, False otherwise
         """
         return self.courant() <= 1
 
@@ -208,8 +256,10 @@ class SaintVenant:
         """
         Calculate the square of the Froude number.
 
-        Returns:
-            float: Square of the Froude number (dimensionless)
+        Returns
+        -------
+        float
+            Square of the Froude number (dimensionless)
         """
         area = self.cross_section.wet_area()
         return self.discharge**2 * self.cross_section.top_width / (self.g * area**3)
@@ -218,8 +268,10 @@ class SaintVenant:
         """
         Calculate the friction slope (energy grade line slope).
 
-        Returns:
-            float: Friction slope (m/m)
+        Returns
+        -------
+        float
+            Friction slope (m/m)
         """
         area = self.cross_section.wet_area()
         hydraulic_radius = self.cross_section.hydraulic_radius
@@ -235,8 +287,10 @@ class SaintVenant:
         """
         Update the state based on the time step.
 
-        Raises:
-            NotImplementedError: Method not yet implemented
+        Raises
+        ------
+        NotImplementedError
+            Method not yet implemented
         """
         # for i in range(1, self.y ):
         raise NotImplementedError("Not yet implemented!")
@@ -245,8 +299,10 @@ class SaintVenant:
         """
         Run the Saint-Venant model.
 
-        Raises:
-            NotImplementedError: Method not yet implemented
+        Raises
+        ------
+        NotImplementedError
+            Method not yet implemented
         """
         raise NotImplementedError("Not yet implemented!")
 
@@ -255,8 +311,10 @@ def lateral_contribution():
     """
     Define the lateral contribution to be included in the model.
 
-    Raises:
-        NotImplementedError: Function not yet implemented
+    Raises
+    ------
+    NotImplementedError
+        Function not yet implemented
     """
     raise NotImplementedError("Not yet implemented!")
 
@@ -265,13 +323,18 @@ def average(values_list, index):
     """
     Calculate the centered average of values at a given index.
 
-    Args:
-        values_list (list): List of values
-        index (int): Index for which to calculate the centered average
+    Parameters
+    ----------
+    values_list : list
+        List of values
+    index : int
+        Index for which to calculate the centered average
 
-    Returns:
-        float: Centered average of values at index-1 and index+1,
-               or None if index is out of bounds
+    Returns
+    -------
+    float or None
+        Centered average of values at index-1 and index+1,
+        or None if index is out of bounds
     """
     try:
         return 0.5 * (values_list[index + 1] + values_list[index - 1])

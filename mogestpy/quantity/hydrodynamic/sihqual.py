@@ -1,5 +1,7 @@
 """
-Simulação Hidrodinâmica e de Qualidade da Água (SIHQUAL)
+SIHQUAL (Simulação Hidrodinâmica e de Qualidade da Água), hydrodynamic and
+water quality simulation.
+
 Class-based implementation for hydrodynamic and water quality simulation.
 """
 
@@ -13,12 +15,17 @@ def _to_numpy_array(data, dtype=None):
     """
     Convert any iterable to numpy array, maintaining pandas DataFrame compatibility.
 
-    Args:
-        data: Input data (pandas Series/DataFrame, list, tuple, numpy array, etc.)
-        dtype: Optional data type for the array
+    Parameters
+    ----------
+    data : array_like
+        Input data (pandas Series/DataFrame, list, tuple, numpy array, etc.)
+    dtype : data-type, optional
+        Optional data type for the array
 
-    Returns:
-        numpy array
+    Returns
+    -------
+    numpy.ndarray
+        Data as a NumPy array.
     """
     if hasattr(data, "to_numpy"):
         # pandas Series/DataFrame
@@ -33,42 +40,50 @@ def _to_numpy_array(data, dtype=None):
 
 class SIHQUAL:
     """
-    SIHQUAL (Simulação Hidrodinâmica e de Qualidade da Água) class.
+    SIHQUAL hydrodynamic and water quality model.
 
     This class implements a 1D hydrodynamic and water quality model for rivers and channels.
     It solves the Saint-Venant equations for hydrodynamics and the advection-dispersion
     equation for water quality.
 
-    Examples:
-        Basic usage:
+    Examples
+    --------
+    Basic usage:
 
-        >>> model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)
-        >>> model.set_uniform_geometry(
-        ...     bottom_width=10.0,
-        ...     side_slope=0.0,
-        ...     manning_coef=0.03,
-        ...     bed_slope=0.001
-        ... )
-        >>> model.set_uniform_initial_conditions(
-        ...     depth=2.0,
-        ...     velocity=0.5,
-        ...     concentration=0.0
-        ... )
-        >>> model.set_output_sections([0, 500, 1000])
-        >>> results = model.run()
+    >>> model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)
+    >>> model.set_uniform_geometry(
+    ...     bottom_width=10.0,
+    ...     side_slope=0.0,
+    ...     manning_coef=0.03,
+    ...     bed_slope=0.001
+    ... )
+    >>> model.set_uniform_initial_conditions(
+    ...     depth=2.0,
+    ...     velocity=0.5,
+    ...     concentration=0.0
+    ... )
+    >>> model.set_output_sections([0, 500, 1000])
+    >>> results = model.run()
     """
 
     def __init__(self, dx, dt, xf, tf, alpha=0.6, dispersion_coef=5.0):
         """
         Initialize the SIHQUAL model.
 
-        Args:
-            dx: Spatial step (m)
-            dt: Time step (s)
-            xf: Total length (m)
-            tf: Total simulation time (s)
-            alpha: Weighting factor for numerical scheme (default: 0.6)
-            dispersion_coef: Dispersion coefficient (m²/s) (default: 5.0)
+        Parameters
+        ----------
+        dx : float
+            Spatial step (m)
+        dt : float
+            Time step (s)
+        xf : float
+            Total length (m)
+        tf : float
+            Total simulation time (s)
+        alpha : float, optional
+            Weighting factor for numerical scheme (default: 0.6)
+        dispersion_coef : float, optional
+            Dispersion coefficient (m²/s) (default: 5.0)
         """
         self.dx = dx
         self.dt = dt
@@ -133,14 +148,21 @@ class SIHQUAL:
         This is a convenience method for setting up a channel with constant
         geometric properties.
 
-        Args:
-            bottom_width: Bottom width (m)
-            side_slope: Side slope (horizontal:vertical)
-            manning_coef: Manning's roughness coefficient
-            bed_slope: Bed slope
+        Parameters
+        ----------
+        bottom_width : float
+            Bottom width (m)
+        side_slope : float
+            Side slope (horizontal:vertical)
+        manning_coef : float
+            Manning's roughness coefficient
+        bed_slope : float
+            Bed slope
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         self.set_geometry(
             bottom_width=bottom_width,
@@ -154,14 +176,21 @@ class SIHQUAL:
         """
         Set channel geometry.
 
-        Args:
-            bottom_width: Bottom width (m) - scalar or array
-            side_slope: Side slope (horizontal:vertical) - scalar or array
-            manning_coef: Manning's roughness coefficient - scalar or array
-            bed_slope: Bed slope - scalar or array
+        Parameters
+        ----------
+        bottom_width : float or array_like
+            Bottom width (m) - scalar or array
+        side_slope : float or array_like
+            Side slope (horizontal:vertical) - scalar or array
+        manning_coef : float or array_like
+            Manning's roughness coefficient - scalar or array
+        bed_slope : float or array_like
+            Bed slope - scalar or array
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Convert scalar inputs to arrays if needed
         if np.isscalar(bottom_width):
@@ -225,13 +254,19 @@ class SIHQUAL:
         This is a convenience method for setting up initial conditions with
         constant values.
 
-        Args:
-            depth: Initial water depth (m)
-            velocity: Initial velocity (m/s)
-            concentration: Initial concentration (mg/L), default is 0.0
+        Parameters
+        ----------
+        depth : float
+            Initial water depth (m)
+        velocity : float
+            Initial velocity (m/s)
+        concentration : float, optional
+            Initial concentration (mg/L), default is 0.0
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         self.set_initial_conditions(
             initial_depth=depth,
@@ -246,13 +281,19 @@ class SIHQUAL:
         """
         Set initial conditions.
 
-        Args:
-            initial_depth: Initial water depth (m) - scalar or array
-            initial_velocity: Initial velocity (m/s) - scalar or array
-            initial_concentration: Initial concentration (mg/L) - scalar or array
+        Parameters
+        ----------
+        initial_depth : float or array_like
+            Initial water depth (m) - scalar or array
+        initial_velocity : float or array_like
+            Initial velocity (m/s) - scalar or array
+        initial_concentration : float or array_like
+            Initial concentration (mg/L) - scalar or array
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Convert scalar inputs to arrays if needed
         if np.isscalar(initial_depth):
@@ -303,12 +344,17 @@ class SIHQUAL:
         This is a convenience method for setting up reaction parameters with
         constant values.
 
-        Args:
-            decay_coef: Decay coefficient (1/s), default is 0.0
-            source_coef: Source coefficient (mg/L/s), default is 0.0
+        Parameters
+        ----------
+        decay_coef : float, optional
+            Decay coefficient (1/s), default is 0.0
+        source_coef : float, optional
+            Source coefficient (mg/L/s), default is 0.0
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         self.set_reaction_parameters(decay_coef=decay_coef, source_coef=source_coef)
         return self
@@ -317,12 +363,17 @@ class SIHQUAL:
         """
         Set reaction parameters for water quality.
 
-        Args:
-            decay_coef: Decay coefficient (1/s) - scalar or array
-            source_coef: Source coefficient (mg/L/s) - scalar or array
+        Parameters
+        ----------
+        decay_coef : float or array_like
+            Decay coefficient (1/s) - scalar or array
+        source_coef : float or array_like
+            Source coefficient (mg/L/s) - scalar or array
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Convert scalar inputs to arrays if needed
         if np.isscalar(decay_coef):
@@ -357,11 +408,15 @@ class SIHQUAL:
         """
         Set output sections.
 
-        Args:
-            positions: List of positions (m) for output sections
+        Parameters
+        ----------
+        positions : array_like
+            List of positions (m) for output sections
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Convert positions to indices
         self.output_sections = [self._x_to_index(pos) for pos in positions]
@@ -374,11 +429,15 @@ class SIHQUAL:
         This is a convenience method for setting up output sections at
         evenly spaced intervals.
 
-        Args:
-            num_sections: Number of output sections (including endpoints)
+        Parameters
+        ----------
+        num_sections : int
+            Number of output sections (including endpoints)
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         positions = np.linspace(0, self.xf, num_sections)
         return self.set_output_sections(positions)
@@ -387,15 +446,20 @@ class SIHQUAL:
         """
         Set boundary conditions.
 
-        Args:
-            boundary_positions: Dictionary with positions for each boundary type
-                {'Q': [positions], 'y': [positions], 'c': [positions]}
-            boundary_data: Dictionary with time series data for each boundary
-                type, ``{'Q': {'time': array, 'values': array}, 'y': {...},
-                'c': {...}}``, with the same keys as ``boundary_positions``
+        Parameters
+        ----------
+        boundary_positions : dict
+            Dictionary with positions for each boundary type
+            {'Q': [positions], 'y': [positions], 'c': [positions]}
+        boundary_data : dict
+            Dictionary with time series data for each boundary
+            type, ``{'Q': {'time': array, 'values': array}, 'y': {...},
+            'c': {...}}``, with the same keys as ``boundary_positions``
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Flow boundaries
         if "Q" in boundary_positions and "Q" in boundary_data:
@@ -424,12 +488,17 @@ class SIHQUAL:
         This is a convenience method for setting up a flow boundary condition
         at the upstream end of the channel.
 
-        Args:
-            flow_values: Flow values (m³/s) - scalar or array
-            times: Time values (s) - array, if None, uses [0, tf]
+        Parameters
+        ----------
+        flow_values : float or array_like
+            Flow values (m³/s) - scalar or array
+        times : array_like, optional
+            Time values (s) - array, if None, uses [0, tf]
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         if times is None:
             times = np.array([0, self.tf])
@@ -459,12 +528,17 @@ class SIHQUAL:
         This is a convenience method for setting up a water level boundary condition
         at the downstream end of the channel.
 
-        Args:
-            level_values: Water level values (m) - scalar or array
-            times: Time values (s) - array, if None, uses [0, tf]
+        Parameters
+        ----------
+        level_values : float or array_like
+            Water level values (m) - scalar or array
+        times : array_like, optional
+            Time values (s) - array, if None, uses [0, tf]
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         if times is None:
             times = np.array([0, self.tf])
@@ -497,16 +571,23 @@ class SIHQUAL:
         """
         Set lateral inflows.
 
-        Args:
-            lateral_Q_segments: List of tuples with start and end positions (m) for lateral flow
-            lateral_Q_data: Dictionary with time series data for lateral flow
-                {'time': array, 'values': array}
-            lateral_c_segments: List of tuples with start and end positions (m) for lateral concentration
-            lateral_c_data: Dictionary with time series data for lateral concentration
-                {'time': array, 'values': array}
+        Parameters
+        ----------
+        lateral_Q_segments : list of tuple, optional
+            List of tuples with start and end positions (m) for lateral flow
+        lateral_Q_data : dict, optional
+            Dictionary with time series data for lateral flow
+            {'time': array, 'values': array}
+        lateral_c_segments : list of tuple, optional
+            List of tuples with start and end positions (m) for lateral concentration
+        lateral_c_data : dict, optional
+            Dictionary with time series data for lateral concentration
+            {'time': array, 'values': array}
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         # Lateral flow
         if lateral_Q_segments is not None and lateral_Q_data is not None:
@@ -532,11 +613,15 @@ class SIHQUAL:
         """
         Enable or disable automatic time step adjustment.
 
-        Args:
-            enable: Whether to enable auto step adjustment (default: True)
+        Parameters
+        ----------
+        enable : bool, optional
+            Whether to enable auto step adjustment (default: True)
 
-        Returns:
-            self: For method chaining
+        Returns
+        -------
+        SIHQUAL
+            The model itself, for method chaining.
         """
         self.auto_step = enable
         return self
@@ -545,11 +630,15 @@ class SIHQUAL:
         """
         Run the simulation.
 
-        Args:
-            show_progress: Whether to show a progress bar (default: True)
+        Parameters
+        ----------
+        show_progress : bool, optional
+            Whether to show a progress bar (default: True)
 
-        Returns:
-            DataFrame with simulation results
+        Returns
+        -------
+        pandas.DataFrame
+            Simulation results.
         """
         # Check if all required parameters are set
         self._check_parameters()
@@ -744,12 +833,17 @@ class SIHQUAL:
         """
         Save simulation results to Excel file.
 
-        Args:
-            results: DataFrame with simulation results
-            filename: Output filename
+        Parameters
+        ----------
+        results : pandas.DataFrame
+            DataFrame with simulation results
+        filename : str
+            Output filename
 
-        Returns:
-            True if successful, False otherwise
+        Returns
+        -------
+        bool
+            True if successful, False otherwise.
         """
         try:
             results.to_excel(filename)
@@ -762,14 +856,21 @@ class SIHQUAL:
         """
         Plot simulation results.
 
-        Args:
-            results: DataFrame with simulation results
-            variable: Variable to plot ('Q', 'y', or 'c')
-            figsize: Figure size (width, height) in inches
-            dpi: DPI for the figure
+        Parameters
+        ----------
+        results : pandas.DataFrame
+            DataFrame with simulation results
+        variable : {'Q', 'y', 'c'}, optional
+            Variable to plot ('Q', 'y', or 'c')
+        figsize : tuple of float, optional
+            Figure size (width, height) in inches
+        dpi : int, optional
+            DPI for the figure
 
-        Returns:
-            Figure and axes objects
+        Returns
+        -------
+        tuple
+            Figure and axes objects.
         """
         import matplotlib.pyplot as plt
 
@@ -828,11 +929,15 @@ class SIHQUAL:
         """
         Convert position to array index.
 
-        Args:
-            x: Position (m)
+        Parameters
+        ----------
+        x : float
+            Position (m)
 
-        Returns:
-            Index in the array
+        Returns
+        -------
+        int
+            Index in the array.
         """
         return int(x / self.xf * (self.dim - 1))
 
@@ -840,11 +945,15 @@ class SIHQUAL:
         """
         Calculate average of adjacent elements.
 
-        Args:
-            vector: Input array
+        Parameters
+        ----------
+        vector : numpy.ndarray
+            Input array
 
-        Returns:
-            Array with averages
+        Returns
+        -------
+        numpy.ndarray
+            Averages of adjacent elements.
         """
         return 0.5 * (vector[2:] + vector[:-2])
 
@@ -852,11 +961,15 @@ class SIHQUAL:
         """
         Calculate central difference.
 
-        Args:
-            vector: Input array
+        Parameters
+        ----------
+        vector : numpy.ndarray
+            Input array
 
-        Returns:
-            Array with central differences
+        Returns
+        -------
+        numpy.ndarray
+            Central differences.
         """
         return vector[2:] - vector[:-2]
 
@@ -864,13 +977,19 @@ class SIHQUAL:
         """
         Calculate top width of the channel.
 
-        Args:
-            b: Bottom width (m)
-            y: Water depth (m)
-            m: Side slope
+        Parameters
+        ----------
+        b : float or array_like
+            Bottom width (m)
+        y : float or array_like
+            Water depth (m)
+        m : float or array_like
+            Side slope
 
-        Returns:
-            Top width (m)
+        Returns
+        -------
+        float or array_like
+            Top width (m).
         """
         return b + 2 * m * y
 
@@ -878,13 +997,19 @@ class SIHQUAL:
         """
         Calculate wet area of the channel.
 
-        Args:
-            b: Bottom width (m)
-            y: Water depth (m)
-            m: Side slope
+        Parameters
+        ----------
+        b : float or array_like
+            Bottom width (m)
+        y : float or array_like
+            Water depth (m)
+        m : float or array_like
+            Side slope
 
-        Returns:
-            Wet area (m²)
+        Returns
+        -------
+        float or array_like
+            Wet area (m²).
         """
         return b * y + m * y * y
 
@@ -892,13 +1017,19 @@ class SIHQUAL:
         """
         Calculate wet perimeter of the channel.
 
-        Args:
-            b: Bottom width (m)
-            y: Water depth (m)
-            m: Side slope
+        Parameters
+        ----------
+        b : float or array_like
+            Bottom width (m)
+        y : float or array_like
+            Water depth (m)
+        m : float or array_like
+            Side slope
 
-        Returns:
-            Wet perimeter (m)
+        Returns
+        -------
+        float or array_like
+            Wet perimeter (m).
         """
         return b + 2 * y * np.sqrt(1 + m * m)
 
@@ -906,13 +1037,19 @@ class SIHQUAL:
         """
         Calculate hydraulic radius of the channel.
 
-        Args:
-            b: Bottom width (m)
-            y: Water depth (m)
-            m: Side slope
+        Parameters
+        ----------
+        b : float or array_like
+            Bottom width (m)
+        y : float or array_like
+            Water depth (m)
+        m : float or array_like
+            Side slope
 
-        Returns:
-            Hydraulic radius (m)
+        Returns
+        -------
+        float or array_like
+            Hydraulic radius (m).
         """
         return self._wet_area(b, y, m) / self._wet_perimeter(b, y, m)
 
@@ -920,13 +1057,19 @@ class SIHQUAL:
         """
         Calculate friction slope.
 
-        Args:
-            n: Manning's coefficient
-            v: Velocity (m/s)
-            rh: Hydraulic radius (m)
+        Parameters
+        ----------
+        n : float or array_like
+            Manning's coefficient
+        v : float or array_like
+            Velocity (m/s)
+        rh : float or array_like
+            Hydraulic radius (m)
 
-        Returns:
-            Friction slope
+        Returns
+        -------
+        float or array_like
+            Friction slope.
         """
         # Avoid division by zero
         mask = rh > 0
@@ -938,16 +1081,25 @@ class SIHQUAL:
         """
         Calculate Courant number.
 
-        Args:
-            dt: Time step (s)
-            dx: Spatial step (m)
-            v: Velocity (m/s)
-            g: Gravity acceleration (m/s²)
-            A: Wet area (m²)
-            B: Top width (m)
+        Parameters
+        ----------
+        dt : float
+            Time step (s)
+        dx : float
+            Spatial step (m)
+        v : float or array_like
+            Velocity (m/s)
+        g : float
+            Gravity acceleration (m/s²)
+        A : float or array_like
+            Wet area (m²)
+        B : float or array_like
+            Top width (m)
 
-        Returns:
-            Courant number
+        Returns
+        -------
+        float or array_like
+            Courant number.
         """
         # Avoid division by zero and negative values
         mask = (B > 0) & (A > 0)
@@ -976,21 +1128,35 @@ class SIHQUAL:
         This is a convenience method for quickly setting up a simple channel
         with uniform properties.
 
-        Args:
-            length: Channel length (m)
-            dx: Spatial step (m), default is 100.0
-            dt: Time step (s), default is 10.0
-            simulation_time: Total simulation time (s), default is 3600.0
-            bottom_width: Bottom width (m), default is 10.0
-            side_slope: Side slope (horizontal:vertical), default is 0.0
-            manning: Manning's roughness coefficient, default is 0.03
-            slope: Bed slope, default is 0.001
-            depth: Initial water depth (m), default is 2.0
-            velocity: Initial velocity (m/s), default is 0.5
-            concentration: Initial concentration (mg/L), default is 0.0
+        Parameters
+        ----------
+        length : float
+            Channel length (m)
+        dx : float, optional
+            Spatial step (m), default is 100.0
+        dt : float, optional
+            Time step (s), default is 10.0
+        simulation_time : float, optional
+            Total simulation time (s), default is 3600.0
+        bottom_width : float, optional
+            Bottom width (m), default is 10.0
+        side_slope : float, optional
+            Side slope (horizontal:vertical), default is 0.0
+        manning : float, optional
+            Manning's roughness coefficient, default is 0.03
+        slope : float, optional
+            Bed slope, default is 0.001
+        depth : float, optional
+            Initial water depth (m), default is 2.0
+        velocity : float, optional
+            Initial velocity (m/s), default is 0.5
+        concentration : float, optional
+            Initial concentration (mg/L), default is 0.0
 
-        Returns:
-            SIHQUAL model instance
+        Returns
+        -------
+        SIHQUAL
+            Model ready to run.
         """
         # Create model
         model = cls(dx=dx, dt=dt, xf=length, tf=simulation_time)
@@ -1018,11 +1184,15 @@ class SIHQUAL:
         """
         Create a SIHQUAL model from an Excel file.
 
-        Args:
-            filename: Path to Excel file
+        Parameters
+        ----------
+        filename : str
+            Path to Excel file
 
-        Returns:
-            SIHQUAL model instance
+        Returns
+        -------
+        SIHQUAL
+            Model built from the file.
         """
         try:
             # Read data from Excel
@@ -1276,8 +1446,10 @@ def run_simulation():
     This function is provided for backwards compatibility with the old API.
     It is recommended to use the SIHQUAL class instead.
 
-    Returns:
-        DataFrame with simulation results
+    Returns
+    -------
+    pandas.DataFrame
+        Simulation results.
     """
     print(
         "DEPRECATED: This function is deprecated. Please use the SIHQUAL class instead."

@@ -19,6 +19,14 @@ DOI on Zenodo.
   (Pillow 13.0.0, certifi 2026.10.23); the published package is not
   affected (#94).
 * Changelog: release date of 2.1.0 (#78).
+* Contributing guide: docstrings follow the NumPy style (#79).
+* Docstrings of the Muskingum, Saint-Venant, SIHQUAL, mass balance and water
+  quality modules converted to the NumPy style (#80).
+* Docstrings for the SmapD transfer functions, build-up and washoff equations,
+  ``ZeroDimensional.RunModel``, the constructors and the deprecated SmapD
+  method names, which were empty in the API reference (#81).
+* Remaining Portuguese text in the source code translated to English, and
+  typos fixed in the package description and keywords on PyPI (#82).
 
 2.1.0 (2026-10-12)
 ------------------

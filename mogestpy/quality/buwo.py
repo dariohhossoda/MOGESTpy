@@ -29,22 +29,38 @@ class BuildUpWashoff:
     ):
         """Initialize a Buwo object.
 
-        Args:
-            Bmax (float): Maximum buildup capacity.
-            Nb (float): Parameter for buildup function.
-            Kb (float): Parameter for buildup function.
-            threshold_flow (float): Threshold flow for washoff.
-            Nw (float): Parameter for washoff function.
-            Kw (float): Parameter for washoff function.
-            BuMethod (int): Buildup function method.
-            WoMethod (int): Washoff function method.
-            timestep_h (float): Time step in hours.
-            initial_buildup (float): Initial buildup value.
-            area (float): Area of the landuse.
-            area_fraction (float): Fraction of the area covered by the landuse.
-            surface_flow (float): Surface flow value.
-            landuse_name (str): Name of the landuse.
-            aggregate (bool, optional): If True, aggregate the results. Defaults to False.
+        Parameters
+        ----------
+        Bmax : float
+            Maximum buildup capacity.
+        Nb : float
+            Parameter for buildup function.
+        Kb : float
+            Parameter for buildup function.
+        threshold_flow : float
+            Threshold flow for washoff.
+        Nw : float
+            Parameter for washoff function.
+        Kw : float
+            Parameter for washoff function.
+        BuMethod : int
+            Buildup function method.
+        WoMethod : int
+            Washoff function method.
+        timestep_h : float
+            Time step in hours.
+        initial_buildup : float
+            Initial buildup value.
+        area : float
+            Area of the landuse.
+        area_fraction : float
+            Fraction of the area covered by the landuse.
+        surface_flow : numpy.ndarray
+            Surface flow values.
+        landuse_name : str
+            Name of the landuse.
+        aggregate : bool, optional
+            If True, aggregate the results. Defaults to False.
         """
         self.LanduseName: str = landuse_name
 
@@ -114,24 +130,144 @@ class BuildUpWashoff:
 
     # region BuildUp Equations
     def BuildUpPow(self, time: float) -> float:
-        return math.min(self.Bmax, self.Kb * (time**self.Nb))
+        r"""
+        Calculate build-up with the power equation, limited to ``Bmax``.
+
+        Parameters
+        ----------
+        time : float
+            Build-up time (days).
+
+        Returns
+        -------
+        float
+            Build-up per unit area.
+
+        Notes
+        -----
+        .. math::
+
+            B = \min\left(B_{max}, K_b t^{N_b}\right)
+        """
+        return min(self.Bmax, self.Kb * (time**self.Nb))
 
     def BuildUpExp(self, time: float) -> float:
+        r"""
+        Calculate build-up with the exponential equation.
+
+        Parameters
+        ----------
+        time : float
+            Build-up time (days).
+
+        Returns
+        -------
+        float
+            Build-up per unit area.
+
+        Notes
+        -----
+        .. math::
+
+            B = B_{max}\left(1 - e^{-K_b t}\right)
+        """
         return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
     def BuildUpSat(self, time: float) -> float:
+        r"""
+        Calculate build-up with the saturation equation.
+
+        Parameters
+        ----------
+        time : float
+            Build-up time (days).
+
+        Returns
+        -------
+        float
+            Build-up per unit area.
+
+        Notes
+        -----
+        .. math::
+
+            B = \frac{B_{max} t}{K_b + t}
+        """
         return self.Bmax * time / (self.Kb + time)
 
     # endregion BuildUp Equations
 
     # region Washoff Equations
     def WashoffExp(self, surface_flow: float, buildup_mass: float) -> float:
+        r"""
+        Calculate washoff with the exponential equation.
+
+        Parameters
+        ----------
+        surface_flow : float
+            Surface flow (q).
+        buildup_mass : float
+            Pollutant mass on the surface (B).
+
+        Returns
+        -------
+        float
+            Washoff rate (mass per day).
+
+        Notes
+        -----
+        .. math::
+
+            W = K_w q^{N_w} B
+        """
         return self.Kw * (surface_flow**self.Nw) * buildup_mass
 
     def WashoffRating(self, surface_flow: float, watershed_area: float) -> float:
+        r"""
+        Calculate washoff with the rating curve equation.
+
+        Parameters
+        ----------
+        surface_flow : float
+            Surface flow (q).
+        watershed_area : float
+            Watershed area (A).
+
+        Returns
+        -------
+        float
+            Washoff rate (mass per day).
+
+        Notes
+        -----
+        .. math::
+
+            W = K_w (1000\,q A)^{N_w}
+        """
         return self.Kw * (1000 * surface_flow * watershed_area) ** self.Nw
 
     def WashoffEMC(self, surface_flow: float, watershed_area: float) -> float:
+        r"""
+        Calculate washoff with the event mean concentration (EMC) equation.
+
+        Parameters
+        ----------
+        surface_flow : float
+            Surface flow (q).
+        watershed_area : float
+            Watershed area (A).
+
+        Returns
+        -------
+        float
+            Washoff rate (mass per day).
+
+        Notes
+        -----
+        .. math::
+
+            W = K_w q A
+        """
         return self.Kw * surface_flow * watershed_area
 
     # endregion Washoff Equations
@@ -140,7 +276,7 @@ class BuildUpWashoff:
         """
         Run the BuildUp and Washoff model, calculating pollutant.
         """
-        buildup_mass: float = self.InitialBuildUp / (self.Area * self.AreaFraction)
+        buildup_mass: float = self.InitialBuildUp
 
         time_from_buildup: dict[int, Callable[[float], float]] = {
             1: self.TimeFromBuildUpPow,
@@ -148,7 +284,9 @@ class BuildUpWashoff:
             3: self.TimeFromBuildUpSat,
         }
 
-        bu_time: float = time_from_buildup.get(self.BuMethod)(buildup_mass)
+        bu_time: float = time_from_buildup.get(self.BuMethod)(
+            buildup_mass / (self.Area * self.AreaFraction)
+        )
 
         for i in range(len(self.SurfaceFlow)):
             if self.SurfaceFlow[i] < self.ThresholdFlow:
@@ -164,14 +302,16 @@ class BuildUpWashoff:
                 buildup_specific: float = buildup_curve.get(self.BuMethod)(bu_time)
                 buildup_mass = buildup_specific * self.Area * self.AreaFraction
             else:
-                washoff_curve: dict[int, Callable[[float, float], float]] = {
-                    1: self.WashoffExp,
-                    2: self.WashoffRating,
-                    3: self.WashoffEMC,
+                landuse_area: float = self.Area * self.AreaFraction
+
+                washoff_curve: dict[int, Callable[[float], float]] = {
+                    1: lambda q: self.WashoffExp(q, buildup_mass),
+                    2: lambda q: self.WashoffRating(q, landuse_area),
+                    3: lambda q: self.WashoffEMC(q, landuse_area),
                 }
 
                 washoff_rate: float = washoff_curve.get(self.WoMethod)(
-                    self.SurfaceFlow[i], buildup_mass
+                    self.SurfaceFlow[i]
                 )
 
                 self.Washoff.append(washoff_rate * self.timestep_d)

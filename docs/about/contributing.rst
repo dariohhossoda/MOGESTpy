@@ -11,7 +11,8 @@ In short:
    `templates <https://github.com/dariohhossoda/MOGESTpy/issues/new/choose>`_.
 2. Create a branch for that issue from ``development``, named
    ``<issue number>-<short-description>``.
-3. Add tests and documentation for the change.
+3. Add tests and documentation for the change. Docstrings follow the
+   `NumPy style <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 4. Open a pull request to ``development`` filling in the template.
 
 ``main`` only receives release pull requests from ``development``.

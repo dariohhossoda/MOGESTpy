@@ -158,4 +158,4 @@ if __name__ == '__main__':
     print('Hello World')
 ```
 
-<p align="right">(<a href="#top">voltar ao topo</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>

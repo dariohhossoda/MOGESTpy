@@ -1,5 +1,7 @@
 """
-Simulação Hidrodinâmica e de Qualidade da Água (SIHQUAL)
+SIHQUAL (Simulação Hidrodinâmica e de Qualidade da Água), hydrodynamic and
+water quality simulation.
+
 Class-based implementation for hydrodynamic and water quality simulation.
 """
 
@@ -38,7 +40,7 @@ def _to_numpy_array(data, dtype=None):
 
 class SIHQUAL:
     """
-    SIHQUAL (Simulação Hidrodinâmica e de Qualidade da Água) class.
+    SIHQUAL hydrodynamic and water quality model.
 
     This class implements a 1D hydrodynamic and water quality model for rivers and channels.
     It solves the Saint-Venant equations for hydrodynamics and the advection-dispersion

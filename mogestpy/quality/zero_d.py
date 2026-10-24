@@ -1,7 +1,10 @@
 class ZeroDimensional:
     """
-    Classe de Qualidade da Água em Reservatórios - Modelo 0D
-    Zero-Dimensional
+    Zero-dimensional (0D) water quality model for reservoirs.
+
+    The reservoir is treated as a completely mixed tank, and the
+    concentration of a constituent is computed from inflow, outflow,
+    first-order decay and settling.
     """
 
     def __init__(self, volume, Qin, Qout, Cin, As, k, v, timestep):

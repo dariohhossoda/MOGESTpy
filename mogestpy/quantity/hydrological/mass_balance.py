@@ -20,6 +20,20 @@ class MassBalance:
     """
 
     def __init__(self, Qin, Qout, Delta_t, Vin):
+        """
+        Initialize the mass balance.
+
+        Parameters
+        ----------
+        Qin : list of float
+            Inflow rate at each time step.
+        Qout : list of float
+            Outflow rate at each time step.
+        Delta_t : float
+            Time interval between steps, in the time unit of the rates.
+        Vin : float
+            Initial volume.
+        """
         self.Qin = Qin
         self.Qout = Qout
         self.Delta_t = Delta_t

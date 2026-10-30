@@ -44,13 +44,15 @@ class BuildUpWashoff:
         Kw : float
             Parameter for washoff function.
         BuMethod : int
-            Buildup function method.
+            Buildup function method: 1 power, 2 exponential, 3 saturation.
         WoMethod : int
-            Washoff function method.
+            Washoff function method: 1 exponential, 2 rating curve, 3 event
+            mean concentration.
         timestep_h : float
             Time step in hours.
         initial_buildup : float
-            Initial buildup value.
+            Initial pollutant mass on the surface, between 0 and
+            ``Bmax * area * area_fraction``.
         area : float
             Area of the landuse.
         area_fraction : float
@@ -61,7 +63,31 @@ class BuildUpWashoff:
             Name of the landuse.
         aggregate : bool, optional
             If True, aggregate the results. Defaults to False.
+
+        Raises
+        ------
+        ValueError
+            If ``BuMethod`` or ``WoMethod`` is not 1, 2 or 3, or if
+            ``initial_buildup`` is negative or above the maximum build-up.
         """
+        if BuMethod not in (1, 2, 3):
+            raise ValueError(
+                f"BuMethod must be 1 (power), 2 (exponential) or 3 "
+                f"(saturation), got {BuMethod!r}."
+            )
+        if WoMethod not in (1, 2, 3):
+            raise ValueError(
+                f"WoMethod must be 1 (exponential), 2 (rating curve) or 3 "
+                f"(event mean concentration), got {WoMethod!r}."
+            )
+
+        max_buildup = Bmax * area * area_fraction
+        if not 0 <= initial_buildup <= max_buildup:
+            raise ValueError(
+                f"initial_buildup must be between 0 and Bmax * area * "
+                f"area_fraction ({max_buildup}), got {initial_buildup!r}."
+            )
+
         self.LanduseName: str = landuse_name
 
         self.Bmax: float = Bmax

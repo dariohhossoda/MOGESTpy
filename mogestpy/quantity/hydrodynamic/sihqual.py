@@ -6,6 +6,8 @@ Class-based implementation for hydrodynamic and water quality simulation.
 """
 
 import os
+import warnings
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -843,13 +845,14 @@ class SIHQUAL:
         Returns
         -------
         bool
-            True if successful, False otherwise.
+            True if successful, False otherwise, with a warning that gives
+            the error.
         """
         try:
             results.to_excel(filename)
             return True
         except Exception as e:
-            print(f"Error saving results: {e}")
+            warnings.warn(f"Error saving results: {e}", stacklevel=2)
             return False
 
     def plot_results(self, results, variable="Q", figsize=(10, 6), dpi=100):
@@ -1316,7 +1319,7 @@ class SIHQUAL:
                 # Set boundary conditions
                 model.set_boundary_conditions(boundary_positions, boundary_data)
             except Exception as e:
-                print(f"Warning: Could not load boundary conditions: {e}")
+                warnings.warn(f"Could not load boundary conditions: {e}", stacklevel=2)
 
             try:
                 # Load lateral inflows
@@ -1431,7 +1434,7 @@ class SIHQUAL:
                     lateral_c_data,
                 )
             except Exception as e:
-                print(f"Warning: Could not load lateral inflows: {e}")
+                warnings.warn(f"Could not load lateral inflows: {e}", stacklevel=2)
 
             return model
         except Exception as e:
@@ -1444,23 +1447,28 @@ def run_simulation():
     Run the SIHQUAL simulation using the legacy implementation.
 
     This function is provided for backwards compatibility with the old API.
-    It is recommended to use the SIHQUAL class instead.
+
+    .. deprecated:: 2.1.2
+       Use the :class:`SIHQUAL` class instead, for example::
+
+           model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)
+           model.set_uniform_geometry(
+               bottom_width=10, side_slope=0, manning_coef=0.03, bed_slope=0.001
+           )
+           model.set_uniform_initial_conditions(depth=2, velocity=0.5)
+           results = model.run()
 
     Returns
     -------
     pandas.DataFrame
         Simulation results.
     """
-    print(
-        "DEPRECATED: This function is deprecated. Please use the SIHQUAL class instead."
+    warnings.warn(
+        "run_simulation is deprecated and will be removed in a future version. "
+        "Use the SIHQUAL class instead.",
+        DeprecationWarning,
+        stacklevel=2,
     )
-    print("Example:")
-    print("    model = SIHQUAL(dx=100, dt=10, xf=1000, tf=3600)")
-    print(
-        "    model.set_uniform_geometry(bottom_width=10, side_slope=0, manning_coef=0.03, bed_slope=0.001)"
-    )
-    print("    model.set_uniform_initial_conditions(depth=2, velocity=0.5)")
-    print("    results = model.run()")
 
     # Create a simple model
     model = SIHQUAL.create_simple_channel(length=1000, simulation_time=3600)

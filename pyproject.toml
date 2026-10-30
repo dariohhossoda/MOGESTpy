@@ -73,4 +73,7 @@ requires = ["poetry-core>=2.2.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = ["--import-mode=importlib"]
+addopts = ["--import-mode=importlib", "--strict-markers"]
+markers = [
+    "slow: long-running tests, skipped in the CI (deselect with -m \"not slow\")",
+]

@@ -30,6 +30,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/dariohhossoda/MOGESTpy"
 Repository = "https://github.com/dariohhossoda/MOGESTpy"
+Documentation = "https://mogestpy.readthedocs.io/"
 "Bug Tracker" = "https://github.com/dariohhossoda/MOGESTpy/issues"
 
 [tool.poetry]

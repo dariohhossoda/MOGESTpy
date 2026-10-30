@@ -62,8 +62,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Minimum supported version and the version used for linting
-        python-version: ["3.11", "3.13"]
+        # Minimum supported version, the version used for linting and the
+        # newest supported version
+        python-version: ["3.11", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v7
 
@@ -87,7 +88,7 @@ jobs:
             test-venv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install dependencies
-        run: poetry install --only main,dev,test --no-interaction --no-ansi
+        run: poetry install --only main,dev,test --all-extras --no-interaction --no-ansi
 
       - name: Run fast tests
         run: poetry run pytest -m "not slow" --cov=mogestpy --cov-report=term-missing

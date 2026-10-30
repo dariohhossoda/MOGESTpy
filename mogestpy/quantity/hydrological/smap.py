@@ -142,11 +142,6 @@ class SmapD:
         self.Ed = 0
         self.Eb = 0
 
-        # if not self.check_bounds():
-        #     warnings.warn(
-        #         "Some parameters are out of bounds. Please check the bounds."
-        #     )
-
         if self.Tuin > 1:
             warnings.warn(
                 "Initial soil moisture content (Tuin) "
@@ -904,9 +899,13 @@ class SmapD:
         options: Optional[dict[str, float]] = None,
         n_particles: int = 50,
         iters: int = 100,
+        verbose: bool = False,
     ) -> dict[str, Any]:
         """
         Calibrate the SMAP model using Particle Swarm Optimization (PSO) BETA.
+
+        Requires the optional ``pyswarms`` package, installed with
+        ``pip install "mogestpy[pso]"``.
 
         This method optimizes the specified model parameters to minimize the
         given objective function. Note that the objective function will be
@@ -936,6 +935,9 @@ class SmapD:
             Number of particles in the swarm. Default is 50.
         iters : int, optional
             Number of iterations for the PSO algorithm. Default is 100.
+        verbose : bool, optional
+            If True, print the parameter bounds before the optimization.
+            Default is False.
 
         Returns
         -------
@@ -948,7 +950,7 @@ class SmapD:
         except ImportError:
             raise ImportError(
                 "pyswarms is required for PSO calibration. "
-                "Please install it via 'pip install pyswarms'."
+                'Install it with the pso extra: pip install "mogestpy[pso]".'
             )
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
@@ -961,7 +963,8 @@ class SmapD:
 
         bounds = [self.bounds()[var] for var in variables]
         lower_bounds, upper_bounds = zip(*bounds)
-        print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
+        if verbose:
+            print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
 
         if obj_func is None:
 
@@ -1728,9 +1731,13 @@ class SmapM:
         options=None,
         n_particles=50,
         iters=100,
+        verbose=False,
     ):
         """
         Calibrate the SMAPM model using Particle Swarm Optimization (PSO) BETA.
+
+        Requires the optional ``pyswarms`` package, installed with
+        ``pip install "mogestpy[pso]"``.
 
         This method optimizes the specified model parameters to minimize the
         given objective function. Note that the objective function will be
@@ -1760,6 +1767,9 @@ class SmapM:
             Number of particles in the swarm. Default is 50.
         iters : int, optional
             Number of iterations for the PSO algorithm. Default is 100.
+        verbose : bool, optional
+            If True, print the parameter bounds before the optimization.
+            Default is False.
 
         Returns
         -------
@@ -1772,7 +1782,7 @@ class SmapM:
         except ImportError:
             raise ImportError(
                 "pyswarms is required for PSO calibration. "
-                "Please install it via 'pip install pyswarms'."
+                'Install it with the pso extra: pip install "mogestpy[pso]".'
             )
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
@@ -1785,7 +1795,8 @@ class SmapM:
 
         bounds = [self.bounds()[var] for var in variables]
         lower_bounds, upper_bounds = zip(*bounds)
-        print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
+        if verbose:
+            print(f"Lower bounds: {lower_bounds}, Upper bounds: {upper_bounds}")
 
         if obj_func is None:
 

@@ -1,13 +1,42 @@
-[tool.poetry]
-name = "MOGESTpy"
+[project]
+name = "mogestpy"
 version = "2.1.1"
 description = "Water resources management model based on hydrological and hydrodynamic models"
-authors = ["Dario Hachisu Hossoda <dario.hossoda@usp.br>"]
+authors = [{ name = "Dario Hachisu Hossoda", email = "dario.hossoda@usp.br" }]
 license = "MIT"
+license-files = ["LICENSE.md"]
 readme = "README.md"
-homepage = "https://github.com/dariohhossoda/MOGESTpy"
-repository = "https://github.com/dariohhossoda/MOGESTpy"
 keywords = ["hydrology", "water resources", "hydrological model"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Hydrology",
+]
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "spotpy>=1.6.2,<2.0.0",
+    "scikit-learn>=1.5.2,<2.0.0",
+    "pandas>=2.2.3,<4.0.0",
+    "tqdm>=4.67.3,<5.0.0",
+    "numpy>=2.4.4,<3.0.0",
+]
+
+[project.optional-dependencies]
+pso = ["pyswarms>=1.3.0,<2.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/dariohhossoda/MOGESTpy"
+Repository = "https://github.com/dariohhossoda/MOGESTpy"
+Documentation = "https://mogestpy.readthedocs.io/"
+"Bug Tracker" = "https://github.com/dariohhossoda/MOGESTpy/issues"
+
+[tool.poetry]
 exclude = [
     { path = "Applications"},
     { path = "Datasets"},
@@ -16,17 +45,6 @@ exclude = [
 include = [
     { path = "docs", format = "sdist" }
 ]
-
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/dariohhossoda/MOGESTpy/issues"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-spotpy = "^1.6.2"
-scikit-learn = "^1.5.2"
-pandas = ">=2.2.3,<4.0.0"
-tqdm = "^4.67.3"
-numpy = "^2.4.4"
 
 [tool.poetry.group.dev.dependencies]
 matplotlib = "^3.8.0"
@@ -52,11 +70,11 @@ sphinx-design = {version = "^0.7.0", python = ">=3.11"}
 matplotlib = {version = "^3.8", python = ">=3.11"}
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.2.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = ["--import-mode=importlib"]
-
-[project]
-name = "mogestpy"
+addopts = ["--import-mode=importlib", "--strict-markers"]
+markers = [
+    "slow: long-running tests, skipped in the CI (deselect with -m \"not slow\")",
+]

@@ -44,13 +44,15 @@ class BuildUpWashoff:
         Kw : float
             Parameter for washoff function.
         BuMethod : int
-            Buildup function method.
+            Buildup function method: 1 power, 2 exponential, 3 saturation.
         WoMethod : int
-            Washoff function method.
+            Washoff function method: 1 exponential, 2 rating curve, 3 event
+            mean concentration.
         timestep_h : float
             Time step in hours.
         initial_buildup : float
-            Initial buildup value.
+            Initial pollutant mass on the surface, between 0 and
+            ``Bmax * area * area_fraction``.
         area : float
             Area of the landuse.
         area_fraction : float
@@ -61,7 +63,31 @@ class BuildUpWashoff:
             Name of the landuse.
         aggregate : bool, optional
             If True, aggregate the results. Defaults to False.
+
+        Raises
+        ------
+        ValueError
+            If ``BuMethod`` or ``WoMethod`` is not 1, 2 or 3, or if
+            ``initial_buildup`` is negative or above the maximum build-up.
         """
+        if BuMethod not in (1, 2, 3):
+            raise ValueError(
+                f"BuMethod must be 1 (power), 2 (exponential) or 3 "
+                f"(saturation), got {BuMethod!r}."
+            )
+        if WoMethod not in (1, 2, 3):
+            raise ValueError(
+                f"WoMethod must be 1 (exponential), 2 (rating curve) or 3 "
+                f"(event mean concentration), got {WoMethod!r}."
+            )
+
+        max_buildup = Bmax * area * area_fraction
+        if not 0 <= initial_buildup <= max_buildup:
+            raise ValueError(
+                f"initial_buildup must be between 0 and Bmax * area * "
+                f"area_fraction ({max_buildup}), got {initial_buildup!r}."
+            )
+
         self.LanduseName: str = landuse_name
 
         self.Bmax: float = Bmax
@@ -92,39 +118,72 @@ class BuildUpWashoff:
     # region Time from BuildUp Equations
     def TimeFromBuildUpPow(self, buildup: float) -> float:
         """
-        Returns time from buildup using the power equation.
+        Calculate the time to reach a build-up with the power equation.
+
+        Parameters
+        ----------
+        buildup : float
+            Build-up per unit area.
+
+        Returns
+        -------
+        float
+            Build-up time (days), or 0 when ``Kb`` or ``Nb`` is zero.
         """
 
         try:
             time = (buildup / self.Kb) ** (1 / self.Nb)
-        except:
+        except ZeroDivisionError:
             time = 0
 
         return time
 
     def TimeFromBuildUpExp(self, buildup: float) -> float:
         """
-        Returns time from buildup using the exponential equation.
+        Calculate the time to reach a build-up with the exponential equation.
+
+        Parameters
+        ----------
+        buildup : float
+            Build-up per unit area.
+
+        Returns
+        -------
+        float
+            Build-up time (days). The equation only reaches ``Bmax`` as the
+            time tends to infinity, so a saturated surface returns
+            ``math.inf``. Returns 0 when ``Kb`` is zero.
         """
+        if buildup >= self.Bmax:
+            return math.inf
 
         try:
             time = -math.log(1 - buildup / self.Bmax) / self.Kb
-        except:
+        except ZeroDivisionError:
             time = 0
 
         return time
 
     def TimeFromBuildUpSat(self, buildup: float) -> float:
         """
-        Returns time from buildup using the saturation equation.
+        Calculate the time to reach a build-up with the saturation equation.
+
+        Parameters
+        ----------
+        buildup : float
+            Build-up per unit area.
+
+        Returns
+        -------
+        float
+            Build-up time (days). The equation only reaches ``Bmax`` as the
+            time tends to infinity, so a saturated surface returns
+            ``math.inf``.
         """
+        if buildup >= self.Bmax:
+            return math.inf
 
-        try:
-            time = buildup * self.Kb / (self.Bmax - buildup)
-        except:
-            time = 0
-
-        return time
+        return buildup * self.Kb / (self.Bmax - buildup)
 
     # endregion Time from BuildUp Equations
 
@@ -171,6 +230,9 @@ class BuildUpWashoff:
 
             B = B_{max}\left(1 - e^{-K_b t}\right)
         """
+        if math.isinf(time):
+            return self.Bmax
+
         return self.Bmax * (1 - math.e ** (-self.Kb * time))
 
     def BuildUpSat(self, time: float) -> float:
@@ -193,6 +255,9 @@ class BuildUpWashoff:
 
             B = \frac{B_{max} t}{K_b + t}
         """
+        if math.isinf(time):
+            return self.Bmax
+
         return self.Bmax * time / (self.Kb + time)
 
     # endregion BuildUp Equations

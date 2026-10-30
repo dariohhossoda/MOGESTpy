@@ -199,8 +199,13 @@ class TestSIHQUALExcel:
             param_df.to_excel(writer, sheet_name="Parameters", index=False)
             data_df.to_excel(writer, sheet_name="Data", index=False)
 
-        # Load model from Excel - should not raise exceptions even with missing files
-        model = SIHQUAL.from_excel(minimal_excel_path)
+        # Load model from Excel - should warn, not raise, with missing files
+        with pytest.warns(UserWarning) as record:
+            model = SIHQUAL.from_excel(minimal_excel_path)
+
+        messages = [str(w.message) for w in record]
+        assert any("Could not load boundary conditions" in m for m in messages)
+        assert any("Could not load lateral inflows" in m for m in messages)
 
         # Check if basic parameters were loaded correctly
         assert model.dx == 100.0

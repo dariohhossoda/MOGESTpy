@@ -43,6 +43,7 @@ A commit exists to do one thing, so it's essential for a commit to make only one
 ### Automated Tests
 
 - The project's automated tests must pass without errors before making a commit.
+- The CI runs the fast tests with `poetry run pytest -m "not slow"`. Mark a test with `@pytest.mark.slow` when it takes more than a few seconds (long simulations or calibrations); it then runs only with the full suite, `poetry run pytest`. Markers must be registered in `pyproject.toml`, since pytest runs with `--strict-markers`.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

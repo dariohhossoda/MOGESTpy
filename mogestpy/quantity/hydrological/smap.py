@@ -142,11 +142,6 @@ class SmapD:
         self.Ed = 0
         self.Eb = 0
 
-        # if not self.check_bounds():
-        #     warnings.warn(
-        #         "Some parameters are out of bounds. Please check the bounds."
-        #     )
-
         if self.Tuin > 1:
             warnings.warn(
                 "Initial soil moisture content (Tuin) "

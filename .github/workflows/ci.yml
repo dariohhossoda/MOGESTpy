@@ -62,8 +62,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Minimum supported version and the version used for linting
-        python-version: ["3.11", "3.13"]
+        # Minimum supported version, the version used for linting and the
+        # newest supported version
+        python-version: ["3.11", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v7
 

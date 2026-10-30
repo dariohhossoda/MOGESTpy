@@ -904,6 +904,9 @@ class SmapD:
         """
         Calibrate the SMAP model using Particle Swarm Optimization (PSO) BETA.
 
+        Requires the optional ``pyswarms`` package, installed with
+        ``pip install "mogestpy[pso]"``.
+
         This method optimizes the specified model parameters to minimize the
         given objective function. Note that the objective function will be
         minimized, so metrics like KGE and NSE should be multiplied by -1.
@@ -947,7 +950,7 @@ class SmapD:
         except ImportError:
             raise ImportError(
                 "pyswarms is required for PSO calibration. "
-                "Please install it via 'pip install pyswarms'."
+                'Install it with the pso extra: pip install "mogestpy[pso]".'
             )
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
@@ -1733,6 +1736,9 @@ class SmapM:
         """
         Calibrate the SMAPM model using Particle Swarm Optimization (PSO) BETA.
 
+        Requires the optional ``pyswarms`` package, installed with
+        ``pip install "mogestpy[pso]"``.
+
         This method optimizes the specified model parameters to minimize the
         given objective function. Note that the objective function will be
         minimized, so metrics like KGE and NSE should be multiplied by -1.
@@ -1776,7 +1782,7 @@ class SmapM:
         except ImportError:
             raise ImportError(
                 "pyswarms is required for PSO calibration. "
-                "Please install it via 'pip install pyswarms'."
+                'Install it with the pso extra: pip install "mogestpy[pso]".'
             )
 
         invalid_vars = [var for var in variables if var not in self.__dict__]

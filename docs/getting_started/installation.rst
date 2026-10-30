@@ -20,7 +20,12 @@ Matplotlib for plots:
 
    pip install matplotlib
 
-PSO calibration (``pso_calibrate``) needs the optional ``pyswarms`` package.
+PSO calibration (``pso_calibrate``) needs the optional ``pyswarms`` package,
+installed with the ``pso`` extra:
+
+.. code-block:: console
+
+   pip install "mogestpy[pso]"
 
 From source
 -----------

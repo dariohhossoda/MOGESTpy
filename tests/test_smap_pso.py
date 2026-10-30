@@ -61,3 +61,24 @@ def test_pso_calibrate_sets_best_parameters(smap_class, fake_pyswarms):
 
     assert result["best_params"]["Str"] == pytest.approx((lower + upper) / 2)
     assert model.Str == pytest.approx((lower + upper) / 2)
+
+
+@pytest.mark.parametrize("smap_class", [SmapD, SmapM])
+def test_pso_calibrate_without_pyswarms_points_to_extra(smap_class, monkeypatch):
+    monkeypatch.setitem(sys.modules, "pyswarms", None)
+
+    with pytest.raises(ImportError, match=r"mogestpy\[pso\]"):
+        run_pso(smap_class())
+
+
+@pytest.mark.parametrize("smap_class", [SmapD, SmapM])
+def test_pso_calibrate_with_pyswarms(smap_class, monkeypatch, tmp_path):
+    # pyswarms opens report.log in the working directory on import
+    monkeypatch.chdir(tmp_path)
+    pytest.importorskip("pyswarms")
+    model = smap_class()
+    lower, upper = model.bounds()["Str"]
+    result = run_pso(model, n_particles=5, iters=3)
+
+    assert lower <= result["best_params"]["Str"] <= upper
+    assert model.Str == result["best_params"]["Str"]

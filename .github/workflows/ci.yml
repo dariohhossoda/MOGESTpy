@@ -87,7 +87,7 @@ jobs:
             test-venv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install dependencies
-        run: poetry install --only main,dev,test --no-interaction --no-ansi
+        run: poetry install --only main,dev,test --all-extras --no-interaction --no-ansi
 
       - name: Run fast tests
         run: poetry run pytest -m "not slow" --cov=mogestpy --cov-report=term-missing

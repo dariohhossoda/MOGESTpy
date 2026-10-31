@@ -64,6 +64,14 @@ def test_calibration_rejects_unknown_variable(smap_class, method):
 
 
 @pytest.mark.parametrize("smap_class", [SmapD, SmapM])
+@pytest.mark.parametrize("method", ["calibrate", "fast_calibrate"])
+@pytest.mark.parametrize("variable", ["Ad", "Tuin", "Ebin"])
+def test_calibration_rejects_variable_without_bounds(smap_class, method, variable):
+    with pytest.raises(ValueError, match=f"'{variable}' is not defined in bounds"):
+        getattr(smap_class(), method)([1.0], [1.0], [1.0], variables=[variable])
+
+
+@pytest.mark.parametrize("smap_class", [SmapD, SmapM])
 def test_check_bounds(smap_class):
     smap = smap_class()
     lower, upper = smap.bounds()["Str"]

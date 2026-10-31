@@ -786,6 +786,10 @@ class SmapD:
         if invalid_vars:
             raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
 
+        for var in variables:
+            if var not in self.bounds():
+                raise ValueError(f"Variable '{var}' is not defined in bounds.")
+
         bounds = [self.bounds()[var] for var in variables]
 
         if obj_func is None:
@@ -851,6 +855,10 @@ class SmapD:
         invalid_vars = [var for var in variables if var not in self.__dict__]
         if invalid_vars:
             raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
+
+        for var in variables:
+            if var not in self.bounds():
+                raise ValueError(f"Variable '{var}' is not defined in bounds.")
 
         # Multiply bounds by 10000 to work with integers
         bounds = [
@@ -1619,6 +1627,10 @@ class SmapM:
         if invalid_vars:
             raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
 
+        for var in variables:
+            if var not in self.bounds():
+                raise ValueError(f"Variable '{var}' is not defined in bounds.")
+
         bounds = [self.bounds()[var] for var in variables]
 
         if obj_func is None:
@@ -1683,6 +1695,10 @@ class SmapM:
         invalid_vars = [var for var in variables if var not in self.__dict__]
         if invalid_vars:
             raise ValueError(f"Variables {', '.join(invalid_vars)} do not exist.")
+
+        for var in variables:
+            if var not in self.bounds():
+                raise ValueError(f"Variable '{var}' is not defined in bounds.")
 
         # Multiply bounds by 10000 to work with integers
         bounds = [

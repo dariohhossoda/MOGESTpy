@@ -173,6 +173,38 @@ def test_smapd_run_to_dataframe_discharge_matches_run_to_list():
         assert abs(q1 - q2) < 1e-9, f"Step {i}: run_to_list={q1}, run_to_dataframe={q2}"
 
 
+def test_smapd_run_to_dataframe_advances_the_model():
+    """
+    Test that run_step continues from the state left by run_to_dataframe
+    """
+    prec = [0.0, 12.5, 30.1, 4.2, 0.0, 18.7]
+    etp = [4.5] * len(prec)
+    expected = Smap(Ad=513.37, Str=1200.0, Ebin=11.05).run_to_list(prec, etp)
+
+    smap = Smap(Ad=513.37, Str=1200.0, Ebin=11.05)
+    df = smap.run_to_dataframe(prec[:5], etp[:5])
+
+    assert smap.i == 5
+    assert df["discharge"].tolist() == pytest.approx(expected[:5])
+    assert smap.run_step(prec[5], etp[5]) == pytest.approx(expected[5])
+
+
+def test_smapd_run_to_dataframe_without_reset_continues():
+    """
+    Test that two run_to_dataframe calls without reset match a single run
+    """
+    prec = [0.0, 12.5, 30.1, 4.2, 0.0, 18.7]
+    etp = [4.5] * len(prec)
+    expected = Smap(Ad=513.37, Str=1200.0, Ebin=11.05).run_to_list(prec, etp)
+
+    smap = Smap(Ad=513.37, Str=1200.0, Ebin=11.05)
+    first = smap.run_to_dataframe(prec[:3], etp[:3])
+    second = smap.run_to_dataframe(prec[3:], etp[3:], reset=False)
+
+    discharge = first["discharge"].tolist() + second["discharge"].tolist()
+    assert discharge == pytest.approx(expected)
+
+
 def test_smapd_dataframe():
     """
     Test different implementation of SmapD class

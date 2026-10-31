@@ -701,27 +701,7 @@ class SmapD:
         data = []
 
         for prec, etp in zip(prec_arr, etp_arr):
-            self.Tu = self.Tu_calc(self.Rsolo, self.Str)
-            self.Es = self.Es_calc(prec, self.Ai, self.Str, self.Rsolo)
-            self.Er = self.Er_calc(prec, etp, self.Es, self.Tu)
-            self.Rec = self.Rec_calc(
-                self.Crec, self.Tu, self.Rsolo, self.Capc, self.Str
-            )
-
-            self.Rsolo = self.Rsolo_calc(self.Rsolo, prec, self.Es, self.Er, self.Rec)
-
-            if self.Rsolo > self.Str:
-                overflow = self.Rsolo - self.Str
-                self.Es += overflow
-                self.Rsolo = self.Str
-
-            self.Ed = self.Ed_calc(self.Rsup + self.Es, self.k2t)
-            self.Eb = self.Eb_calc(self.Rsub, self.kkt)
-
-            self.Rsup = self.Rsup_calc(self.Rsup, self.Es, self.Ed)
-            self.Rsub = self.Rsub_calc(self.Rsub, self.Rec, self.Eb)
-
-            discharge = self.discharge_calc(self.Ed, self.Eb, self.Ad)
+            discharge = self.run_step(prec, etp)
 
             # Store all variables for the current step
             data.append(

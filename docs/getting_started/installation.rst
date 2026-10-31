@@ -12,7 +12,7 @@ Stable releases are published on `PyPI`_:
 
    pip install mogestpy
 
-The package depends on pandas, scikit-learn, SPOTPY and tqdm (which bring
+The package depends on pandas, SPOTPY and tqdm (which bring
 NumPy and SciPy), installed automatically by pip. The examples in this documentation also use
 Matplotlib for plots:
 

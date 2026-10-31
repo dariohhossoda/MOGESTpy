@@ -2,8 +2,11 @@
 Tests for the SMAP calibration, parameter bounds and deprecated method names.
 """
 
+import numpy as np
 import pytest
+from scipy.optimize import OptimizeResult
 
+from mogestpy.quantity.hydrological import smap
 from mogestpy.quantity.hydrological.smap import SmapD, SmapM
 
 DAILY_PREC = [0.0, 0.0, 12.5, 30.1, 4.2, 0.0, 0.0, 18.7, 2.3, 0.0] * 6
@@ -40,6 +43,22 @@ def test_smapm_fast_calibrate_sets_rounded_parameter():
 
     assert result.x[0] == round(result.x[0], 4)
     assert smap.Str == result.x[0]
+
+
+@pytest.mark.parametrize("smap_class", [SmapD, SmapM])
+def test_calibrate_sets_best_parameters_on_model(smap_class, monkeypatch):
+    # The optimizer evaluates the objective last at another point than the
+    # best one, as it can without polishing.
+    def fake_differential_evolution(func, bounds, disp):
+        func(np.array([bounds[0][0]]))
+        return OptimizeResult(x=np.array([1234.5]), fun=0.0)
+
+    monkeypatch.setattr(smap, "differential_evolution", fake_differential_evolution)
+    model = smap_class()
+    result = model.calibrate(DAILY_PREC, DAILY_ETP, DAILY_PREC, variables=["Str"])
+
+    assert result.x[0] == 1234.5
+    assert model.Str == 1234.5
 
 
 def test_calibrate_with_custom_objective():

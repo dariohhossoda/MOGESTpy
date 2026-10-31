@@ -759,7 +759,8 @@ class SmapD:
         -------
         scipy.optimize.OptimizeResult
             The result of the optimization process, as returned by
-            `scipy.optimize.differential_evolution`.
+            `scipy.optimize.differential_evolution`. The optimized parameters
+            are set on the model.
         """
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
@@ -785,6 +786,9 @@ class SmapD:
             return obj_func(eval_arr, list(self.run(prec_arr, etp_arr)))
 
         result = differential_evolution(func=objective, bounds=bounds, disp=disp)
+
+        # Update model parameters with final calibrated values
+        self.__dict__.update({var: val for var, val in zip(variables, result.x)})
 
         return result
 
@@ -1600,7 +1604,8 @@ class SmapM:
         -------
         scipy.optimize.OptimizeResult
             The result of the optimization process, as returned by
-            `scipy.optimize.differential_evolution`.
+            `scipy.optimize.differential_evolution`. The optimized parameters
+            are set on the model.
         """
 
         invalid_vars = [var for var in variables if var not in self.__dict__]
@@ -1626,6 +1631,9 @@ class SmapM:
             return obj_func(eval_arr, list(self.run(prec_arr, etp_arr)))
 
         result = differential_evolution(func=objective, bounds=bounds, disp=disp)
+
+        # Update model parameters with final calibrated values
+        self.__dict__.update({var: val for var, val in zip(variables, result.x)})
 
         return result
 
@@ -1669,7 +1677,8 @@ class SmapM:
         scipy.optimize.OptimizeResult
             The result of the optimization process, as returned by
             `scipy.optimize.differential_evolution`. The optimized parameters
-            are automatically scaled back to their original range.
+            are automatically scaled back to their original range and set on
+            the model.
         """
 
         invalid_vars = [var for var in variables if var not in self.__dict__]

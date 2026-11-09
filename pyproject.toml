@@ -22,7 +22,7 @@ requires-python = ">=3.11,<4.0"
 dependencies = [
     "spotpy>=1.6.2,<2.0.0",
     "scikit-learn>=1.5.2,<2.0.0",
-    "pandas>=2.2.3,<4.0.0",
+    "pandas>=3.1.1,<4.0.0",
     "tqdm>=4.67.3,<5.0.0",
     "numpy>=2.4.4,<3.0.0",
 ]
@@ -64,7 +64,7 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = {version = ">=8.2,<10.0", python = ">=3.11"}
 sphinxcontrib-bibtex = {version = "^2.6.5", python = ">=3.11"}
-pydata-sphinx-theme = {version = "^0.23.0", python = ">=3.11"}
+pydata-sphinx-theme = {version = "^0.24.0", python = ">=3.11"}
 sphinx-gallery = {version = "^0.22.1", python = ">=3.11"}
 sphinx-design = {version = "^0.7.0", python = ">=3.11"}
 matplotlib = {version = "^3.8", python = ">=3.11"}
